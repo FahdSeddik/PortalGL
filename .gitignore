@@ -1,3 +1,4 @@
+# build related
 CMakeLists.txt.user
 CMakeCache.txt
 CMakeFiles
@@ -9,12 +10,30 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 _deps
-.vscode/
 bin/
 build/
+cmake-build-*/
+out/
+
+# imgui saved state
+imgui.ini
+
+# force .obj files to be added
+!assets/models/**/*.obj
+
+# IDE specific files
+.vscode/
+.vs/
+
+# Clion specific files
+.idea/
+
+# More
 docs/
 expected/
 scripts/
 instructions.md
 instructions.pdf
 screenshots/
+
+
