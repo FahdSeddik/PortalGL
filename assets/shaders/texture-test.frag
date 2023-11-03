@@ -14,5 +14,8 @@ uniform sampler2D tex;
 void main(){
     //TODO: (Req 5) Change the following line to read the fragment color
     // from the texture at the received texture coordinates
-    frag_color = vec4(1.0);
+
+    //texture function takes in a sampler2D (the texture), and a vec2 (the texture coordinates)
+    //it returns a vec4 (the color of the texture at the given coordinates)
+    frag_color = texture(tex, fs_in.tex_coord);
 }
