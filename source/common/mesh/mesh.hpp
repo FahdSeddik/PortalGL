@@ -56,7 +56,7 @@ namespace our {
             glEnableVertexAttribArray(ATTRIB_LOC_NORMAL);
 
             glBindVertexArray(0);
-            elementCount = elements.size();
+            elementCount = (GLsizei)elements.size();
 
         }
 
