@@ -35,17 +35,31 @@ namespace our {
         // - the center position which is the point (0,0,-1) but after being transformed by M
         // - the up direction which is the vector (0,1,0) but after being transformed by M
         // then you can use glm::lookAt
-        return glm::mat4(1.0f);
+        glm::vec3 eye = glm::vec3(M * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        glm::vec3 center = glm::vec3(M * glm::vec4(0.0f, 0.0f, -1.0f, 1.0f));
+        glm::vec3 up = glm::vec3(M * glm::vec4(0.0f, 1.0f, 0.0f, 0.0f));
+        return glm::lookAt(eye, center, up);
     }
 
     // Creates and returns the camera projection matrix
     // "viewportSize" is used to compute the aspect ratio
     glm::mat4 CameraComponent::getProjectionMatrix(glm::ivec2 viewportSize) const {
-        //TODO: (Req 8) Wrtie this function
-        // NOTE: The function glm::ortho can be used to create the orthographic projection matrix
-        // It takes left, right, bottom, top. Bottom is -orthoHeight/2 and Top is orthoHeight/2.
-        // Left and Right are the same but after being multiplied by the aspect ratio
-        // For the perspective camera, you can use glm::perspective
-        return glm::mat4(1.0f);
+        // TODO: (Req 8) Wrtie this function
+        //  NOTE: The function glm::ortho can be used to create the orthographic projection matrix
+        //  It takes left, right, bottom, top. Bottom is -orthoHeight/2 and Top is orthoHeight/2.
+        //  Left and Right are the same but after being multiplied by the aspect ratio
+        //  For the perspective camera, you can use glm::perspective
+        float aspectRatio = static_cast<float>(viewportSize.x) / static_cast<float>(viewportSize.y);
+        if (cameraType == CameraType::ORTHOGRAPHIC)
+        {
+            // compute the aspect ratio
+            // compute the orthographic projection matrix
+            return glm::ortho((-orthoHeight / 2.0f) * aspectRatio, (orthoHeight / 2.0f) * aspectRatio, -orthoHeight / 2.0f, orthoHeight / 2.0f, near, far);
+        }
+        else
+        {
+            // compute the perspective projection matrix
+            return glm::perspective(fovY, aspectRatio, near, far);
+        }
     }
 }
