@@ -51,9 +51,11 @@ namespace our {
         TintedMaterial::setup();
         //setting the "alphaThreshold" uniform to the value in the member variable alphaThreshold
         shader->set("alphaThreshold", alphaThreshold);
+        glActiveTexture(GL_TEXTURE0); // You need to activate the texture unit before binding the texture to it
         //binding the texture and sampler to a texture unit and sending the unit number to the uniform variable "tex"
         texture->bind();
-        sampler->bind(0);
+        if(sampler)
+            sampler->bind(0);
         shader->set("tex", 0);
     }
 
