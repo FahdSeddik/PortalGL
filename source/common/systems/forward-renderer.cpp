@@ -2,8 +2,6 @@
 #include "../mesh/mesh-utils.hpp"
 #include "../texture/texture-utils.hpp"
 
-#define viewPortStart_X 0
-#define viewPortStart_Y 0
 
 namespace our {
 
@@ -143,17 +141,18 @@ namespace our {
         std::sort(transparentCommands.begin(), transparentCommands.end(), [cameraForward](const RenderCommand& first, const RenderCommand& second){
             //TODO: (Req 9) Finish this function
             // HINT: the following return should return true "first" should be drawn before "second".
-            //calculating the distance between the camera and the center of the objects
-            float distanceToFirst = glm::distance(first.center, cameraForward);
-            float distanceToSecond = glm::distance(second.center, cameraForward);
-              // The command with the greater distance should be drawn first
-            return distanceToFirst > distanceToSecond;
+            //calculating the magntiudes from the center of the object to the camera
+            //the closer the object the smaller the magnitude
+            float distanceToFirst = glm::dot(first.center, cameraForward);
+            float distanceToSecond = glm::dot(second.center, cameraForward);
+              // The command with the smaller magnitude should be drawn first
+            return distanceToFirst < distanceToSecond;
         });
 
         //TODO: (Req 9) Get the camera ViewProjection matrix and store it in VP
         glm::mat4 VP = camera->getProjectionMatrix(windowSize) * camera->getViewMatrix();
         //TODO: (Req 9) Set the OpenGL viewport using viewportStart and viewportSize
-        glViewport(viewPortStart_X, viewPortStart_Y, windowSize.x, windowSize.y);
+        glViewport(0, 0, windowSize.x, windowSize.y);
         //TODO: (Req 9) Set the clear color to black and the clear depth to 1
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClearDepth(1.0f);
