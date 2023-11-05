@@ -27,7 +27,7 @@ namespace our {
             skyPipelineState.depthTesting.enabled = true;
             skyPipelineState.depthTesting.function = GL_LEQUAL;
             skyPipelineState.faceCulling.enabled = true;
-            skyPipelineState.faceCulling.culledFace = GL_BACK;
+            skyPipelineState.faceCulling.culledFace = GL_FRONT;
             
             // Load the sky texture (note that we don't need mipmaps since we want to avoid any unnecessary blurring while rendering the sky)
             std::string skyTextureFile = config.value<std::string>("sky", "");
