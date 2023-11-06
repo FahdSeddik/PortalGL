@@ -1,0 +1,37 @@
+name: CMake Build and Run Scripts
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Create Build Environment
+      run: cmake -E make_directory ${{github.workspace}}/build
+
+    - name: Configure CMake
+      shell: bash
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=Release -B ${{github.workspace}}/build
+
+    - name: Build
+      shell: bash
+      run: cmake --build ${{github.workspace}}/build --config Release
+
+    - name: Run executable
+      shell: pwsh
+      run: |
+        $exit_code = 0
+        try {
+          ./bin/GAME_APPLICATION.exe
+        } catch {
+          $exit_code = 1
+        }
+        exit $exit_code
