@@ -23,6 +23,9 @@ class Playstate: public our::State {
         if(config.contains("assets")){
             our::deserializeAllAssets(config["assets"]);
         }
+        if(config.contains("physicsWorld")){
+            world.deserialize_physics(config["physicsWorld"]);
+        }
         // If we have a world in the scene config, we use it to populate our world
         if(config.contains("world")){
             world.deserialize(config["world"]);

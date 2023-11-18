@@ -3,6 +3,8 @@
 // We will use "Tiny OBJ Loader" to read and process '.obj" files
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tinyobj/tiny_obj_loader.h>
+#include <reactphysics3d/reactphysics3d.h>
+namespace r3d = reactphysics3d;
 
 #include <iostream>
 #include <vector>
@@ -119,5 +121,34 @@ our::Mesh* our::mesh_utils::sphere(const glm::ivec2& segments){
         }
     }
 
+    return new our::Mesh(vertices, elements);
+}
+
+our::Mesh* our::mesh_utils::triangle(const r3d::Vector3& v0,const r3d::Vector3& v1,const r3d::Vector3& v2, const uint32_t& c0, const uint32_t& c1, const uint32_t& c2){
+    std::vector<our::Vertex> vertices;
+    std::vector<GLuint> elements;
+    // colors are encoded R=color>>24 & 0xFF, G=color>>16 & 0xFF, B=color>>8 & 0xFF, A=color & 0xFF
+    our::Color color0 = our::Color(c0>>24 & 0xFF, c0>>16 & 0xFF, c0>>8 & 0xFF, c0 & 0xFF);
+    our::Color color1 = our::Color(c1>>24 & 0xFF, c1>>16 & 0xFF, c1>>8 & 0xFF, c1 & 0xFF);
+    our::Color color2 = our::Color(c2>>24 & 0xFF, c2>>16 & 0xFF, c2>>8 & 0xFF, c2 & 0xFF);
+    vertices.push_back({glm::vec3(v0.x, v0.y, v0.z), color0, glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)});
+    vertices.push_back({glm::vec3(v1.x, v1.y, v1.z), color1, glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)});
+    vertices.push_back({glm::vec3(v2.x, v2.y, v2.z), color2, glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)});
+    elements.push_back(0);
+    elements.push_back(1);
+    elements.push_back(2);
+    return new our::Mesh(vertices, elements);
+}
+
+our::Mesh* our::mesh_utils::line(const r3d::Vector3& v0,const r3d::Vector3& v1, const uint32_t& c0, const uint32_t& c1){
+    std::vector<our::Vertex> vertices;
+    std::vector<GLuint> elements;
+    // colors are encoded R=color>>24 & 0xFF, G=color>>16 & 0xFF, B=color>>8 & 0xFF, A=color & 0xFF
+    our::Color color0 = our::Color(c0>>24 & 0xFF, c0>>16 & 0xFF, c0>>8 & 0xFF, c0 & 0xFF);
+    our::Color color1 = our::Color(c1>>24 & 0xFF, c1>>16 & 0xFF, c1>>8 & 0xFF, c1 & 0xFF);
+    vertices.push_back({glm::vec3(v0.x, v0.y, v0.z), color0, glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)});
+    vertices.push_back({glm::vec3(v1.x, v1.y, v1.z), color1, glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)});
+    elements.push_back(0);
+    elements.push_back(1);
     return new our::Mesh(vertices, elements);
 }

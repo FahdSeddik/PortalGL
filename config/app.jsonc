@@ -45,6 +45,19 @@
                 }
             },
             "materials":{
+                "debug":{
+                    "type": "tinted",
+                    "shader": "tinted",
+                    "pipelineState": {
+                        "faceCulling":{
+                            "enabled": false
+                        },
+                        "depthTesting":{
+                            "enabled": true
+                        }
+                    },
+                    "tint": [1, 0, 1, 1]
+                },
                 "metal":{
                     "type": "tinted",
                     "shader": "tinted",
@@ -127,15 +140,50 @@
                 }
             }
         },
+        // if physicsWorld is not defined then physics will be disabled
+        "physicsWorld":{
+            // all of them are optional and have default values check PhysicsWorld.h for more info
+            // "defaultVelocitySolverNbIterations": 15,
+            // "defaultPositionSolverNbIterations": 8,
+            // "isSleepingEnabled":false,
+            // "gravity":[0,-9.81,0],
+            // "worldName": "MainWorld",
+        },
         "world":[
             {
-                "position": [0, 0, 10],
+                "position": [0, 1, 7],
                 "components": [
                     {
                         "type": "Camera"
                     },
                     {
                         "type": "Free Camera Controller"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Dynamic", // Satic->floor, Kinematic->moving platforms, Dynamic->player  // default is Static
+                        "enableGravity": true, // default is false
+                        "allowedToSleep": false, // default is false: keep as false for player or moving object, true for static objects
+                        "rotaionAxis": [0,0,0], //default [1,1,1]
+                        "motionAxis": [1,1,1], //default [1,1,1]
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [0.5, 0.5, 0.5],
+
+                            // "type": "Sphere Collider",
+                            // "radius": 0.5,
+
+                            // "type": "Capsule Collider",
+                            // "radius": 0.5,
+                            // "height": 1.0,
+                            
+                            // for material
+                            "bounciness":0.0,
+                            "friction": 1.0,
+                            
+                            // for trigger
+                            "isTrigger": false // default is false
+                        }
                     }
                 ],
                 "children": [
@@ -177,6 +225,15 @@
                         "type": "Mesh Renderer",
                         "mesh": "plane",
                         "material": "grass"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [10, 10, 1],
+                            "bounciness":0.0
+                        }
                     }
                 ]
             },
@@ -189,6 +246,15 @@
                         "type": "Mesh Renderer",
                         "mesh": "plane",
                         "material": "glass"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [2, 2, 0.01],
+                            "bounciness":0.0
+                        }
                     }
                 ]
             },

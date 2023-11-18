@@ -3,6 +3,9 @@
 #include "../ecs/component.hpp"
 
 #include <glm/glm.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include<glm/common.hpp>
 
 namespace our {
 
@@ -13,7 +16,7 @@ namespace our {
     class MovementComponent : public Component {
     public:
         glm::vec3 linearVelocity = {0, 0, 0}; // Each frame, the entity should move as follows: position += linearVelocity * deltaTime 
-        glm::vec3 angularVelocity = {0, 0, 0}; // Each frame, the entity should rotate as follows: rotation += angularVelocity * deltaTime
+        glm::quat angularVelocity = glm::quat(0, 0, 0, 0); // Each frame, the entity should rotate as follows: rotation += angularVelocity * deltaTime
 
         // The ID of this component type is "Movement"
         static std::string getID() { return "Movement"; }
