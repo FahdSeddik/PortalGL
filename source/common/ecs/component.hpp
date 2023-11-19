@@ -3,7 +3,7 @@
 #include <json/json.hpp>
 #include <string>
 
-namespace our {
+namespace portal {
 
     class Entity; // A forward declaration of the Entity Class
 

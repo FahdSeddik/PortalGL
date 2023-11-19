@@ -4,7 +4,7 @@
 #include <string>
 #include <json/json.hpp>
 
-namespace our {
+namespace portal {
 
     // This static template class will hold the loaded assets
     // and can be called from anywhere to get an asset by its name.

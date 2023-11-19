@@ -1,7 +1,7 @@
 #include "pipeline-state.hpp"
 #include "../deserialize-utils.hpp"
 
-namespace our {
+namespace portal {
 
     // Given a json object, this function deserializes a PipelineState structure
     void PipelineState::deserialize(const nlohmann::json& data){

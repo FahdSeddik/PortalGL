@@ -5,16 +5,16 @@
 #include <application.hpp>
 
 // This state tests and shows how to use the Shader Class.
-class ShaderTestState: public our::State {
+class ShaderTestState: public portal::State {
 
-    our::ShaderProgram* shader;
+    portal::ShaderProgram* shader;
     GLuint vertex_array;
     
     void onInitialize() override {
         // First of all, we get the scene configuration from the app config
         auto& config = getApp()->getConfig()["scene"];
         // Then we load the shader that will be used for this scene
-        shader = new our::ShaderProgram();
+        shader = new portal::ShaderProgram();
         shader->attach(config.value("vertex-shader", ""), GL_VERTEX_SHADER);
         shader->attach(config.value("fragment-shader", ""), GL_FRAGMENT_SHADER);
         shader->link();

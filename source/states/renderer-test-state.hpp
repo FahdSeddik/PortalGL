@@ -8,17 +8,17 @@
 #include <application.hpp>
 
 // This state tests and shows how to use the Forward renderer.
-class RendererTestState: public our::State {
+class RendererTestState: public portal::State {
 
-    our::World world;
-    our::ForwardRenderer renderer;
+    portal::World world;
+    portal::ForwardRenderer renderer;
     
     void onInitialize() override {
         // First of all, we get the scene configuration from the app config
         auto& config = getApp()->getConfig()["scene"];
         // If we have assets in the scene config, we deserialize them
         if(config.contains("assets")){
-            our::deserializeAllAssets(config["assets"]);
+            portal::deserializeAllAssets(config["assets"]);
         }
 
         // If we have a world in the scene config, we use it to populate our world
@@ -37,6 +37,6 @@ class RendererTestState: public our::State {
 
     void onDestroy() override {
         world.clear();
-        our::clearAllAssets();
+        portal::clearAllAssets();
     }
 };

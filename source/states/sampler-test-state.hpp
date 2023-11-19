@@ -9,24 +9,24 @@
 
 
 // This state tests and shows how to use the Sampler class.
-class SamplerTestState: public our::State {
+class SamplerTestState: public portal::State {
 
-    our::ShaderProgram* shader;
-    our::Mesh* mesh;
-    our::Texture2D* texture;
-    our::Sampler* sampler;
+    portal::ShaderProgram* shader;
+    portal::Mesh* mesh;
+    portal::Texture2D* texture;
+    portal::Sampler* sampler;
     
     void onInitialize() override {
         // First of all, we get the scene configuration from the app config
         auto& config = getApp()->getConfig()["scene"];
         // Then we load the shader that will be used for this scene
-        shader = new our::ShaderProgram();
+        shader = new portal::ShaderProgram();
         shader->attach("assets/shaders/texture-test.vert", GL_VERTEX_SHADER);
         shader->attach("assets/shaders/texture-test.frag", GL_FRAGMENT_SHADER);
         shader->link();
         
         // We create a simple 2D plane to use for viewing the plane
-        std::vector<our::Vertex> vertices = {
+        std::vector<portal::Vertex> vertices = {
             { {-1, -1,  0}, {255, 255, 255, 255}, {-1.00, -1.00}, {0, 0, 1} },
             { { 1, -1,  0}, {255, 255, 255, 255}, { 2.00, -1.00}, {0, 0, 1} },
             { { 1,  1,  0}, {255, 255, 255, 255}, { 2.00,  2.00}, {0, 0, 1} },
@@ -36,13 +36,13 @@ class SamplerTestState: public our::State {
             0, 1, 2,
             2, 3, 0,
         };
-        mesh = new our::Mesh(vertices, elements);
+        mesh = new portal::Mesh(vertices, elements);
 
         // Then we create a texture and load an image into it
-        texture = our::texture_utils::loadImage(config.value("texture", ""));
+        texture = portal::texture_utils::loadImage(config.value("texture", ""));
 
         // Then we create a sampler and load its paramters from the json config
-        sampler = new our::Sampler();
+        sampler = new portal::Sampler();
         if(config.contains("sampler")){
             sampler->deserialize(config["sampler"]);
         }

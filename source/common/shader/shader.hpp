@@ -7,7 +7,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-namespace our {
+namespace portal {
 
     class ShaderProgram {
 

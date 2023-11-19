@@ -1,7 +1,7 @@
 #include "mesh-renderer.hpp"
 #include "../asset-loader.hpp"
 
-namespace our {
+namespace portal {
     // Receives the mesh & material from the AssetLoader by the names given in the json object
     void MeshRendererComponent::deserialize(const nlohmann::json& data){
         if(!data.is_object()) return;

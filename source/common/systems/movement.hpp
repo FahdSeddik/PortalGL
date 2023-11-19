@@ -10,7 +10,7 @@
 #include <glm/trigonometric.hpp>
 #include <glm/gtx/fast_trigonometry.hpp>
 
-namespace our
+namespace portal
 {
 
     // The movement system is responsible for moving every entity which contains a MovementComponent.
@@ -60,7 +60,8 @@ namespace our
                         // orientation stays the same
                         transform.setOrientation(entity->localTransform.getRotation());
                         entity->localTransform.setTransform(transform);
-                        // set linear velocity other than y to 0
+                        // This disables the player to get influenced by other objects in a way that it
+                        // glitches and flies off the map
                         r3d::Vector3 linearVelocity = rgb->getBody()->getLinearVelocity();
                         linearVelocity.x = linearVelocity.z = 0;
                         rgb->getBody()->setLinearVelocity(linearVelocity);

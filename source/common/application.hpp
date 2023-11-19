@@ -13,7 +13,7 @@
 #include "input/keyboard.hpp"
 #include "input/mouse.hpp"
 
-namespace our {
+namespace portal {
 
     // This struct handles window attributes: (title, size, isFullscreen).
     struct WindowConfiguration {
@@ -85,7 +85,7 @@ namespace our {
         // If the name is already used, the old name owner is deleted and the new state takes its place
         template<typename T>
         void registerState(std::string name){
-            static_assert(std::is_base_of<State, T>::value, "T must derive from our::State");
+            static_assert(std::is_base_of<State, T>::value, "T must derive from portal::State");
             auto it = states.find(name);
             if(it != states.end()){
                 delete it->second;

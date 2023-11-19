@@ -4,7 +4,7 @@
 #include <json/json.hpp>
 #include <glm/vec4.hpp>
 
-namespace our {
+namespace portal {
 
     // This class defined an OpenGL sampler
     class Sampler {

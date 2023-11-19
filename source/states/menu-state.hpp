@@ -34,14 +34,14 @@ struct Button {
 };
 
 // This state shows how to use some of the abstractions we created to make a menu.
-class Menustate: public our::State {
+class Menustate: public portal::State {
 
     // A meterial holding the menu shader and the menu texture to draw
-    our::TexturedMaterial* menuMaterial;
+    portal::TexturedMaterial* menuMaterial;
     // A material to be used to highlight hovered buttons (we will use blending to create a negative effect).
-    our::TintedMaterial * highlightMaterial;
+    portal::TintedMaterial * highlightMaterial;
     // A rectangle mesh on which the menu material will be drawn
-    our::Mesh* rectangle;
+    portal::Mesh* rectangle;
     // A variable to record the time since the state is entered (it will be used for the fading effect).
     float time;
     // An array of the button that we can interact with
@@ -49,21 +49,21 @@ class Menustate: public our::State {
 
     void onInitialize() override {
         // First, we create a material for the menu's background
-        menuMaterial = new our::TexturedMaterial();
+        menuMaterial = new portal::TexturedMaterial();
         // Here, we load the shader that will be used to draw the background
-        menuMaterial->shader = new our::ShaderProgram();
+        menuMaterial->shader = new portal::ShaderProgram();
         menuMaterial->shader->attach("assets/shaders/textured.vert", GL_VERTEX_SHADER);
         menuMaterial->shader->attach("assets/shaders/textured.frag", GL_FRAGMENT_SHADER);
         menuMaterial->shader->link();
         // Then we load the menu texture
-        menuMaterial->texture = our::texture_utils::loadImage("assets/textures/menu.png");
+        menuMaterial->texture = portal::texture_utils::loadImage("assets/textures/menu.png");
         // Initially, the menu material will be black, then it will fade in
         menuMaterial->tint = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
 
         // Second, we create a material to highlight the hovered buttons
-        highlightMaterial = new our::TintedMaterial();
+        highlightMaterial = new portal::TintedMaterial();
         // Since the highlight is not textured, we used the tinted material shaders
-        highlightMaterial->shader = new our::ShaderProgram();
+        highlightMaterial->shader = new portal::ShaderProgram();
         highlightMaterial->shader->attach("assets/shaders/tinted.vert", GL_VERTEX_SHADER);
         highlightMaterial->shader->attach("assets/shaders/tinted.frag", GL_FRAGMENT_SHADER);
         highlightMaterial->shader->link();
@@ -79,7 +79,7 @@ class Menustate: public our::State {
         // Then we create a rectangle whose top-left corner is at the origin and its size is 1x1.
         // Note that the texture coordinates at the origin is (0.0, 1.0) since we will use the 
         // projection matrix to make the origin at the the top-left corner of the screen.
-        rectangle = new our::Mesh({
+        rectangle = new portal::Mesh({
             {{0.0f, 0.0f, 0.0f}, {255, 255, 255, 255}, {0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}},
             {{1.0f, 0.0f, 0.0f}, {255, 255, 255, 255}, {1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}},
             {{1.0f, 1.0f, 0.0f}, {255, 255, 255, 255}, {1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},

@@ -3,7 +3,7 @@
 #include "../asset-loader.hpp"
 #include "deserialize-utils.hpp"
 
-namespace our {
+namespace portal {
 
     // This function should setup the pipeline state and set the shader to be used
     void Material::setup() const {

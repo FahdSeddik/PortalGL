@@ -4,7 +4,7 @@
 #include <glm/vec4.hpp>
 #include <json/json.hpp>
 
-namespace our {
+namespace portal {
     // There are some options in the render pipeline that we cannot control via shaders
     // such as blending, depth testing and so on
     // Since each material could require different options (e.g. transparent materials usually use blending),

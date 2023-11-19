@@ -9,19 +9,19 @@
 #include <asset-loader.hpp>
 
 // This state shows how to use the ECS framework and deserialization.
-class Playstate: public our::State {
+class Playstate: public portal::State {
 
-    our::World world;
-    our::ForwardRenderer renderer;
-    our::FreeCameraControllerSystem cameraController;
-    our::MovementSystem movementSystem;
+    portal::World world;
+    portal::ForwardRenderer renderer;
+    portal::FreeCameraControllerSystem cameraController;
+    portal::MovementSystem movementSystem;
 
     void onInitialize() override {
         // First of all, we get the scene configuration from the app config
         auto& config = getApp()->getConfig()["scene"];
         // If we have assets in the scene config, we deserialize them
         if(config.contains("assets")){
-            our::deserializeAllAssets(config["assets"]);
+            portal::deserializeAllAssets(config["assets"]);
         }
         if(config.contains("physicsWorld")){
             world.deserialize_physics(config["physicsWorld"]);
@@ -61,6 +61,6 @@ class Playstate: public our::State {
         // Clear the world
         world.clear();
         // and we delete all the loaded assets to free memory on the RAM and the VRAM
-        our::clearAllAssets();
+        portal::clearAllAssets();
     }
 };

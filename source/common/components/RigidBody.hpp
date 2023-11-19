@@ -4,7 +4,7 @@
 #include "../deserialize-utils.hpp"
 namespace r3d = reactphysics3d;
 
-namespace our {
+namespace portal {
     class RigidBodyComponent : public Component {
         r3d::RigidBody* body = nullptr;
         r3d::Collider* collider = nullptr;

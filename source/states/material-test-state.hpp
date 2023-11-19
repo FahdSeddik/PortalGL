@@ -10,11 +10,11 @@
 
 // This state shows how to use the Material class.
 // It also shows how to use the AssetLoader to load assets
-class MaterialTestState: public our::State {
+class MaterialTestState: public portal::State {
 
-    our::Material* material;
-    our::Mesh* mesh;
-    std::vector<our::Transform> transforms;
+    portal::Material* material;
+    portal::Mesh* mesh;
+    std::vector<portal::Transform> transforms;
     glm::mat4 VP;
     
     void onInitialize() override {
@@ -22,11 +22,11 @@ class MaterialTestState: public our::State {
         auto& config = getApp()->getConfig()["scene"];
         // If we have assets in the scene config, we deserialize them
         if(config.contains("assets")){
-            our::deserializeAllAssets(config["assets"]);
+            portal::deserializeAllAssets(config["assets"]);
         }
         // We get the mesh and the material from AssetLoader 
-        mesh = our::AssetLoader<our::Mesh>::get("mesh");
-        material = our::AssetLoader<our::Material>::get("material");
+        mesh = portal::AssetLoader<portal::Mesh>::get("mesh");
+        material = portal::AssetLoader<portal::Material>::get("material");
 
         // Then we read a list of transform objects from the shader
         // In draw, we will render a mesh for each of the transforms
@@ -34,7 +34,7 @@ class MaterialTestState: public our::State {
         if(config.contains("objects")){
             if(auto& objects = config["objects"]; objects.is_array()){
                 for(auto& object : objects){
-                    our::Transform transform;
+                    portal::Transform transform;
                     transform.deserialize(object);
                     transforms.push_back(transform);
                 }
@@ -76,6 +76,6 @@ class MaterialTestState: public our::State {
     }
 
     void onDestroy() override {
-        our::clearAllAssets();
+        portal::clearAllAssets();
     }
 };

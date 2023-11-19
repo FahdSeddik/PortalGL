@@ -8,7 +8,7 @@
 #include <vector>
 #include <filesystem>
 
-bool our::screenshot_png(const std::string& filename, bool include_alpha) {
+bool portal::screenshot_png(const std::string& filename, bool include_alpha) {
 
     // Read the current viewport parameters
     struct {

@@ -2,7 +2,7 @@
 
 #include <glad/gl.h>
 
-namespace our {
+namespace portal {
 
     // This class defined an OpenGL texture which will be used as a GL_TEXTURE_2D
     class Texture2D {

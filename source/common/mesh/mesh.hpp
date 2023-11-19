@@ -3,7 +3,7 @@
 #include <glad/gl.h>
 #include "vertex.hpp"
 
-namespace our {
+namespace portal {
 
     #define ATTRIB_LOC_POSITION 0
     #define ATTRIB_LOC_COLOR    1

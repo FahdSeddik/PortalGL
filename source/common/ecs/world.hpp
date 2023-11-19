@@ -4,7 +4,7 @@
 #include "entity.hpp"
 #include <reactphysics3d/reactphysics3d.h>
 
-namespace our {
+namespace portal {
 
     // This class holds a set of entities
     class World {
