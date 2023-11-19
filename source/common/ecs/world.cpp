@@ -1,4 +1,6 @@
 #include "world.hpp"
+#include <json/json.hpp>
+#include "../deserialize-utils.hpp"
 
 namespace our {
 
@@ -15,6 +17,18 @@ namespace our {
                 deserialize(entityData["children"], entity);
             }
         }
+    }
+
+    void World::deserialize_physics(const nlohmann::json& data){
+        if(!data.is_object()) return;
+        r3d::PhysicsWorld::WorldSettings settings;
+        glm::vec3 gravity(settings.gravity.x, settings.gravity.y, settings.gravity.z);
+        gravity = data.value("gravity", gravity);
+        settings.gravity = r3d::Vector3(gravity.x, gravity.y, gravity.z);
+        settings.worldName = data.value("worldName", settings.worldName);
+        // TODO: Support world settings like gravity and world name
+
+        this->physicsWorld = this->physicsCommon.createPhysicsWorld(settings);
     }
 
 }

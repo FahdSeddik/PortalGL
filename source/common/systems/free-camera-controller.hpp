@@ -3,6 +3,7 @@
 #include "../ecs/world.hpp"
 #include "../components/camera.hpp"
 #include "../components/free-camera-controller.hpp"
+#include "../components/RigidBody.hpp"
 
 #include "../application.hpp"
 
@@ -10,6 +11,9 @@
 #include <glm/gtc/constants.hpp>
 #include <glm/trigonometric.hpp>
 #include <glm/gtx/fast_trigonometry.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include<glm/common.hpp>
 
 namespace our
 {
@@ -54,23 +58,29 @@ namespace our
             }
 
             // We get a reference to the entity's position and rotation
-            glm::vec3& position = entity->localTransform.position;
-            glm::vec3& rotation = entity->localTransform.rotation;
-
+            const r3d::Vector3& pos = entity->localTransform.getPosition();
+            const r3d::Quaternion& rot = entity->localTransform.getRotation();
+            glm::vec3 position(pos.x, pos.y, pos.z);
+            glm::quat rotation((float)rot.w, (float)rot.x, (float)rot.y, (float)rot.z);
             // If the left mouse button is pressed, we get the change in the mouse location
             // and use it to update the camera rotation
             if(app->getMouse().isPressed(GLFW_MOUSE_BUTTON_1)){
                 glm::vec2 delta = app->getMouse().getMouseDelta();
-                rotation.x -= delta.y * controller->rotationSensitivity; // The y-axis controls the pitch
-                rotation.y -= delta.x * controller->rotationSensitivity; // The x-axis controls the yaw
+                float pitch = -delta.y * controller->rotationSensitivity; // The y-axis controls the pitch
+                float yaw = -delta.x * controller->rotationSensitivity; // The x-axis controls the yaw
+                glm::quat yawQuat = glm::angleAxis(yaw, glm::vec3(0,1,0));
+                auto owner = camera->getOwner();
+                auto M = owner->getLocalToWorldMatrix();
+                glm::vec3 eye = glm::vec3(M * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+                glm::vec3 center = glm::vec3(M * glm::vec4(0.0f, 0.0f, -1.0f, 1.0f));
+                glm::vec3 cameraForward = glm::normalize(center - eye);
+                if(glm::dot(cameraForward, glm::vec3(0,1,0)) > 0.95f && pitch > 0) pitch = 0;
+                else if (glm::dot(cameraForward, glm::vec3(0,-1,0)) > 0.95f && pitch < 0) pitch = 0;
+                glm::quat pitchQuat = glm::angleAxis(pitch, glm::vec3(1,0,0));
+                // Combine the pitch and yaw rotations
+                rotation = yawQuat * rotation * pitchQuat;
+                rotation = glm::normalize(rotation);
             }
-
-            // We prevent the pitch from exceeding a certain angle from the XZ plane to prevent gimbal locks
-            if(rotation.x < -glm::half_pi<float>() * 0.99f) rotation.x = -glm::half_pi<float>() * 0.99f;
-            if(rotation.x >  glm::half_pi<float>() * 0.99f) rotation.x  = glm::half_pi<float>() * 0.99f;
-            // This is not necessary, but whenever the rotation goes outside the 0 to 2*PI range, we wrap it back inside.
-            // This could prevent floating point error if the player rotates in single direction for an extremely long time. 
-            rotation.y = glm::wrapAngle(rotation.y);
 
             // We update the camera fov based on the mouse wheel scrolling amount
             float fov = camera->fovY + app->getMouse().getScrollOffset().y * controller->fovSensitivity;
@@ -80,9 +90,19 @@ namespace our
             // We get the camera model matrix (relative to its parent) to compute the front, up and right directions
             glm::mat4 matrix = entity->localTransform.toMat4();
 
-            glm::vec3 front = glm::vec3(matrix * glm::vec4(0, 0, -1, 0)),
-                      up = glm::vec3(matrix * glm::vec4(0, 1, 0, 0)), 
-                      right = glm::vec3(matrix * glm::vec4(1, 0, 0, 0));
+            // front: the direction the camera is looking at projected on the xz plane
+            // up: global up vector (0,1,0)
+            // right: the vector to the right of the camera (x-axis)
+            glm::vec3 front = glm::normalize(glm::vec3(matrix * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)));
+            // project on xz plane
+            front.y = 0;
+            front = glm::normalize(front);
+            //global up
+            glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+            glm::vec3 right = glm::normalize(glm::vec3(matrix * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
+            // project on xz plane
+            right.y = 0;
+            right = glm::normalize(right);
 
             glm::vec3 current_sensitivity = controller->positionSensitivity;
             // If the LEFT SHIFT key is pressed, we multiply the position sensitivity by the speed up factor
@@ -98,6 +118,40 @@ namespace our
             // A & D moves the player left or right 
             if(app->getKeyboard().isPressed(GLFW_KEY_D)) position += right * (deltaTime * current_sensitivity.x);
             if(app->getKeyboard().isPressed(GLFW_KEY_A)) position -= right * (deltaTime * current_sensitivity.x);
+            entity->localTransform.setPosition(position);
+            entity->localTransform.setRotation(rotation);
+            RigidBodyComponent* rgb = entity->getComponent<RigidBodyComponent>();
+            if (rgb){
+                // we need to get only the rotation around the y-axis
+                glm::quat q = rotation;
+
+                // Get the forward direction (z-axis) of the quaternion
+                glm::vec3 forward = glm::rotate(q, glm::vec3(0.0f, 0.0f, -1.0f));
+
+                // Remove the y-component of the forward direction
+                forward.y = 0.0f;
+
+                // Normalize the forward direction
+                forward = glm::normalize(forward);
+
+                // Compute the angle between the forward direction and the negative z-axis
+                float angle = glm::acos(glm::dot(forward, glm::vec3(0.0f, 0.0f, -1.0f)));
+
+                // Compute the cross product of the forward direction and the negative z-axis
+                glm::vec3 cross = glm::cross(forward, glm::vec3(0.0f, 0.0f, -1.0f));
+
+                // If the y-component of the cross product is negative, negate the angle
+                if (cross.y < 0.0f)
+                    angle = -angle;
+
+                // Create a new quaternion representing the rotation around the y-axis
+                glm::quat yRotation = glm::angleAxis(angle, glm::vec3(0.0f, 1.0f, 0.0f));
+                r3d::Quaternion qt(yRotation.x, yRotation.y, yRotation.z, yRotation.w);
+                r3d::Transform transform = rgb->getBody()->getTransform();
+                transform.setOrientation(qt);
+                transform.setPosition(entity->localTransform.getPosition() + rgb->relativePosition);
+                rgb->getBody()->setTransform(transform);
+            }
         }
 
         // When the state exits, it should call this function to ensure the mouse is unlocked
