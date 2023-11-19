@@ -151,7 +151,7 @@
         },
         "world":[
             {
-                "position": [0, 1, 7],
+                "position": [0, 3, 7],
                 "components": [
                     {
                         "type": "Camera"
@@ -164,22 +164,24 @@
                         "r3dType": "Dynamic", // Satic->floor, Kinematic->moving platforms, Dynamic->player  // default is Static
                         "enableGravity": true, // default is false
                         "allowedToSleep": false, // default is false: keep as false for player or moving object, true for static objects
-                        "rotaionAxis": [0,0,0], //default [1,1,1]
+                        "rotaionAxis": [1,1,1], //default [1,1,1]
                         "motionAxis": [1,1,1], //default [1,1,1]
+                        "relativePosition": [0,-1,0], //default [0,0,0]
                         "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [0.5, 0.5, 0.5],
+                            // "type": "Box Collider",
+                            // "halfExtents": [0.5, 2, 0.5],
 
                             // "type": "Sphere Collider",
                             // "radius": 0.5,
 
-                            // "type": "Capsule Collider",
-                            // "radius": 0.5,
-                            // "height": 1.0,
+                            "type": "Capsule Collider",
+                            "radius": 0.5,
+                            "height": 2.0,
                             
                             // for material
                             "bounciness":0.0,
                             "friction": 1.0,
+                            "massDensity": 1,
                             
                             // for trigger
                             "isTrigger": false // default is false
@@ -198,6 +200,27 @@
                                 "material": "metal"
                             }
                         ]
+                    }
+                ]
+            },
+            {
+                "position": [-2, 1, 7],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "cube",
+                        "material": "metal"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Dynamic",
+                        "enableGravity": true,
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [1, 1, 1],
+                            "friction": 1.0,
+                            "bounciness":0.0
+                        }
                     }
                 ]
             },
@@ -229,6 +252,7 @@
                     {
                         "type": "RigidBody",
                         "r3dType": "Static",
+                        "relativePosition": [0, -1, 0],
                         "collider":{
                             "type": "Box Collider",
                             "halfExtents": [10, 10, 1],

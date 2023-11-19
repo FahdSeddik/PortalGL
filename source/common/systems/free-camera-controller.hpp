@@ -149,7 +149,7 @@ namespace our
                 r3d::Quaternion qt(yRotation.x, yRotation.y, yRotation.z, yRotation.w);
                 r3d::Transform transform = rgb->getBody()->getTransform();
                 transform.setOrientation(qt);
-                transform.setPosition(entity->localTransform.getPosition());
+                transform.setPosition(entity->localTransform.getPosition() + rgb->relativePosition);
                 rgb->getBody()->setTransform(transform);
             }
         }

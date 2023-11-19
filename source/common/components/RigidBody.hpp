@@ -10,6 +10,7 @@ namespace our {
         r3d::Collider* collider = nullptr;
         void deserialize_collider(const nlohmann::json& data);
     public:
+        r3d::Vector3 relativePosition;
         static std::string getID() { return "RigidBody"; }
 
         void deserialize(const nlohmann::json &data) override;

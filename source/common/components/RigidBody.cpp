@@ -7,8 +7,13 @@ namespace our {
     void RigidBodyComponent::deserialize(const nlohmann::json& data) {
         if(!data.is_object()) return;
         r3d::PhysicsWorld *pWorld = this->getOwner()->getWorld()->getPhysicsWorld();
+        relativePosition = r3d::Vector3(0,0,0);
+        glm::vec3 rel = data.value("relativePosition", glm::vec3(0.0f));
+        relativePosition = r3d::Vector3(rel.x, rel.y, rel.z);
+        r3d::Transform transform = this->getOwner()->localTransform.getTransform();
+        transform.setPosition(transform.getPosition() + relativePosition);
         // Create a rigid body in the physics world
-        r3d::RigidBody* body = pWorld->createRigidBody(this->getOwner()->localTransform.getTransform());
+        r3d::RigidBody *body = pWorld->createRigidBody(transform);
         // Set the rigid body to the component
         this->body = body;
         // get r3dType
@@ -71,7 +76,7 @@ namespace our {
         r3d::Material &material = collider->getMaterial();
         material.setBounciness(data.value("bounciness", material.getBounciness()));
         material.setFrictionCoefficient(data.value("friction", material.getFrictionCoefficient()));
-
+        material.setMassDensity(data.value("massDensity", material.getMassDensity()));
         // trigger
         collider->setIsTrigger(data.value("isTrigger", false));
     }

@@ -46,7 +46,7 @@ namespace our
                     glm::vec3 position(pos.x, pos.y, pos.z);
                     glm::quat rotation((float)rot.w, (float)rot.x, (float)rot.y, (float)rot.z);
                     position += deltaTime * movement->linearVelocity;
-                    rotation = rotation + 0.5f * deltaTime * glm::quat(0, movement->angularVelocity.x, movement->angularVelocity.y, movement->angularVelocity.z) * rotation;
+                    rotation = rotation + 0.5f * deltaTime * movement->angularVelocity * rotation;
                     rotation = glm::normalize(rotation);
                     entity->localTransform.setPosition(position);
                     entity->localTransform.setRotation(rotation);
@@ -54,13 +54,19 @@ namespace our
                 RigidBodyComponent* rgb = entity->getComponent<RigidBodyComponent>();
                 if(rgb){
                     FreeCameraControllerComponent* fcc = entity->getComponent<FreeCameraControllerComponent>();
+                    r3d::Transform transform = rgb->getBody()->getTransform();
+                    transform.setPosition(transform.getPosition() - rgb->relativePosition);
                     if(fcc){
-                        r3d::Transform transform = rgb->getBody()->getTransform();
                         // orientation stays the same
                         transform.setOrientation(entity->localTransform.getRotation());
                         entity->localTransform.setTransform(transform);
+                        // set linear velocity other than y to 0
+                        r3d::Vector3 linearVelocity = rgb->getBody()->getLinearVelocity();
+                        linearVelocity.x = linearVelocity.z = 0;
+                        rgb->getBody()->setLinearVelocity(linearVelocity);
+                        rgb->getBody()->setAngularVelocity(r3d::Vector3(0,0,0));
                     }else{
-                        entity->localTransform.setTransform(rgb->getBody()->getTransform());
+                        entity->localTransform.setTransform(transform);
                     }
                 }
             }

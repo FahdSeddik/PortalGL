@@ -6,6 +6,7 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include<glm/common.hpp>
+#include <glm/gtc/type_ptr.inl>
 
 namespace our {
 
@@ -15,12 +16,10 @@ namespace our {
     glm::mat4 Transform::toMat4() const {
         //TODO: (Req 3) Write this function
         glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), scale);
-        const r3d::Quaternion& q = transform.getOrientation();
-        glm::mat4 rotationMatrix = glm::toMat4(glm::quat(q.w, q.x, q.y, q.z));
-        const r3d::Vector3& pos = transform.getPosition();
-        glm::vec3 position(pos.x, pos.y, pos.z);
-        glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), position);
-        return translationMatrix * rotationMatrix * scaleMatrix;
+        float matrix[16];
+        transform.getOpenGLMatrix(matrix);
+        glm::mat4 transformMatrix = glm::make_mat4(matrix);
+        return transformMatrix * scaleMatrix;
     }
 
      // Deserializes the entity data and components from a json object
@@ -30,7 +29,13 @@ namespace our {
         rotation = glm::radians(data.value("rotation", glm::degrees(rotation)));
         scale    = data.value("scale", scale);
         transform.setPosition(r3d::Vector3(position.x, position.y, position.z));
-        transform.setOrientation(r3d::Quaternion::fromEulerAngles(rotation.x, rotation.y, rotation.z));
+        // axis angle for yaw, pitch, roll
+        glm::quat yawQuat = glm::angleAxis(rotation.y, glm::vec3(0,1,0));
+        glm::quat pitchQuat = glm::angleAxis(rotation.x, glm::vec3(1,0,0));
+        glm::quat rollQuat = glm::angleAxis(rotation.z, glm::vec3(0,0,1));
+        glm::quat rotationQuat = yawQuat * pitchQuat * rollQuat;
+        // r3d takes x,y,z, w
+        transform.setOrientation(r3d::Quaternion(rotationQuat.x, rotationQuat.y, rotationQuat.z, rotationQuat.w));
     }
 
 }
