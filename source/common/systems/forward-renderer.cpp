@@ -3,7 +3,7 @@
 #include "../texture/texture-utils.hpp"
 
 
-namespace our {
+namespace portal {
 
     void ForwardRenderer::initialize(glm::ivec2 windowSize, const nlohmann::json& config){
         // First, we store the window size for later use

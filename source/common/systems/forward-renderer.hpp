@@ -9,7 +9,7 @@
 #include <vector>
 #include <algorithm>
 
-namespace our
+namespace portal
 {
     
     // The render command stores command that tells the renderer that it should draw

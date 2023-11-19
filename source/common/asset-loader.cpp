@@ -9,7 +9,7 @@
 #include "material/material.hpp"
 #include "deserialize-utils.hpp"
 
-namespace our {
+namespace portal {
 
     // This will load all the shaders defined in "data"
     // data must be in the form:

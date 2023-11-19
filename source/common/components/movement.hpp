@@ -7,7 +7,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include<glm/common.hpp>
 
-namespace our {
+namespace portal {
 
     // This component denotes that the MovementSystem will move the owning entity by a certain linear and angular velocity.
     // This component is added as a simple example for how use the ECS framework to implement logic.

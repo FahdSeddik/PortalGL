@@ -7,7 +7,7 @@
 #include <string>
 #include <glm/glm.hpp>
 
-namespace our {
+namespace portal {
 
     class World; // A forward declaration of the World Class
 

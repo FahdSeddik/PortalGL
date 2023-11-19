@@ -2,7 +2,7 @@
 #include "../ecs/entity.hpp"
 #include "../deserialize-utils.hpp"
 
-namespace our {
+namespace portal {
     // Reads sensitivities & speedupFactor from the given json object
     void FreeCameraControllerComponent::deserialize(const nlohmann::json& data){
         if(!data.is_object()) return;

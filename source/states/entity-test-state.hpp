@@ -8,7 +8,7 @@
 
 // This is a helper function that will search for a component and will return the first one found
 template<typename T>
-T* find(our::World *world){
+T* find(portal::World *world){
     for(auto& entity : world->getEntities()){
         T* component = entity->getComponent<T>();
         if(component) return component;
@@ -17,16 +17,16 @@ T* find(our::World *world){
 }
 
 // This state tests and shows how to use the ECS framework and deserialization.
-class EntityTestState: public our::State {
+class EntityTestState: public portal::State {
 
-    our::World world;
+    portal::World world;
     
     void onInitialize() override {
         // First of all, we get the scene configuration from the app config
         auto& config = getApp()->getConfig()["scene"];
         // If we have assets in the scene config, we deserialize them
         if(config.contains("assets")){
-            our::deserializeAllAssets(config["assets"]);
+            portal::deserializeAllAssets(config["assets"]);
         }
 
         // If we have a world in the scene config, we use it to populate our world
@@ -39,7 +39,7 @@ class EntityTestState: public our::State {
     void onDraw(double deltaTime) override {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // First, we look for a camera and if none was found, we return (there is nothing we can render)
-        our::CameraComponent* camera = find<our::CameraComponent>(&world);
+        portal::CameraComponent* camera = find<portal::CameraComponent>(&world);
         if(camera == nullptr) return;
 
         // Then we compute the VP matrix from the camera
@@ -48,7 +48,7 @@ class EntityTestState: public our::State {
         glm::mat4 VP = camera->getProjectionMatrix(size) * camera->getViewMatrix();
         for(auto& entity : world.getEntities()){
             // For each entity, we look for a mesh renderer (if none was found, we skip this entity)
-            our::MeshRendererComponent* meshRenderer = entity->getComponent<our::MeshRendererComponent>();
+            portal::MeshRendererComponent* meshRenderer = entity->getComponent<portal::MeshRendererComponent>();
             if(meshRenderer == nullptr) continue;
             //TODO: (Req 8) Complete the loop body to draw the current entity
             // Then we setup the material, send the transform matrix to the shader then draw the mesh
@@ -60,6 +60,6 @@ class EntityTestState: public our::State {
 
     void onDestroy() override {
         world.clear();
-        our::clearAllAssets();
+        portal::clearAllAssets();
     }
 };

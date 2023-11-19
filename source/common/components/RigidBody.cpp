@@ -3,7 +3,7 @@
 #include "RigidBody.hpp"
 #include "../ecs/world.hpp"
 
-namespace our {
+namespace portal {
     void RigidBodyComponent::deserialize(const nlohmann::json& data) {
         if(!data.is_object()) return;
         r3d::PhysicsWorld *pWorld = this->getOwner()->getWorld()->getPhysicsWorld();

@@ -12,30 +12,30 @@
 
 
 // This state test and shows how to use the Transform struct.
-class TransformTestState: public our::State {
+class TransformTestState: public portal::State {
 
-    our::ShaderProgram* shader;
-    our::Mesh* mesh;
-    std::vector<our::Transform> transforms;
+    portal::ShaderProgram* shader;
+    portal::Mesh* mesh;
+    std::vector<portal::Transform> transforms;
     glm::mat4 VP;
     
     void onInitialize() override {
         // First of all, we get the scene configuration from the app config
         auto& config = getApp()->getConfig()["scene"];
         // Then we load the shader that will be used for this scene
-        shader = new our::ShaderProgram();
+        shader = new portal::ShaderProgram();
         shader->attach("assets/shaders/transform-test.vert", GL_VERTEX_SHADER);
         shader->attach("assets/shaders/transform-test.frag", GL_FRAGMENT_SHADER);
         shader->link();
         // Then we load the mesh
-        mesh = our::mesh_utils::loadOBJ("assets/models/monkey.obj");
+        mesh = portal::mesh_utils::loadOBJ("assets/models/monkey.obj");
         // Then we read a list of transform objects from the shader
         // In draw, we will render a mesh for each of the transforms
         transforms.clear();
         if(config.contains("objects")){
             if(auto& objects = config["objects"]; objects.is_array()){
                 for(auto& object : objects){
-                    our::Transform transform;
+                    portal::Transform transform;
                     transform.deserialize(object);
                     transforms.push_back(transform);
                 }

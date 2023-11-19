@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp> 
 
-namespace our {
+namespace portal {
     // Reads camera parameters from the given json object
     void CameraComponent::deserialize(const nlohmann::json& data){
         if(!data.is_object()) return;

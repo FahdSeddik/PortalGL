@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace our {
+namespace portal {
 
     bool screenshot_png(const std::string& filename, bool include_alpha = false);
 

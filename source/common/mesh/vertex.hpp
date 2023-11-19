@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/hash.hpp>
 
-namespace our {
+namespace portal {
 
     // Since we may want to store colors in bytes instead of floats for efficiency,
     // we are creating our own 32-bit R8G8B8A8 Color data type with the default GLM precision
@@ -32,10 +32,10 @@ namespace std {
     inline size_t hash_combine(size_t h1, size_t h2){ return h1 ^ (h2 << 1); }
 
     //A Hash function for struct Vertex
-    template<> struct hash<our::Vertex> {
-        size_t operator()(our::Vertex const& vertex) const {
+    template<> struct hash<portal::Vertex> {
+        size_t operator()(portal::Vertex const& vertex) const {
             size_t combined = hash<glm::vec3>()(vertex.position);
-            combined = hash_combine(combined, hash<our::Color>()(vertex.color));
+            combined = hash_combine(combined, hash<portal::Color>()(vertex.color));
             combined = hash_combine(combined, hash<glm::vec2>()(vertex.tex_coord));
             combined = hash_combine(combined, hash<glm::vec3>()(vertex.normal));
             return combined;

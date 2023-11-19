@@ -5,7 +5,7 @@
 #include "../material/material.hpp"
 #include "../asset-loader.hpp"
 
-namespace our {
+namespace portal {
 
     // This component denotes that any renderer should draw the given mesh using the given material at the transformation of the owning entity.
     class MeshRendererComponent : public Component {

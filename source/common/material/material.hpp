@@ -8,7 +8,7 @@
 #include <glm/vec4.hpp>
 #include <json/json.hpp>
 
-namespace our {
+namespace portal {
 
     // This is the base class for all the materials
     // It contains the 3 essential components required by any material

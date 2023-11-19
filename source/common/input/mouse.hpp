@@ -4,7 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <cstring>
 
-namespace our {
+namespace portal {
 
     // A convenience class to read mouse input
     class Mouse {

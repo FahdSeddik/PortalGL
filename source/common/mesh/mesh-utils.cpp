@@ -10,16 +10,16 @@ namespace r3d = reactphysics3d;
 #include <vector>
 #include <unordered_map>
 
-our::Mesh* our::mesh_utils::loadOBJ(const std::string& filename) {
+portal::Mesh* portal::mesh_utils::loadOBJ(const std::string& filename) {
 
     // The data that we will use to initialize our mesh
-    std::vector<our::Vertex> vertices;
+    std::vector<portal::Vertex> vertices;
     std::vector<GLuint> elements;
 
     // Since the OBJ can have duplicated vertices, we make them unique using this map
     // The key is the vertex, the value is its index in the vector "vertices".
     // That index will be used to populate the "elements" vector.
-    std::unordered_map<our::Vertex, GLuint> vertex_map;
+    std::unordered_map<portal::Vertex, GLuint> vertex_map;
 
     // The data loaded by Tiny OBJ Loader
     tinyobj::attrib_t attrib;
@@ -83,13 +83,13 @@ our::Mesh* our::mesh_utils::loadOBJ(const std::string& filename) {
         }
     }
 
-    return new our::Mesh(vertices, elements);
+    return new portal::Mesh(vertices, elements);
 }
 
 // Create a sphere (the vertex order in the triangles are CCW from the outside)
 // Segments define the number of divisions on the both the latitude and the longitude
-our::Mesh* our::mesh_utils::sphere(const glm::ivec2& segments){
-    std::vector<our::Vertex> vertices;
+portal::Mesh* portal::mesh_utils::sphere(const glm::ivec2& segments){
+    std::vector<portal::Vertex> vertices;
     std::vector<GLuint> elements;
 
     // We populate the sphere vertices by looping over its longitude and latitude
@@ -103,7 +103,7 @@ our::Mesh* our::mesh_utils::sphere(const glm::ivec2& segments){
             glm::vec3 normal = {cos * glm::cos(yaw), sin, cos * glm::sin(yaw)};
             glm::vec3 position = normal;
             glm::vec2 tex_coords = glm::vec2(u, v);
-            our::Color color = our::Color(255, 255, 255, 255);
+            portal::Color color = portal::Color(255, 255, 255, 255);
             vertices.push_back({position, color, tex_coords, normal});
         }
     }
@@ -121,34 +121,5 @@ our::Mesh* our::mesh_utils::sphere(const glm::ivec2& segments){
         }
     }
 
-    return new our::Mesh(vertices, elements);
-}
-
-our::Mesh* our::mesh_utils::triangle(const r3d::Vector3& v0,const r3d::Vector3& v1,const r3d::Vector3& v2, const uint32_t& c0, const uint32_t& c1, const uint32_t& c2){
-    std::vector<our::Vertex> vertices;
-    std::vector<GLuint> elements;
-    // colors are encoded R=color>>24 & 0xFF, G=color>>16 & 0xFF, B=color>>8 & 0xFF, A=color & 0xFF
-    our::Color color0 = our::Color(c0>>24 & 0xFF, c0>>16 & 0xFF, c0>>8 & 0xFF, c0 & 0xFF);
-    our::Color color1 = our::Color(c1>>24 & 0xFF, c1>>16 & 0xFF, c1>>8 & 0xFF, c1 & 0xFF);
-    our::Color color2 = our::Color(c2>>24 & 0xFF, c2>>16 & 0xFF, c2>>8 & 0xFF, c2 & 0xFF);
-    vertices.push_back({glm::vec3(v0.x, v0.y, v0.z), color0, glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)});
-    vertices.push_back({glm::vec3(v1.x, v1.y, v1.z), color1, glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)});
-    vertices.push_back({glm::vec3(v2.x, v2.y, v2.z), color2, glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)});
-    elements.push_back(0);
-    elements.push_back(1);
-    elements.push_back(2);
-    return new our::Mesh(vertices, elements);
-}
-
-our::Mesh* our::mesh_utils::line(const r3d::Vector3& v0,const r3d::Vector3& v1, const uint32_t& c0, const uint32_t& c1){
-    std::vector<our::Vertex> vertices;
-    std::vector<GLuint> elements;
-    // colors are encoded R=color>>24 & 0xFF, G=color>>16 & 0xFF, B=color>>8 & 0xFF, A=color & 0xFF
-    our::Color color0 = our::Color(c0>>24 & 0xFF, c0>>16 & 0xFF, c0>>8 & 0xFF, c0 & 0xFF);
-    our::Color color1 = our::Color(c1>>24 & 0xFF, c1>>16 & 0xFF, c1>>8 & 0xFF, c1 & 0xFF);
-    vertices.push_back({glm::vec3(v0.x, v0.y, v0.z), color0, glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)});
-    vertices.push_back({glm::vec3(v1.x, v1.y, v1.z), color1, glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f)});
-    elements.push_back(0);
-    elements.push_back(1);
-    return new our::Mesh(vertices, elements);
+    return new portal::Mesh(vertices, elements);
 }

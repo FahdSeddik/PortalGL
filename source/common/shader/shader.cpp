@@ -9,7 +9,7 @@
 std::string checkForShaderCompilationErrors(GLuint shader);
 std::string checkForLinkingErrors(GLuint program);
 
-bool our::ShaderProgram::attach(const std::string &filename, GLenum type) const {
+bool portal::ShaderProgram::attach(const std::string &filename, GLenum type) const {
     // Here, we open the file and read a string from it containing the GLSL code of our shader
     std::ifstream file(filename);
     if(!file){
@@ -43,7 +43,7 @@ bool our::ShaderProgram::attach(const std::string &filename, GLenum type) const 
 
 
 
-bool our::ShaderProgram::link() const {
+bool portal::ShaderProgram::link() const {
     //TODO: Complete this function
     //Note: The function "checkForLinkingErrors" checks if there is
     // an error in the given program. You should use it to check if there is a

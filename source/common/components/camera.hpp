@@ -4,7 +4,7 @@
 
 #include <glm/mat4x4.hpp>
 
-namespace our {
+namespace portal {
 
     // An enum that defines the type of the camera (ORTHOGRAPHIC or PERSPECTIVE) 
     enum class CameraType {

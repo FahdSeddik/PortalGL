@@ -6,16 +6,16 @@
 #include <application.hpp>
 
 // This state tests and shows how to use the Mesh Class.
-class MeshTestState: public our::State {
+class MeshTestState: public portal::State {
 
-    our::ShaderProgram* shader;
-    our::Mesh* mesh;
+    portal::ShaderProgram* shader;
+    portal::Mesh* mesh;
     
     void onInitialize() override {
         // First of all, we get the scene configuration from the app config
         auto& config = getApp()->getConfig()["scene"];
         // Then we load the shader that will be used for this scene
-        shader = new our::ShaderProgram();
+        shader = new portal::ShaderProgram();
         shader->attach("assets/shaders/mesh-test.vert", GL_VERTEX_SHADER);
         shader->attach("assets/shaders/mesh-test.frag", GL_FRAGMENT_SHADER);
         shader->link();
@@ -26,10 +26,10 @@ class MeshTestState: public our::State {
         std::string meshPath = config.value("mesh", "");
         if(meshPath.size() != 0){
             // If it is not empty, we load the OBJ file
-            mesh = our::mesh_utils::loadOBJ(meshPath);
+            mesh = portal::mesh_utils::loadOBJ(meshPath);
         } else {
             // Otherwise, we create a simple diamond object
-            std::vector<our::Vertex> vertices = {
+            std::vector<portal::Vertex> vertices = {
                 { { 1,  0,  0}, {  0, 128,  64, 255}, {0.00, 1.00}, {-1,  0,  0} },
                 { { 0,  1,  0}, { 64,   0, 128, 255}, {1.00, 1.00}, { 0, -1,  0} },
                 { { 0,  0,  1}, {128,  64,   0, 255}, {0.33, 0.67}, { 0,  0, -1} },
@@ -47,7 +47,7 @@ class MeshTestState: public our::State {
                 3, 4, 2,
                 2, 4, 0
             };
-            mesh = new our::Mesh(vertices, elements);
+            mesh = new portal::Mesh(vertices, elements);
         }
     }
 

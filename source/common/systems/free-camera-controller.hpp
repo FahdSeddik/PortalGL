@@ -15,7 +15,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include<glm/common.hpp>
 
-namespace our
+namespace portal
 {
 
     // The free camera controller system is responsible for moving every entity which contains a FreeCameraControllerComponent.

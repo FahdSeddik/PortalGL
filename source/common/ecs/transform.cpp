@@ -8,7 +8,7 @@
 #include<glm/common.hpp>
 #include <glm/gtc/type_ptr.inl>
 
-namespace our {
+namespace portal {
 
     // This function computes and returns a matrix that represents this transform
     // Remember that the order of transformations is: Scaling, Rotation then Translation

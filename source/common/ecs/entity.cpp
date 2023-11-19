@@ -4,7 +4,7 @@
 
 #include <glm/gtx/euler_angles.hpp>
 
-namespace our {
+namespace portal {
 
     // This function returns the transformation matrix from the entity's local space to the world space
     // Remember that you can get the transformation matrix from this entity to its parent from "localTransform"

@@ -21,7 +21,7 @@ namespace glm {
     }
 }
 
-namespace our {
+namespace portal {
     // This namespace will hold a set of inline maps that map between strings and GLenums
     // These will be used to deserialize Sampler and PipelineState Configurations
     namespace gl_enum_deserialize {

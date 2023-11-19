@@ -6,7 +6,7 @@
 #include <reactphysics3d/reactphysics3d.h>
 namespace r3d = reactphysics3d;
 
-namespace our {
+namespace portal {
 
     // A transform defines the translation, rotation & scale of an object relative to its parent
     struct Transform {
