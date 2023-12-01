@@ -117,11 +117,31 @@ namespace portal {
     void LitMaterial::deserialize(const nlohmann::json& data){
         TintedMaterial::deserialize(data);
         if(!data.is_object()) return;
-        albedo = AssetLoader<Texture2D>::get(data.value("albedo", ""));
-        specular = AssetLoader<Texture2D>::get(data.value("specular", ""));
-        roughness = AssetLoader<Texture2D>::get(data.value("roughness", ""));
-        ambient_occlusion = AssetLoader<Texture2D>::get(data.value("ambient_occlusion", ""));
-        emission = AssetLoader<Texture2D>::get(data.value("emission", ""));
+        if(data.contains("albedo")) {
+            albedo = AssetLoader<Texture2D>::get(data.value("albedo", ""));
+        } else {
+            albedo = AssetLoader<Texture2D>::get("default_albedo");
+        } 
+        if(data.contains("specular")) {
+            specular = AssetLoader<Texture2D>::get(data.value("specular", ""));
+        } else {
+            specular = AssetLoader<Texture2D>::get("default_specular");
+        } 
+        if(data.contains("roughness")) {
+            roughness = AssetLoader<Texture2D>::get(data.value("roughness", ""));
+        } else {
+            roughness = AssetLoader<Texture2D>::get("default_roughness");
+        } 
+        if(data.contains("ambient_occlusion")) {
+            ambient_occlusion = AssetLoader<Texture2D>::get(data.value("ambient_occlusion", ""));
+        } else {
+            ambient_occlusion = AssetLoader<Texture2D>::get("default_ambient_occlusion");
+        } 
+        if(data.contains("emission")) {
+            emission = AssetLoader<Texture2D>::get(data.value("emission", ""));
+        } else {
+            emission = AssetLoader<Texture2D>::get("default_emission");
+        } 
         sampler = AssetLoader<Sampler>::get(data.value("sampler", ""));
     }
 }
