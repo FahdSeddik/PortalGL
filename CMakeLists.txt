@@ -89,6 +89,9 @@ set(COMMON_SOURCES
 
         source/common/components/RigidBody.hpp
         source/common/components/RigidBody.cpp
+
+        source/common/components/lighting.hpp
+        source/common/components/lighting.cpp
 )
 
 # Define the directories in which to search for the included headers

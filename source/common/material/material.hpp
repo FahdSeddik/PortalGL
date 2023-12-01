@@ -53,12 +53,34 @@ namespace portal {
         void deserialize(const nlohmann::json& data) override;
     };
 
+    // This material adds 5 uniforms (besides the tint from Tinted Material)
+    // The uniforms are:
+    // - "albedo" which is a Sampler2D. "albedo" and "sampler" will be bound to it.
+    // - "specular" which is a Sampler2D. "specular" and "sampler" will be bound to it.
+    // - "roughness" which is a Sampler2D. "roughness" and "sampler" will be bound to it.
+    // - "ambient_occlusion" which is a Sampler2D. "ambient_occlusion" and "sampler" will be bound to it.
+    // - "emission" which is a Sampler2D. "emission" and "sampler" will be bound to it.
+    class LitMaterial : public TintedMaterial {
+    public:
+        Sampler* sampler; 
+        Texture2D* albedo;
+        Texture2D* specular;
+        Texture2D* roughness;
+        Texture2D* ambient_occlusion;
+        Texture2D* emission;
+
+        void setup() const override;
+        void deserialize(const nlohmann::json& data) override;
+    };
+
     // This function returns a new material instance based on the given type
     inline Material* createMaterialFromType(const std::string& type){
         if(type == "tinted"){
             return new TintedMaterial();
         } else if(type == "textured"){
             return new TexturedMaterial();
+        } else if(type == "lit"){
+            return new LitMaterial();
         } else {
             return new Material();
         }
