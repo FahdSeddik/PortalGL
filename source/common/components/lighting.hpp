@@ -31,12 +31,7 @@ namespace portal {
 
         // Reads lighting data from the given json object
         void deserialize(const nlohmann::json& data) override;
-
-        // Returns the direction of the light in world space
-        glm::vec3 getDirection() const;
-
         
-
     };
 
 }

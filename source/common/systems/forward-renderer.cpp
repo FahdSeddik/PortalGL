@@ -231,8 +231,7 @@ namespace portal {
                 setupLights(lights, litMaterial->shader);
                 // set the model, view, projection matrices in the shader
                 litMaterial->shader->set("model", command.localToWorld);
-                litMaterial->shader->set("view", camera->getViewMatrix());
-                litMaterial->shader->set("projection", camera->getProjectionMatrix(windowSize));
+                litMaterial->shader->set("VP", VP);
                 litMaterial->shader->set("viewPos", eye);
             }
             else{
@@ -276,8 +275,8 @@ namespace portal {
                 setupLights(lights, litMaterial->shader);
                 // set the model, view, projection matrices in the shader
                 litMaterial->shader->set("model", command.localToWorld);
-                litMaterial->shader->set("view", camera->getViewMatrix());
-                litMaterial->shader->set("projection", camera->getProjectionMatrix(windowSize));
+                litMaterial->shader->set("VP", VP);
+                litMaterial->shader->set("viewPos", eye);
             }
             else{
                 command.material->shader->set("transform", MVP);

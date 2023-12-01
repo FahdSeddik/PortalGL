@@ -36,13 +36,6 @@
                 "glass": "assets/textures/glass-panels.png",
                 "monkey": "assets/textures/monkey.png",
                 
-                "house": "assets/textures/house/house.jpg",
-                "house_albedo": "assets/textures/house/house_albedo.jpg",
-                "house_specular": "assets/textures/house/house_specular.jpg",
-                "house_roughness": "assets/textures/house/house_roughness.jpg",
-                "house_ambient_occlusion": "assets/textures/house/house_ambient_occlusion.jpg",
-                "house_emissive": "assets/textures/house/house_emissive.jpg",
-                
                 // default textures
                 "default_albedo": "assets/textures/default_albedo.jpg",
                 "default_specular": "assets/textures/default_specular.jpg",
@@ -128,15 +121,9 @@
                         }
                     },
                     "tint": [1, 1, 1, 1],
-                    // "texture": "grass",
-                    "texture": "house",
+                    "texture": "grass",
                     "sampler": "default",
-
-                    "albedo": "house_albedo",
-                    // "specular": "house_specular",
-                    "roughness": "house_roughness",
-                    "emission": "house_emissive",
-                    "ambient_occlusion": "house_ambient_occlusion"
+                    "albedo": "grass"
 
                 },
                 "monkey":{
@@ -194,10 +181,21 @@
                     },
                     {
                         "type": "Light",
-                        "color": [20, 20, 20],
-                        // "lightType": "point",
-                        "lightType": "spot",
+                        
+                        // example directional light
                         // "lightType": "directional",
+                        // "color": [0, 0.5, 0],
+                        // "direction": [0.0, -1.0, 0.0]
+
+                        // example point light 
+                        // "lightType": "point",
+                        // "color": [20, 20, 20],
+                        // "attenuation": [1.0, 0.22, 0.20],
+                        // "direction": [0.0, -1.0, 0.0]
+                        
+                        // example spot light
+                        "lightType": "spot",
+                        "color": [20, 20, 20],
                         // "attenuation": [1.0, 0.0, 0.0],
                         // "attenuation": [1.0, 0.09, 0.032],
                         "attenuation": [1.0, 0.22, 0.20],

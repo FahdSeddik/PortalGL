@@ -25,7 +25,6 @@ in Varyings {
     vec3 FragPos;
     vec3 Normal;
     vec2 TexCoord;
-    // vec3 ViewDir; // view direction
 } fs_in;
 
 uniform Light lights[50];
