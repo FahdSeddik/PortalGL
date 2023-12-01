@@ -23,6 +23,10 @@
                 "textured":{
                     "vs":"assets/shaders/textured.vert",
                     "fs":"assets/shaders/textured.frag"
+                },
+                "lit":{
+                    "vs":"assets/shaders/lit.vert",
+                    "fs":"assets/shaders/lit.frag"
                 }
             },
             "textures":{
@@ -30,7 +34,15 @@
                 "grass": "assets/textures/grass_ground_d.jpg",
                 "wood": "assets/textures/wood.jpg",
                 "glass": "assets/textures/glass-panels.png",
-                "monkey": "assets/textures/monkey.png"
+                "monkey": "assets/textures/monkey.png",
+                
+                // default textures
+                "default_albedo": "assets/textures/default_albedo.jpg",
+                "default_specular": "assets/textures/default_specular.jpg",
+                "default_roughness": "assets/textures/default_roughness.jpg",
+                "default_ambient_occlusion": "assets/textures/default_ambient_occlusion.jpg",
+                "default_emission": "assets/textures/default_emissive.jpg"
+                
             },
             "meshes":{
                 "cube": "assets/models/cube.obj",
@@ -59,8 +71,10 @@
                     "tint": [1, 0, 1, 1]
                 },
                 "metal":{
-                    "type": "tinted",
-                    "shader": "tinted",
+                    // "type": "tinted",
+                    "type": "lit",
+                    // "shader": "tinted",
+                    "shader": "lit",
                     "pipelineState": {
                         "faceCulling":{
                             "enabled": false
@@ -94,8 +108,10 @@
                     "sampler": "pixelated"
                 },
                 "grass":{
-                    "type": "textured",
-                    "shader": "textured",
+                    // "type": "textured",
+                    "type": "lit",
+                    // "shader": "textured",
+                    "shader": "lit",
                     "pipelineState": {
                         "faceCulling":{
                             "enabled": false
@@ -106,11 +122,15 @@
                     },
                     "tint": [1, 1, 1, 1],
                     "texture": "grass",
-                    "sampler": "default"
+                    "sampler": "default",
+                    "albedo": "grass"
+
                 },
                 "monkey":{
-                    "type": "textured",
-                    "shader": "textured",
+                    // "type": "textured",
+                    "type": "lit",
+                    // "shader": "textured",
+                    "shader": "lit",
                     "pipelineState": {
                         "faceCulling":{
                             "enabled": false
@@ -121,7 +141,8 @@
                     },
                     "tint": [1, 1, 1, 1],
                     "texture": "monkey",
-                    "sampler": "default"
+                    "sampler": "default",
+                    "albedo": "monkey"
                 },
                 "moon":{
                     "type": "textured",
@@ -150,6 +171,77 @@
             // "worldName": "MainWorld",
         },
         "world":[
+            {
+                "position": [4, 3, 7],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "cube",
+                        "material": "metal"
+                    },
+                    {
+                        "type": "Light",
+                        
+                        // example directional light
+                        // "lightType": "directional",
+                        // "color": [0, 0.5, 0],
+                        // "direction": [0.0, -1.0, 0.0]
+
+                        // example point light 
+                        // "lightType": "point",
+                        // "color": [20, 20, 20],
+                        // "attenuation": [1.0, 0.22, 0.20],
+                        // "direction": [0.0, -1.0, 0.0]
+                        
+                        // example spot light
+                        "lightType": "spot",
+                        "color": [20, 20, 20],
+                        // "attenuation": [1.0, 0.0, 0.0],
+                        // "attenuation": [1.0, 0.09, 0.032],
+                        "attenuation": [1.0, 0.22, 0.20],
+                        "innerCutoff": 15,
+                        "outerCutOff": 30,
+                        "direction": [0.0, -1.0, 0.0]
+
+                    }
+                ]
+            },
+            {
+                "position": [-3, 3, 7],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "cube",
+                        "material": "metal"
+                    },
+                    {
+                        "type": "Light",
+                        "color": [20, 0, 0],
+                        "lightType": "point",
+                        "attenuation": [1.0, 0.22, 0.20],
+                        "direction": [0.0, -1.0, 0.0]
+
+                    }
+                ]
+            },
+            {
+                "position": [4, 3, 2],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "cube",
+                        "material": "metal"
+                    },
+                    {
+                        "type": "Light",
+                        "color": [0, 0.5, 0],
+                        "lightType": "directional",
+                        "direction": [0.0, -1.0, 0.0]
+
+                    }
+                ]
+            },
+
             {
                 "position": [0, 3, 7],
                 "components": [

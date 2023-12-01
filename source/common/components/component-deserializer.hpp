@@ -6,6 +6,7 @@
 #include "free-camera-controller.hpp"
 #include "movement.hpp"
 #include "RigidBody.hpp"
+#include "lighting.hpp"
 #include "../ecs/world.hpp"
 
 namespace portal {
@@ -26,6 +27,10 @@ namespace portal {
             component = entity->addComponent<MeshRendererComponent>();
         }else if(type == RigidBodyComponent::getID()) {
             component = entity->addComponent<RigidBodyComponent>();
+        }
+        else if(type == LightComponent::getID())
+        {
+            component = entity->addComponent<LightComponent>();
         }
         if(component) component->deserialize(data);
 

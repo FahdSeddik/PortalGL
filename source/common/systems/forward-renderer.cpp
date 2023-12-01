@@ -2,7 +2,6 @@
 #include "../mesh/mesh-utils.hpp"
 #include "../texture/texture-utils.hpp"
 
-
 namespace portal {
 
     void ForwardRenderer::initialize(glm::ivec2 windowSize, const nlohmann::json& config){
@@ -113,11 +112,45 @@ namespace portal {
         }
     }
 
+    // Utility function to add a lights to the shader and set the "lightCount" uniform
+    void setupLights(const std::vector<LightComponent*>& lights, ShaderProgram* shader){
+        for(int i = 0; i < lights.size(); i++){
+            if(lights[i]->type == LightComponent::Type::Directional){ // Directional
+                shader->set("lights[" + std::to_string(i) + "].type", 0);
+                shader->set("lights[" + std::to_string(i) + "].color", lights[i]->color);
+                shader->set("lights[" + std::to_string(i) + "].direction", lights[i]->direction);
+            } else if(lights[i]->type == LightComponent::Type::Point){ // Point
+                // get the position of the light
+                r3d::Vector3 position = lights[i]->getOwner()->localTransform.getPosition();
+                // convert the position to vec3
+                glm::vec3 positionVec3 = glm::vec3(position.x, position.y, position.z);
+                shader->set("lights[" + std::to_string(i) + "].type", 1);
+                shader->set("lights[" + std::to_string(i) + "].color", lights[i]->color);
+                shader->set("lights[" + std::to_string(i) + "].position", positionVec3);
+                shader->set("lights[" + std::to_string(i) + "].attenuation", lights[i]->attenuation);
+            } else if(lights[i]->type == LightComponent::Type::Spot){ // Spot
+                // get the position of the light
+                r3d::Vector3 position = lights[i]->getOwner()->localTransform.getPosition();
+                // convert the position to vec3
+                glm::vec3 positionVec3 = glm::vec3(position.x, position.y, position.z);
+                shader->set("lights[" + std::to_string(i) + "].type", 2);
+                shader->set("lights[" + std::to_string(i) + "].color", lights[i]->color);
+                shader->set("lights[" + std::to_string(i) + "].position", positionVec3);
+                shader->set("lights[" + std::to_string(i) + "].direction", lights[i]->direction);
+                shader->set("lights[" + std::to_string(i) + "].innerCutoff", lights[i]->innerCutoff);
+                shader->set("lights[" + std::to_string(i) + "].outerCutOff", lights[i]->outerCutOff);
+                shader->set("lights[" + std::to_string(i) + "].attenuation", lights[i]->attenuation);
+            }
+        }
+        shader->set("numLights", (int)lights.size());
+    }
+
     void ForwardRenderer::render(World* world){
         // First of all, we search for a camera and for all the mesh renderers
         CameraComponent* camera = nullptr;
         opaqueCommands.clear();
         transparentCommands.clear();
+        lights.clear();
         for(auto entity : world->getEntities()){
             // If we hadn't found a camera yet, we look for a camera in this entity
             if(!camera) camera = entity->getComponent<CameraComponent>();
@@ -136,6 +169,11 @@ namespace portal {
                 // Otherwise, we add it to the opaque command list
                     opaqueCommands.push_back(command);
                 }
+            }
+
+            // Add all the lights in the scene to the lights vector
+            if(auto light = entity->getComponent<LightComponent>(); light){
+                lights.push_back(light);
             }
         }
 
@@ -186,7 +224,19 @@ namespace portal {
             //Set the "transform" uniform to be equal the model-view-projection matrix for each render command
             glm::mat4 MVP = VP * command.localToWorld;
             command.material->setup();
-            command.material->shader->set("transform", MVP);
+
+            // check if the material is of type LitMaterial
+            if (auto litMaterial = dynamic_cast<LitMaterial*>(command.material); litMaterial){
+                // set the lights in the shader
+                setupLights(lights, litMaterial->shader);
+                // set the model, view, projection matrices in the shader
+                litMaterial->shader->set("model", command.localToWorld);
+                litMaterial->shader->set("VP", VP);
+                litMaterial->shader->set("viewPos", eye);
+            }
+            else{
+                command.material->shader->set("transform", MVP);
+            }
             command.mesh->draw();
         }
         // If there is a sky material, draw the sky
@@ -218,7 +268,19 @@ namespace portal {
             // Set the "transform" uniform to be equal the model-view-projection matrix for each render command
             glm::mat4 MVP = VP * command.localToWorld;
             command.material->setup();
-            command.material->shader->set("transform", MVP);
+
+            // check if the material is of type LitMaterial
+            if (auto litMaterial = dynamic_cast<LitMaterial*>(command.material); litMaterial){
+                // set the lights in the shader
+                setupLights(lights, litMaterial->shader);
+                // set the model, view, projection matrices in the shader
+                litMaterial->shader->set("model", command.localToWorld);
+                litMaterial->shader->set("VP", VP);
+                litMaterial->shader->set("viewPos", eye);
+            }
+            else{
+                command.material->shader->set("transform", MVP);
+            }
             command.mesh->draw();
         }
 
