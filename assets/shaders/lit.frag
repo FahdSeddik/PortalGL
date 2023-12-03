@@ -140,6 +140,6 @@ void main() {
 
     vec3 ambient = vec3(0.1) * albedo * ao; // Calculate the ambient light color
     vec3 color = ambient + Lo + emission; // Calculate the final color by adding the ambient light, outgoing light, and emission color
-    frag_color = vec4(color, 1.0); // Set the fragment color to the final color
+    frag_color = vec4(color, texture(albedoMap, fs_in.TexCoord).a); // Set the fragment color to the final color
 }
     

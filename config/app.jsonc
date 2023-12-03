@@ -133,8 +133,8 @@
                     "tint": [0.45, 0.4, 0.5, 1]
                 },
                 "glass":{
-                    "type": "textured",
-                    "shader": "textured",
+                    "type": "lit",
+                    "shader": "lit",
                     "pipelineState": {
                         "faceCulling":{
                             "enabled": false
@@ -151,7 +151,7 @@
                     },
                     "transparent": true,
                     "tint": [1, 1, 1, 1],
-                    "texture": "glass",
+                    "albedo": "glass",
                     "sampler": "pixelated"
                 },
                 "grass":{
@@ -443,7 +443,6 @@
                     },
                     "transparent": true,
                     "tint": [1, 1, 1, 1],
-                    "alphaThreshold": 0.1,
                     "albedo": "tex_door_wall",
                     "sampler": "default"
                 },
