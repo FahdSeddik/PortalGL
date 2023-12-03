@@ -7,6 +7,7 @@
 #include <systems/free-camera-controller.hpp>
 #include <systems/movement.hpp>
 #include <asset-loader.hpp>
+#include "../common/components/animation.hpp"
 
 // This state shows how to use the ECS framework and deserialization.
 class Playstate: public portal::State {
@@ -48,8 +49,19 @@ class Playstate: public portal::State {
         // Here, we just run a bunch of systems to control the world logic
         movementSystem.update(&world, (float)deltaTime);
         cameraController.update(&world, (float)deltaTime);
+        
+        // Loop on playing animations and play them given delta time
+        for(auto& animation : world.getPlayingAnimations()){
+            if(animation.second->play((float)deltaTime)){
+                // If return true then animation finished then we need to mark for stop
+                world.markAnimationForStop(animation.first);
+            }
+        }
+        // Stop animations marked for stop
+        world.stopAnimations();
+
         // And finally we use the renderer system to draw the scene
-        renderer.render(&world, (float)deltaTime);
+        renderer.render(&world);
 
         // Get a reference to the keyboard object
         auto& keyboard = getApp()->getKeyboard();

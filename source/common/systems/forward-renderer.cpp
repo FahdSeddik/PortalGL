@@ -1,7 +1,6 @@
 #include "forward-renderer.hpp"
 #include "../mesh/mesh-utils.hpp"
 #include "../texture/texture-utils.hpp"
-#include "../components/animation.hpp"
 namespace portal {
 
     void ForwardRenderer::initialize(glm::ivec2 windowSize, const nlohmann::json& config){
@@ -118,7 +117,7 @@ namespace portal {
             if(lights[i]->type == LightComponent::Type::Directional){ // Directional
                 shader->set("lights[" + std::to_string(i) + "].type", 0);
                 shader->set("lights[" + std::to_string(i) + "].color", lights[i]->color);
-                shader->set("lights[" + std::to_string(i) + "].direction", glm::normalize(lights[i]->direction));
+                shader->set("lights[" + std::to_string(i) + "].direction", lights[i]->direction);
             } else if(lights[i]->type == LightComponent::Type::Point){ // Point
                 shader->set("lights[" + std::to_string(i) + "].type", 1);
                 shader->set("lights[" + std::to_string(i) + "].color", lights[i]->color);
@@ -128,7 +127,7 @@ namespace portal {
                 shader->set("lights[" + std::to_string(i) + "].type", 2);
                 shader->set("lights[" + std::to_string(i) + "].color", lights[i]->color);
                 shader->set("lights[" + std::to_string(i) + "].position", glm::vec3(lights[i]->getOwner()->getLocalToWorldMatrix()*glm::vec4(0, 0, 0, 1)));
-                shader->set("lights[" + std::to_string(i) + "].direction",  glm::normalize(lights[i]->direction));
+                shader->set("lights[" + std::to_string(i) + "].direction",  lights[i]->direction);
                 shader->set("lights[" + std::to_string(i) + "].innerCutOff", lights[i]->innerCutOff);
                 shader->set("lights[" + std::to_string(i) + "].outerCutOff", lights[i]->outerCutOff);
                 shader->set("lights[" + std::to_string(i) + "].attenuation", lights[i]->attenuation);
@@ -137,16 +136,7 @@ namespace portal {
         shader->set("numLights", (int)lights.size());
     }
 
-    void ForwardRenderer::render(World* world, float deltaTime){
-        // Loop on playing animations and play them given delta time
-        for(auto& animation : world->getPlayingAnimations()){
-            if(animation.second->play(deltaTime)){
-                // If return true then animation finished then we need to mark for stop
-                world->markAnimationForStop(animation.first);
-            }
-        }
-        // Stop animations marked for stop
-        world->stopAnimations();
+    void ForwardRenderer::render(World* world){
         // First of all, we search for a camera and for all the mesh renderers
         CameraComponent* camera = nullptr;
         opaqueCommands.clear();

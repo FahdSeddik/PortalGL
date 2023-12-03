@@ -87,15 +87,6 @@ namespace portal
                 }
                 playerRigidBody->getBody()->setLinearVelocity(r3d::Vector3(vel.x, linearVelocity.y, vel.z));
 
-                // if linear velocity exceeds max speed, set it to max speed
-                // if(linearVelocity.x > 3){
-                //     linearVelocity.x = 3;
-                // }
-                // if(linearVelocity.z > 3){
-                //     linearVelocity.z = 3;
-                // }
-                // playerRigidBody->getBody()->setLinearVelocity(linearVelocity);
-
                 // Update the physics world
                 physicsWorld->update(step);
                 // Subtract the time step from the remaining time
@@ -127,11 +118,6 @@ namespace portal
                         // orientation stays the same
                         transform.setOrientation(entity->localTransform.getRotation());
                         entity->localTransform.setTransform(transform);
-                        // This disables the player to get influenced by other objects in a way that it
-                        // glitches and flies off the map
-                        // r3d::Vector3 linearVelocity = rgb->getBody()->getLinearVelocity();
-                        // linearVelocity.x = linearVelocity.z = 0;
-                        // rgb->getBody()->setLinearVelocity(linearVelocity);
                         rgb->getBody()->setAngularVelocity(r3d::Vector3(0,0,0));
                     }else{
                         entity->localTransform.setTransform(transform);
