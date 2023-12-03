@@ -6,6 +6,7 @@
 
 namespace portal {
 
+    class AnimationComponent;
     // This class holds a set of entities
     class World {
         std::unordered_set<Entity*> entities; // These are the entities held by this world
@@ -13,6 +14,10 @@ namespace portal {
                                                       // when deleteMarkedEntities is called
         r3d::PhysicsCommon physicsCommon; // Factory pattern for creating physics world objects , logging, and memory management
         r3d::PhysicsWorld* physicsWorld = nullptr; // This is the physics world that will be used for physics simulation
+
+        std::unordered_map<std::string, AnimationComponent*> animations;
+        std::unordered_map<std::string, AnimationComponent *> playingAnimations;
+        std::unordered_set<std::string> toStopPlaying;
     public:
 
         World() = default;
@@ -87,6 +92,29 @@ namespace portal {
         r3d::PhysicsCommon& getPhysicsCommon() {
             return physicsCommon;
         }
+
+        void startAnimation(const std::string &name);
+
+        void addAnimation(const std::string& name, AnimationComponent* animation) {
+            animations[name] = animation;
+        }
+
+        std::unordered_map<std::string, AnimationComponent*>& getPlayingAnimations() {
+            return playingAnimations;
+        }
+
+        void markAnimationForStop(const std::string& name) {
+            toStopPlaying.insert(name);
+        }
+
+        void stopAnimations() {
+            for(auto& name : toStopPlaying) {
+                playingAnimations.erase(name);
+            }
+            toStopPlaying.clear();
+        }
+
+        void resetAnimations();
 
         //Since the world owns all of its entities, they should be deleted alongside it.
         ~World(){

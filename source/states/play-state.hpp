@@ -35,6 +35,13 @@ class Playstate: public portal::State {
         // Then we initialize the renderer
         auto size = getApp()->getFrameBufferSize();
         renderer.initialize(size, config["renderer"]);
+
+        for(auto& entity : world.getEntities()) {
+            if(entity->name == "Player") {
+                movementSystem.init(entity, getApp());
+                break;
+            }
+        }
     }
 
     void onDraw(double deltaTime) override {
@@ -42,7 +49,7 @@ class Playstate: public portal::State {
         movementSystem.update(&world, (float)deltaTime);
         cameraController.update(&world, (float)deltaTime);
         // And finally we use the renderer system to draw the scene
-        renderer.render(&world);
+        renderer.render(&world, (float)deltaTime);
 
         // Get a reference to the keyboard object
         auto& keyboard = getApp()->getKeyboard();
@@ -50,6 +57,11 @@ class Playstate: public portal::State {
         if(keyboard.justPressed(GLFW_KEY_ESCAPE)){
             // If the escape  key is pressed in this frame, go to the play state
             getApp()->changeState("menu");
+            world.resetAnimations();
+        }
+        if(keyboard.justPressed(GLFW_KEY_H)){
+            world.startAnimation("door_1_left_spin");
+            world.startAnimation("door_1_right_spin");
         }
     }
 

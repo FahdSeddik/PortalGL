@@ -16,7 +16,8 @@ namespace portal {
         void deserialize(const nlohmann::json &data) override;
 
         r3d::RigidBody* getBody() { return body; }
-
+        r3d::Collider* getCollider() { return collider; }
+        
         ~RigidBodyComponent();
     };
 

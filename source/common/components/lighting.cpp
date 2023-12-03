@@ -15,8 +15,8 @@ namespace portal{
         } else if(typeString == "spot"){
             type = Type::Spot;
             // Spot light properties
-            innerCutoff = glm::radians(data.value("innerCutoff", glm::degrees(innerCutoff)));
-            outerCutOff = glm::radians(data.value("outerCutOff", glm::degrees(outerCutOff)));
+            innerCutOff = glm::cos(glm::radians(data.value("innerCutOff", innerCutOff)));
+            outerCutOff = glm::cos(glm::radians(data.value("outerCutOff", outerCutOff)));
         }
         // Attenuation properties (for point lights and spot lights)
         attenuation = data.value("attenuation", attenuation);
