@@ -30,14 +30,18 @@ namespace portal {
 
         this->physicsWorld = this->physicsCommon.createPhysicsWorld(settings);
     }
-
-    void World::startAnimation(const std::string& name) {
+    
+    void World::startAnimation(const std::string& name, bool reverse) {
+        // Checks if the given animation isn't already playing and exists
         if(animations.find(name) != animations.end() && playingAnimations.find(name) == playingAnimations.end()) {
-            animations[name]->startPlaying();
+            // Start playing the animation
+            animations[name]->startPlaying(reverse);
+            // Add this animation to playingAnimations map
             playingAnimations[name] = animations[name];
         }
     }
 
+    // Ensure resetting when changing states of the game
     void World::resetAnimations() {
         for(auto& animation : playingAnimations) {
             animation.second->reset();

@@ -138,8 +138,10 @@ namespace portal {
     }
 
     void ForwardRenderer::render(World* world, float deltaTime){
+        // Loop on playing animations and play them given delta time
         for(auto& animation : world->getPlayingAnimations()){
             if(animation.second->play(deltaTime)){
+                // If return true then animation finished then we need to mark for stop
                 world->markAnimationForStop(animation.first);
             }
         }

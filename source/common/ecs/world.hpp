@@ -93,7 +93,7 @@ namespace portal {
             return physicsCommon;
         }
 
-        void startAnimation(const std::string &name);
+        void startAnimation(const std::string &name, bool reverse = false);
 
         void addAnimation(const std::string& name, AnimationComponent* animation) {
             animations[name] = animation;
@@ -114,6 +114,8 @@ namespace portal {
             toStopPlaying.clear();
         }
 
+        // This calls reset on all animations to make sure we go back
+        // to the starting state of the animations when we change states
         void resetAnimations();
 
         //Since the world owns all of its entities, they should be deleted alongside it.

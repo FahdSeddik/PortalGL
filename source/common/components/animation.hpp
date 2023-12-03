@@ -12,8 +12,13 @@ namespace portal {
         float accumulatedTime = 0.0f;
         bool isPlaying = false;
         bool isStarted = false;
+        bool isReversed = false;
         std::string name = "";
+        // Callback lambda function to be called when animation ends
         std::function<void()> callback;
+        std::function<void()> reverseCallback;
+
+        void deserializeCallback(const nlohmann::json& data, bool reverse = false);
     public:
         // The ID of this component type is "Animation"
         static std::string getID() { return "Animation"; }
@@ -25,7 +30,7 @@ namespace portal {
         bool play(float deltaTime);
 
         // Starts playing the animation
-        void startPlaying() { isPlaying = true; }
+        void startPlaying(bool reverse) { isPlaying = true, isReversed = reverse; }
 
         // Resets the animation
         void reset();

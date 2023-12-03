@@ -63,6 +63,12 @@ class Playstate: public portal::State {
             world.startAnimation("door_1_left_spin");
             world.startAnimation("door_1_right_spin");
         }
+        if(keyboard.justPressed(GLFW_KEY_J)){
+            world.startAnimation("door_1_left_open", true);
+            world.startAnimation("door_1_right_open", true);
+            world.startAnimation("door_1_left_spin_open", true);
+            world.startAnimation("door_1_right_spin_open", true);
+        }
     }
 
     void onDestroy() override {
