@@ -97,6 +97,19 @@ namespace portal {
         }
     };
 
+
+    // To store data such as models as json objects to be dynamically loaded when needed
+    template<>
+    void AssetLoader<nlohmann::json>::deserialize(const nlohmann::json& data) {
+        if(data.is_object()){
+            for(auto& [name, desc] : data.items()){
+                // Create Json object and store its pointer in assets
+                assets[name] = new nlohmann::json(desc);
+            }
+        }
+    };
+    
+
     void deserializeAllAssets(const nlohmann::json& assetData){
         if(!assetData.is_object()) return;
         if(assetData.contains("shaders"))
@@ -109,6 +122,8 @@ namespace portal {
             AssetLoader<Mesh>::deserialize(assetData["meshes"]);
         if(assetData.contains("materials"))
             AssetLoader<Material>::deserialize(assetData["materials"]);
+        if(assetData.contains("models")) 
+            AssetLoader<nlohmann::json>::deserialize(assetData["models"]);
     }
 
     void clearAllAssets(){
@@ -117,6 +132,7 @@ namespace portal {
         AssetLoader<Sampler>::clear();
         AssetLoader<Mesh>::clear();
         AssetLoader<Material>::clear();
+        AssetLoader<nlohmann::json>::clear();
     }
 
 }

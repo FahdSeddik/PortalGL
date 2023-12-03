@@ -1,7 +1,7 @@
 #include "world.hpp"
 #include <json/json.hpp>
 #include "../deserialize-utils.hpp"
-
+#include "../components/animation.hpp"
 namespace portal {
 
     // This will deserialize a json array of entities and add the new entities to the current world
@@ -29,6 +29,21 @@ namespace portal {
         // TODO: Support world settings like gravity and world name
 
         this->physicsWorld = this->physicsCommon.createPhysicsWorld(settings);
+    }
+    
+    void World::startAnimation(const std::string& name, bool reverse) {
+        // Checks if the given animation isn't already playing and exists
+        if(animations.find(name) != animations.end() && playingAnimations.find(name) == playingAnimations.end()) {
+            // Start playing the animation
+            animations[name]->startPlaying(reverse);
+            // Add this animation to playingAnimations map
+            playingAnimations[name] = animations[name];
+        }
+    }
+
+    // Ensure resetting when changing states of the game
+    void World::clearPlayingAnimations() {
+        playingAnimations.clear();
     }
 
 }

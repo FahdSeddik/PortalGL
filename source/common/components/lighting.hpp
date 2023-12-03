@@ -18,11 +18,11 @@ namespace portal {
             Spot
         } type = Type::Directional;
         // for spot lights, the angle of the cone
-        float innerCutoff = 45.0f;
+        float innerCutOff = 45.0f;
         // for spot lights, the falloff of the cone
-        float outerCutOff = 1.0f;
+        float outerCutOff = 50.0f;
         // for directional lights and spot lights, the direction of the light in world space
-        glm::vec3 direction = { 0, 0, -1 };
+        glm::vec3 direction = { 0, -1, 0 };
         // attenuation
         glm::vec3 attenuation = { 1.0f, 0.09f, 0.032f };
 

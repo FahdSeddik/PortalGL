@@ -68,6 +68,8 @@ namespace portal {
         Texture2D* roughness;
         Texture2D* ambient_occlusion;
         Texture2D* emission;
+        Texture2D* metallic;
+        float alphaThreshold;
 
         void setup() const override;
         void deserialize(const nlohmann::json& data) override;

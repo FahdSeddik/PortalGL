@@ -92,6 +92,9 @@ set(COMMON_SOURCES
 
         source/common/components/lighting.hpp
         source/common/components/lighting.cpp
+
+        source/common/components/animation.hpp
+        source/common/components/animation.cpp
 )
 
 # Define the directories in which to search for the included headers

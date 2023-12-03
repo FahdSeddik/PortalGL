@@ -111,6 +111,14 @@ namespace portal {
         if(sampler)
             sampler->bind(4);
         shader->set("emissionMap", 4);
+
+        glActiveTexture(GL_TEXTURE5); // You need to activate the texture unit before binding the texture to it
+        metallic->bind();
+        if(sampler)
+            sampler->bind(5);
+        shader->set("metallicMap", 5);
+
+        shader->set("alphaThreshold", alphaThreshold);
     }
 
     // This function read the material data from a json object
@@ -142,6 +150,12 @@ namespace portal {
         } else {
             emission = AssetLoader<Texture2D>::get("default_emission");
         } 
+        if(data.contains("metallic")) {
+            metallic = AssetLoader<Texture2D>::get(data.value("metallic", ""));
+        } else {
+            metallic = AssetLoader<Texture2D>::get("default_metallic");
+        }
+        alphaThreshold = data.value("alphaThreshold", 0.0f);
         sampler = AssetLoader<Sampler>::get(data.value("sampler", ""));
     }
 }

@@ -6,6 +6,7 @@ uniform sampler2D specularMap;
 uniform sampler2D roughnessMap;
 uniform sampler2D ambient_occlusionMap;
 uniform sampler2D emissionMap;
+uniform sampler2D metallicMap;
 
 #define DIRECTIONAL 0
 #define POINT 1
@@ -16,8 +17,8 @@ struct Light {
     vec3 position;
     vec3 color;
     vec3 direction;
-    float innerCutoff;
-    float outerCutoff;
+    float innerCutOff;
+    float outerCutOff;
     vec3 attenuation;
 };
 
@@ -29,7 +30,7 @@ in Varyings {
 
 uniform Light lights[50];
 uniform int numLights;
-
+uniform float alphaThreshold;
 uniform vec3 viewPos;
 
 out vec4 frag_color;
@@ -78,18 +79,20 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 // ----------------------------------------------------------------------------
 
 void main() {
+    if(texture(albedoMap, fs_in.TexCoord).a < alphaThreshold) discard; // Discard the fragment if the alpha value of the albedo map is less than 0.1 (transparent)
     vec3 albedo = texture(albedoMap, fs_in.TexCoord).rgb; // Retrieve the albedo (color) of the material from the albedo map
     vec3 specular = texture(specularMap, fs_in.TexCoord).rgb; // Retrieve the specular reflection color from the specular map
     float roughness = texture(roughnessMap, fs_in.TexCoord).r; // Retrieve the roughness value from the roughness map
     vec3 ao = texture(ambient_occlusionMap, fs_in.TexCoord).rgb; // Retrieve the ambient occlusion value from the ambient occlusion map
     vec3 emission = texture(emissionMap, fs_in.TexCoord).rgb; // Retrieve the emission color from the emission map
+    float metallic = texture(metallicMap, fs_in.TexCoord).r; // Retrieve the metallic value from the metallic map
     
     vec3 N = normalize(fs_in.Normal); // Normalize the surface normal
     vec3 V = normalize(viewPos - fs_in.FragPos); // Calculate the view vector
     vec3 R = reflect(-V, N); // Calculate the reflection vector
 
     vec3 F0 = vec3(0.04); // Set the base reflectance value
-    // F0 = mix(F0, albedo, metallic); // (Optional) Mix the base reflectance with the albedo based on a metallic value
+    F0 = mix(F0, albedo, metallic); // (Optional) Mix the base reflectance with the albedo based on a metallic value
 
     vec3 Lo = vec3(0.0); // Initialize the outgoing light color
     for(int i = 0; i < numLights; ++i) // Loop through each light source
@@ -109,8 +112,8 @@ void main() {
             attenuation = 1.0 / (light.attenuation.x + light.attenuation.y * distance + light.attenuation.z * (distance * distance)); // Calculate the attenuation factor based on the light's attenuation properties
         
             float theta = dot(L, normalize(-light.direction)); // Calculate the angle between the light direction and the spotlight direction
-            float epsilon = light.innerCutoff - light.outerCutoff; // Calculate the angle between the inner and outer cutoff angles of the spotlight
-            float intensity = clamp((theta - light.outerCutoff) / epsilon, 0.0, 1.0); // Calculate the intensity of the spotlight based on the angle
+            float epsilon = light.innerCutOff - light.outerCutOff; // Calculate the angle between the inner and outer cutoff angles of the spotlight
+            float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0); // Calculate the intensity of the spotlight based on the angle
             attenuation *= intensity; // Apply the spotlight intensity to the attenuation factor
         
         }
@@ -127,8 +130,8 @@ void main() {
 
         vec3 kS = F; // Set the specular reflection color as the specular reflection coefficient
         vec3 kD = vec3(1.0) - kS; // Calculate the diffuse reflection coefficient
-        // no metalness property defined, so we'll use the specular map value as the metalness
-        kD *= 1.0 - max(specular.r, max(specular.g, specular.b)); // Adjust the diffuse reflection coefficient based on the metalness
+        // Adjust the diffuse reflection coefficient based on the metalness
+        kD *= 1.0 - metallic;
         
         float NdotL = max(dot(N, L), 0.0); // Calculate the dot product between the surface normal and the light direction
 
@@ -137,6 +140,6 @@ void main() {
 
     vec3 ambient = vec3(0.1) * albedo * ao; // Calculate the ambient light color
     vec3 color = ambient + Lo + emission; // Calculate the final color by adding the ambient light, outgoing light, and emission color
-    frag_color = vec4(color, 1.0); // Set the fragment color to the final color
+    frag_color = vec4(color, texture(albedoMap, fs_in.TexCoord).a); // Set the fragment color to the final color
 }
     
