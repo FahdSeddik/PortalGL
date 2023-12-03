@@ -57,7 +57,7 @@ class Playstate: public portal::State {
         if(keyboard.justPressed(GLFW_KEY_ESCAPE)){
             // If the escape  key is pressed in this frame, go to the play state
             getApp()->changeState("menu");
-            world.resetAnimations();
+            world.clearPlayingAnimations();
         }
         if(keyboard.justPressed(GLFW_KEY_H)){
             world.startAnimation("door_1_left_spin");

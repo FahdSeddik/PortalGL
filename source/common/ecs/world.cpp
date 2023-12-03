@@ -42,10 +42,7 @@ namespace portal {
     }
 
     // Ensure resetting when changing states of the game
-    void World::resetAnimations() {
-        for(auto& animation : playingAnimations) {
-            animation.second->reset();
-        }
+    void World::clearPlayingAnimations() {
         playingAnimations.clear();
     }
 

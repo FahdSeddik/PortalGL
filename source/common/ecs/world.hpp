@@ -114,9 +114,9 @@ namespace portal {
             toStopPlaying.clear();
         }
 
-        // This calls reset on all animations to make sure we go back
-        // to the starting state of the animations when we change states
-        void resetAnimations();
+        // Clears the playing animations map to ensure 
+        // resetting when changing states of the game
+        void clearPlayingAnimations();
 
         //Since the world owns all of its entities, they should be deleted alongside it.
         ~World(){
