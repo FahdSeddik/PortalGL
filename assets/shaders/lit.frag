@@ -33,7 +33,10 @@ uniform int numLights;
 uniform float alphaThreshold;
 uniform vec3 viewPos;
 
-out vec4 frag_color;
+
+layout (location = 0) out vec4 frag_color;
+layout (location = 1) out vec4 BrightColor;
+
 
 const float PI = 3.14159265359;
 // ----------------------------------------------------------------------------
@@ -140,6 +143,13 @@ void main() {
 
     vec3 ambient = vec3(0.1) * albedo * ao; // Calculate the ambient light color
     vec3 color = ambient + Lo + emission; // Calculate the final color by adding the ambient light, outgoing light, and emission color
+
+    float brightness = dot(color, vec3(0.2126, 0.7152, 0.0722));
+    if(brightness > 0.9)
+        BrightColor = vec4(color, texture(albedoMap, fs_in.TexCoord).a);
+    else
+        BrightColor = vec4(0.0, 0.0, 0.0, texture(albedoMap, fs_in.TexCoord).a);
+
     frag_color = vec4(color, texture(albedoMap, fs_in.TexCoord).a); // Set the fragment color to the final color
 }
     

@@ -75,6 +75,21 @@ namespace portal {
         void deserialize(const nlohmann::json& data) override;
     };
 
+    // This Material has 2 uniforms 
+    // - "tex1" which is a Sampler2D. "texture1" and "sampler1" will be bound to it.
+    // - "tex2" which is a Sampler2D. "texture2" and "sampler2" will be bound to it.
+    class MultiTextureMaterial : public Material {
+    public:
+        Texture2D* texture1;
+        Texture2D* texture2;
+        Sampler* sampler;
+        // Sampler* sampler2;
+
+        void setup() const override;
+        void deserialize(const nlohmann::json& data) override;
+    };
+
+
     // This function returns a new material instance based on the given type
     inline Material* createMaterialFromType(const std::string& type){
         if(type == "tinted"){
