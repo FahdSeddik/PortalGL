@@ -13,7 +13,12 @@
         "renderer":{
             // "sky": "assets/textures/sky.jpg",
             "sky": "assets/textures/Space.png",
-            "postprocess": "assets/shaders/postprocess/vignette.frag"
+            "postprocess": "assets/shaders/postprocess/vignette.frag",
+            "bloom": true,
+            // "bloom": false,
+            "bloomIntensity": 1,
+            "bloomBlurIterations": 10,
+            "exposure": 0.5
         },
         "assets":{
             "shaders":{
@@ -338,7 +343,8 @@
                     "tint": [1, 1, 1, 1],
                     "albedo": "tex_button_albedo",
                     "emission": "tex_button_emission",
-                    "sampler": "default"
+                    "sampler": "default",
+                    "bloom": true
                 },
                 "mat_spotlight_standing":{
                     "type": "lit",
@@ -357,7 +363,8 @@
                     "metallic": "tex_spotlight_standing_metallic",
                     "roughness": "tex_spotlight_standing_roughness",
                     "ambient_occlusion": "tex_spotlight_standing_ao",
-                    "sampler": "default"
+                    "sampler": "default",
+                    "bloom": true
                 },
                 "mat_monitor_screen":{
                     "type": "lit",
@@ -422,7 +429,8 @@
                     "albedo":"tex_door_albedo",
                     "emission":"tex_door_emission",
                     "ambient_occlusion":"tex_door_ambient_occlusion",
-                    "sampler": "default"
+                    "sampler": "default",
+                    "bloom": true
                 },
                 "mat_door_wall":{
                     "type": "lit",
@@ -831,53 +839,13 @@
                                 
                                 // example spot light
                                 "lightType": "spot",
-                                "color": [100, 100, 80],
+                                "color": [100, 100, 100],
                                 "attenuation": [1.0, 0.14, 0.07],
                                 "innerCutOff": 40,
                                 "outerCutOff": 65,
                                 "direction": [1.0, -1.5, 1.0]
                             }
                         ]
-                    }
-                ]
-            },
-            {
-                "name": "Point Light 1",
-                "position": [-5, 3, 5],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "sphere",
-                        "material": "metal"
-                    },
-                    {
-                        "type": "Light",
-                        "lightType": "spot",
-                        "color": [60, 20, 20],
-                        "attenuation": [1.0, 0.35, 0.44],
-                        "innerCutOff": 10,
-                        "outerCutOff": 90,
-                        "direction": [0.0, -1.5, 0.0]
-                    }
-                ]
-            },
-            {
-                "name": "Point Light 2",
-                "position": [-5, 50, 5],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "sphere",
-                        "material": "metal"
-                    },
-                    {
-                        "type": "Light",
-                        "lightType": "spot",
-                        "color": [5, 5, 5],
-                        "attenuation": [1.0, 0.014, 0.0007],
-                        "innerCutOff": 0,
-                        "outerCutOff": 500,
-                        "direction": [0.0, -1, 0.0]
                     }
                 ]
             },
