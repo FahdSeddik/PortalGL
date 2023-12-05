@@ -12,6 +12,7 @@ namespace portal {
         pipelineState.setup();
         //setting the shader to be used
         shader->use();
+        shader->set("bloom", bloom);
     }
 
     // This function read the material data from a json object
@@ -23,6 +24,7 @@ namespace portal {
         }
         shader = AssetLoader<ShaderProgram>::get(data["shader"].get<std::string>());
         transparent = data.value("transparent", false);
+        bloom = data.value("bloom", false);
     }
 
     // This function should call the setup of its parent and
@@ -158,4 +160,39 @@ namespace portal {
         alphaThreshold = data.value("alphaThreshold", 0.0f);
         sampler = AssetLoader<Sampler>::get(data.value("sampler", ""));
     }
+
+    // This function should call the setup of its parent and
+    // bind the textures and sampler to texture units and send the unit numbers to the uniform variables
+    void MultiTextureMaterial::setup() const {
+        // calling the setup of its parent
+        Material::setup();
+        // binding the textures and sampler to texture units and sending the unit numbers to the uniform variables
+        // "tex1" and "tex2"
+        glActiveTexture(GL_TEXTURE0); // You need to activate the texture unit before binding the texture to it
+        // binding the texture and sampler to a texture unit and sending the unit number to the uniform variable "tex1"
+
+        texture1->bind(); // You need to bind the texture to the texture unit
+        if(sampler) // You need to bind the sampler to the texture unit
+            sampler->bind(0);
+        shader->set("tex1", 0); // You need to send the texture unit number to the uniform variable "tex1"
+
+        // You need to repeat the same process for the other texture
+
+        glActiveTexture(GL_TEXTURE1); // You need to activate the texture unit before binding the texture to it
+        texture2->bind(); // You need to bind the texture to the texture unit
+        if(sampler) // You need to bind the sampler to the texture unit
+            sampler->bind(1);
+        shader->set("tex2", 1); // You need to send the texture unit number to the uniform variable "tex2"
+    }
+
+    // This function read the material data from a json object
+    void MultiTextureMaterial::deserialize(const nlohmann::json& data){
+        Material::deserialize(data);
+        if(!data.is_object()) return;
+        texture1 = AssetLoader<Texture2D>::get(data.value("texture1", ""));
+        texture2 = AssetLoader<Texture2D>::get(data.value("texture2", ""));
+        sampler = AssetLoader<Sampler>::get(data.value("sampler", ""));
+
+    }
+
 }

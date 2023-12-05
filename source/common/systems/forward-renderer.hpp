@@ -43,6 +43,33 @@ namespace portal
         TexturedMaterial* postprocessMaterial;
         // List of all the lights in the scene
         std::vector<LightComponent*> lights;
+
+        // **********************//
+        // **** Bloom & HDR **//
+        // **********************//
+        bool bloom;
+        float bloomThreshold;
+        float bloomIntensity;
+        int bloomBlurIterations;
+        float exposure;
+        // Framebuffer used to store the bright color
+        GLuint hdrFBO;
+        // Texture used to store the normal color
+        Texture2D *colorTexture;
+        // Texture used to store the bright color
+        Texture2D *brightColorTexture;
+        // Material used to render final frame
+        MultiTextureMaterial* hdrMaterial;
+        // pingpong variable to switch between the two postprocess materials
+        // pingpong framebuffers
+        GLuint pingpongFBO[2];
+        // pingpong colorbuffers
+        Texture2D *pingpongColorbuffers[2];
+        // pingpong material
+        // Material used to blur the bright color
+        MultiTextureMaterial* pingpongMaterial;
+        // TexturedMaterial* pingpongMaterial[2];
+        
     public:
         // Initialize the renderer including the sky and the Postprocessing objects.
         // windowSize is the width & height of the window (in pixels).
