@@ -12,6 +12,7 @@ namespace portal {
         pipelineState.setup();
         //setting the shader to be used
         shader->use();
+        shader->set("bloom", bloom);
     }
 
     // This function read the material data from a json object
@@ -23,6 +24,7 @@ namespace portal {
         }
         shader = AssetLoader<ShaderProgram>::get(data["shader"].get<std::string>());
         transparent = data.value("transparent", false);
+        bloom = data.value("bloom", false);
     }
 
     // This function should call the setup of its parent and
