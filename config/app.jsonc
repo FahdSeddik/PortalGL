@@ -806,7 +806,7 @@
                                     "type": "Capsule Collider",
                                     "radius": 0.2,
                                     "height": 12.0,
-                                    "friction": 1.0,
+                                    "friction": 0.0,
                                     "bounciness":0.0
                                 }
                             }
@@ -928,7 +928,7 @@
                             // for material
                             "bounciness":0.0,
                             "friction": 1.0,
-                            "massDensity": 1,
+                            "massDensity": 10,
                             
                             // for trigger
                             "isTrigger": false // default is false
@@ -989,7 +989,7 @@
                         "collider":{
                             "type": "Box Collider",
                             "halfExtents": [5, 5, 1],
-                            "friction": 1.0,
+                            "friction": 0.0,
                             "bounciness":0.0
                         }
                     },
@@ -1046,6 +1046,7 @@
                 ]
             },
             {
+                "name": "Monitor 1",
                 "position": [15.5, -0.25, -6],
                 "rotation": [0, -90, 0],
                 "scale": [1.5, 1.5, 1.5],
@@ -1061,7 +1062,7 @@
                         "collider":{
                             "type":"Box Collider",
                             "halfExtents": [1, 0.5, 0.2],
-                            "friction": 1.0,
+                            "friction": 0.0,
                             "bounciness":0.0
                         }
                     }
@@ -2013,7 +2014,8 @@
                         "collider":{
                             "type": "Box Collider",
                             "halfExtents": [5, 2, 0.1],
-                            "bounciness":0.0
+                            "bounciness":0.0,
+                            "friction": 0
                         }
                     }
                 ]
@@ -2092,7 +2094,7 @@
                         "collider":{
                             "type":"Box Collider",
                             "halfExtents": [5, 1, 5],
-                            "friction": 1.0,
+                            "friction": 0.0,
                             "bounciness":0.0
                         }
                     }
@@ -2108,7 +2110,7 @@
                         "collider": {
                             "type": "Box Collider",
                             "halfExtents": [5, 5, 0.1],
-                            "friction": 1.0,
+                            "friction": 0.0,
                             "bounciness":0.0
                         }
                     }
@@ -2124,7 +2126,7 @@
                         "collider": {
                             "type": "Box Collider",
                             "halfExtents": [5, 5, 0.1],
-                            "friction": 1.0,
+                            "friction": 0.0,
                             "bounciness":0.0
                         }
                     }
@@ -2140,7 +2142,7 @@
                         "collider": {
                             "type": "Box Collider",
                             "halfExtents": [5, 5, 0.1],
-                            "friction": 1.0,
+                            "friction": 0.0,
                             "bounciness":0.0
                         }
                     }
@@ -2163,7 +2165,7 @@
                         "collider":{
                             "type":"Box Collider",
                             "halfExtents": [5, 1, 5],
-                            "friction": 1.0,
+                            "friction": 0.0,
                             "bounciness":0.0
                         }
                     }
@@ -2179,7 +2181,7 @@
                         "collider": {
                             "type": "Box Collider",
                             "halfExtents": [5, 5, 0.1],
-                            "friction": 1.0,
+                            "friction": 0.0,
                             "bounciness":0.0
                         }
                     }
@@ -2195,7 +2197,7 @@
                         "collider": {
                             "type": "Box Collider",
                             "halfExtents": [5, 5, 0.1],
-                            "friction": 1.0,
+                            "friction": 0.0,
                             "bounciness":0.0
                         }
                     }
@@ -2211,11 +2213,21 @@
                         "collider": {
                             "type": "Box Collider",
                             "halfExtents": [5, 5, 0.1],
-                            "friction": 1.0,
+                            "friction": 0.0,
                             "bounciness":0.0
                         }
                     }
                 ]
+            }
+        ],
+        "onCollisionEvents": [
+            {
+                "body1": "Player", // Name of object 1
+                "body2": "Monitor 1", // Name of object 2
+                "type": "animation",
+                "names": ["door_1_left_spin", "door_1_right_spin"],
+                "once": true, // If false, callback can be called multiple times if event happened again
+                "OnContact": "Start" // This could be "Start", "Stay", "Exit"
             }
         ]
     }

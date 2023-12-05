@@ -16,6 +16,7 @@ namespace portal {
         r3d::RigidBody *body = pWorld->createRigidBody(transform);
         // Set the rigid body to the component
         this->body = body;
+        this->body->setUserData(new std::string((this->getOwner()->name.empty()) ? std::to_string(pWorld->getNbRigidBodies()):this->getOwner()->name));
         // get r3dType
         const std::string r3dType = data.value("r3dType", "Static");
         if(r3dType == "Kinemtatic") {

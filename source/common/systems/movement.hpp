@@ -22,11 +22,13 @@ namespace portal
     private:
         Entity* player = nullptr;
         Application *app;
-
+        FreeCameraControllerComponent* controller;
+        RigidBodyComponent* playerRigidBody;
+        bool& isGrounded;
     public:
-        void init(Entity* player, Application* app) {
-            this->player = player;
-            this->app = app;
+        MovementSystem(Entity* player, Application* app) : player(player), app(app), isGrounded(player->getWorld()->isGrounded) {
+            controller = player->getComponent<FreeCameraControllerComponent>();
+            playerRigidBody = player->getComponent<RigidBodyComponent>();
         }
 
 
@@ -39,9 +41,7 @@ namespace portal
             const float timeStep = 1.0f / 60.0f;
             float delta = deltaTime;
             // Get rigidbody of player 
-            RigidBodyComponent* playerRigidBody = player->getComponent<RigidBodyComponent>();
             glm::mat4 matrix = player->localTransform.toMat4();
-
             // front: the direction the camera is looking at projected on the xz plane
             // up: global up vector (0,1,0)
             // right: the vector to the right of the camera (x-axis)
@@ -55,15 +55,18 @@ namespace portal
             // project on xz plane
             right.y = 0;
             right = glm::normalize(right);
-            FreeCameraControllerComponent* controller = player->getComponent<FreeCameraControllerComponent>();
+            bool jumped = false;
             while(delta > 0.0f){
                 // If the remaining time is smaller than the time step, use the remaining time
                 float step = glm::min(delta, timeStep);
                 glm::vec3 velf = glm::vec3(0.0f, 0.0f, 0.0f);
                 glm::vec3 velr = glm::vec3(0.0f, 0.0f, 0.0f);
-                r3d::Vector3 linearVelocity = playerRigidBody->getBody()->getLinearVelocity();
-                // if shift is pressed, speed up
-
+                // Check if grounded and pressed space then jump
+                if(isGrounded && app->getKeyboard().isPressed(GLFW_KEY_SPACE)){
+                    // jump Apply force
+                    playerRigidBody->getBody()->applyWorldForceAtCenterOfMass(r3d::Vector3(0, controller->positionSensitivity.y * 60.0f, 0));
+                    jumped = true;
+                }
                 if(app->getKeyboard().isPressed(GLFW_KEY_W)){
                     // move forward
                     velf = front * controller->positionSensitivity.z;
@@ -85,6 +88,7 @@ namespace portal
                 if(app->getKeyboard().isPressed(GLFW_KEY_LEFT_SHIFT)){
                     vel *= controller->speedupFactor;
                 }
+                r3d::Vector3 linearVelocity = playerRigidBody->getBody()->getLinearVelocity();
                 playerRigidBody->getBody()->setLinearVelocity(r3d::Vector3(vel.x, linearVelocity.y, vel.z));
 
                 // Update the physics world
@@ -92,6 +96,7 @@ namespace portal
                 // Subtract the time step from the remaining time
                 delta -= step;
             }
+            if(jumped) isGrounded = false;
             // For each entity in the world
             for(auto entity : world->getEntities()){
                 // Get the movement component if it exists
@@ -111,6 +116,7 @@ namespace portal
                 }
                 RigidBodyComponent* rgb = entity->getComponent<RigidBodyComponent>();
                 if(rgb){
+                    if(rgb->getBody()->getType() == r3d::BodyType::STATIC) continue;
                     FreeCameraControllerComponent* fcc = entity->getComponent<FreeCameraControllerComponent>();
                     r3d::Transform transform = rgb->getBody()->getTransform();
                     transform.setPosition(transform.getPosition() - rgb->relativePosition);

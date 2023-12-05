@@ -2,6 +2,7 @@
 #include <json/json.hpp>
 #include "../deserialize-utils.hpp"
 #include "../components/animation.hpp"
+#include "../systems/event.hpp"
 namespace portal {
 
     // This will deserialize a json array of entities and add the new entities to the current world
@@ -19,7 +20,7 @@ namespace portal {
         }
     }
 
-    void World::deserialize_physics(const nlohmann::json& data){
+    void World::deserialize_physics(const nlohmann::json& data, const nlohmann::json* OnCollisionData){
         if(!data.is_object()) return;
         r3d::PhysicsWorld::WorldSettings settings;
         glm::vec3 gravity(settings.gravity.x, settings.gravity.y, settings.gravity.z);
@@ -29,6 +30,9 @@ namespace portal {
         // TODO: Support world settings like gravity and world name
 
         this->physicsWorld = this->physicsCommon.createPhysicsWorld(settings);
+        EventSystem *eventSystem = new EventSystem(this, this->isGrounded);
+        if(OnCollisionData)eventSystem->deserialize(*OnCollisionData);
+        this->physicsWorld->setEventListener(eventSystem);
     }
     
     void World::startAnimation(const std::string& name, bool reverse) {

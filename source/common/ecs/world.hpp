@@ -19,6 +19,7 @@ namespace portal {
         std::unordered_map<std::string, AnimationComponent *> playingAnimations;
         std::unordered_set<std::string> toStopPlaying;
     public:
+        bool isGrounded = false;
 
         World() = default;
 
@@ -29,7 +30,7 @@ namespace portal {
 
         // This will deserialize a json object of physics world settings and create a physics world
         // The physics world will be used for physics simulation
-        void deserialize_physics(const nlohmann::json& data);
+        void deserialize_physics(const nlohmann::json& data, const nlohmann::json* OnCollisionData = nullptr);
 
         // This adds an entity to the entities set and returns a pointer to that entity
         // WARNING The entity is owned by this world so don't use "delete" to delete it, instead, call "markForRemoval"
