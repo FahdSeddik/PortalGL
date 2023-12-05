@@ -70,6 +70,7 @@ namespace portal {
                         }
                     };
                     collisionEvents[name_1][name_2] = std::make_pair(once ? 1:-1, std::make_pair(eventType, callback));
+                    collisionEvents[name_2][name_1] = std::make_pair(once ? 1:-1, std::make_pair(eventType, callback));
                 }
             }
         }
@@ -101,6 +102,8 @@ namespace portal {
                         physicsWorld->raycast(ray, &rayCastHandler);
                     }
                 }
+                if(collisionEvents.find(name_1) == collisionEvents.end()) continue;
+                if(collisionEvents[name_1].find(name_2) == collisionEvents[name_1].end()) continue;
                 auto& event = collisionEvents[name_1][name_2];
                 if(event.second.first != contactPair.getEventType() || event.first == 0) continue;
                 if(event.first > 0) event.first--;

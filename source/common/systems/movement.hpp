@@ -6,7 +6,8 @@
 #include "../components/free-camera-controller.hpp"
 
 #include "../application.hpp"
-
+#include <reactphysics3d/reactphysics3d.h>
+namespace r3d = reactphysics3d;
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 #include <glm/trigonometric.hpp>
@@ -14,6 +15,25 @@
 
 namespace portal
 {
+
+    // Class Handle player Grounded
+    class RayCastInteraction : public r3d::RaycastCallback {
+        bool& isAttached;
+        public:
+        RayCastInteraction(bool& isAttached) : isAttached(isAttached) {}
+        /// Called when a raycast hit a body
+        /**
+         * @param hit The raycast hit information
+         */
+        virtual r3d::decimal notifyRaycastHit(const r3d::RaycastInfo& raycastInfo) override {
+            // is grounded 
+            std::string name = *((std::string*)raycastInfo.body->getUserData());
+            std::cout << "RayCast Hit" << name << std::endl;
+            if(name == "cube 1")isAttached = true;
+            return raycastInfo.hitFraction;
+        }
+    };
+
 
     // The movement system is responsible for moving every entity which contains a MovementComponent.
     // This system is added as a simple example for how use the ECS framework to implement logic. 
@@ -25,6 +45,8 @@ namespace portal
         FreeCameraControllerComponent* controller;
         RigidBodyComponent* playerRigidBody;
         bool& isGrounded;
+        bool isAttached = false;
+        Entity* attachement = nullptr;
     public:
         MovementSystem(Entity* player, Application* app) : player(player), app(app), isGrounded(player->getWorld()->isGrounded) {
             controller = player->getComponent<FreeCameraControllerComponent>();
@@ -47,6 +69,8 @@ namespace portal
             // right: the vector to the right of the camera (x-axis)
             glm::vec3 front = glm::normalize(glm::vec3(matrix * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)));
             // project on xz plane
+            r3d::Vector3 frontdir(front.x, front.y, front.z);
+            frontdir.normalize();
             front.y = 0;
             front = glm::normalize(front);
             //global up
@@ -56,6 +80,28 @@ namespace portal
             right.y = 0;
             right = glm::normalize(right);
             bool jumped = false;
+            // Player position
+            r3d::Vector3 playerPos = player->localTransform.getPosition();
+            // Check if E is pressed
+            if(!isAttached && app->getKeyboard().justPressed(GLFW_KEY_E)) {
+                // RayCast from player position to front direction with length 1.5
+                r3d::Ray ray(playerPos + frontdir,frontdir * 3 + playerPos);
+                player->getWorld()->getPhysicsWorld()->raycast(ray, new RayCastInteraction(isAttached));
+                if(isAttached) {
+                    // Get the entity that is attached
+                    for(auto entity : world->getEntities()){
+                        if(entity->name == "cube 1") {
+                            attachement = entity;
+                            break;
+                        }
+                    }
+                }
+            } else if (app->getKeyboard().justPressed(GLFW_KEY_E)) {
+                attachement->getComponent<RigidBodyComponent>()->getCollider()->setIsTrigger(false);
+                attachement = nullptr;
+                isAttached = false;
+            }
+
             while(delta > 0.0f){
                 // If the remaining time is smaller than the time step, use the remaining time
                 float step = glm::min(delta, timeStep);
@@ -99,6 +145,18 @@ namespace portal
             if(jumped) isGrounded = false;
             // For each entity in the world
             for(auto entity : world->getEntities()){
+                if(entity == attachement) {
+                    r3d::Transform temp;
+                    temp.setPosition(playerPos + frontdir * 3);
+                    temp.setOrientation(player->localTransform.getRotation());
+                    entity->localTransform.setTransform(temp);
+                    RigidBodyComponent* rgb = entity->getComponent<RigidBodyComponent>();
+                    rgb->getBody()->setTransform(temp);
+                    rgb->getBody()->setLinearVelocity(r3d::Vector3(0,0,0));
+                    rgb->getBody()->setAngularVelocity(r3d::Vector3(0,0,0));
+                    rgb->getCollider()->setIsTrigger(true);
+                    continue;
+                }
                 // Get the movement component if it exists
                 MovementComponent* movement = entity->getComponent<MovementComponent>();
                 // If the movement component exists
