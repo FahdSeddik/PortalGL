@@ -108,8 +108,9 @@ namespace portal {
                 if(collisionEvents.find(name_1) == collisionEvents.end()) continue;
                 if(collisionEvents[name_1].find(name_2) == collisionEvents[name_1].end()) continue;
                 auto& event = collisionEvents[name_1][name_2];
+                auto& eventCopy = collisionEvents[name_2][name_1];
                 if(event.second.first != contactPair.getEventType() || event.first == 0) continue;
-                if(event.first > 0) event.first--;
+                if(event.first > 0) event.first--, eventCopy.first--;
                 event.second.second();
             }
         }
