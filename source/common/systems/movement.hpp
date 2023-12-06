@@ -25,10 +25,12 @@ namespace portal
         virtual r3d::decimal notifyRaycastHit(const r3d::RaycastInfo& raycastInfo) override {
             // Get the name of the body that has been hit
             if(raycastInfo.body->getCollider(0)->getIsTrigger()){
+                // if trigger, return 1.0 to continue raycast
                 return r3d::decimal(1.0);
             }
             attachedName = *((std::string*)raycastInfo.body->getUserData());
             std::cout << "RayCast Hit" << attachedName << std::endl;
+            // return 0 to stop raycast
             return r3d::decimal(0.0);
         }
     };

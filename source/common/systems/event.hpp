@@ -19,9 +19,11 @@ namespace portal {
             // is grounded 
             // std::cout << "Player Grounded: " << *((std::string*)raycastInfo.body->getUserData()) << std::endl;
             if(raycastInfo.body->getCollider(0)->getIsTrigger()){
+                // if trigger, return 1.0 to continue raycast
                 return r3d::decimal(1.0);
             }
             isGrounded = true;
+            // return 0 to stop raycast
             return r3d::decimal(0.0);
         }
     };
