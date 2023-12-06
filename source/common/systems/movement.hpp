@@ -6,7 +6,8 @@
 #include "../components/free-camera-controller.hpp"
 
 #include "../application.hpp"
-
+#include <reactphysics3d/reactphysics3d.h>
+namespace r3d = reactphysics3d;
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 #include <glm/trigonometric.hpp>
@@ -15,6 +16,26 @@
 namespace portal
 {
 
+    // Class Handle player Grounded
+    class RayCastInteraction : public r3d::RaycastCallback {
+        std::string& attachedName;
+        public:
+        RayCastInteraction(std::string& attachedName) : attachedName(attachedName) {}
+        // Called when a raycast hits a body
+        virtual r3d::decimal notifyRaycastHit(const r3d::RaycastInfo& raycastInfo) override {
+            // Get the name of the body that has been hit
+            if(raycastInfo.body->getCollider(0)->getIsTrigger()){
+                // if trigger, return 1.0 to continue raycast
+                return r3d::decimal(1.0);
+            }
+            attachedName = *((std::string*)raycastInfo.body->getUserData());
+            std::cout << "RayCast Hit" << attachedName << std::endl;
+            // return 0 to stop raycast
+            return r3d::decimal(0.0);
+        }
+    };
+
+
     // The movement system is responsible for moving every entity which contains a MovementComponent.
     // This system is added as a simple example for how use the ECS framework to implement logic. 
     // For more information, see "common/components/movement.hpp"
@@ -22,78 +43,51 @@ namespace portal
     private:
         Entity* player = nullptr;
         Application *app;
+        FreeCameraControllerComponent* controller;
+        RigidBodyComponent* playerRigidBody;
+        r3d::PhysicsWorld* physicsWorld;
+        bool& isGrounded;
+        std::string attachedName = "";
+        Entity* attachement = nullptr;
+
+        // Player Vectors
+        r3d::Vector3 absoluteFront;
+        glm::vec3 front;
+        glm::vec3 right;
+        // Player position reference
+        const r3d::Vector3 &playerPos;
+
+        void attachToPlayer(Entity *entity) const;
+
+        void physicsUpdate(float deltaTime);
+
+        // Returns velocity component of player
+        glm::vec3 handlePlayerMovement(bool &jumped);
+
+        void calculatePlayerVectors();
+
+        void checkAttachment();
 
     public:
-        void init(Entity* player, Application* app) {
-            this->player = player;
-            this->app = app;
+        MovementSystem(Entity* player, Application* app) : player(player), app(app), isGrounded(player->getWorld()->isGrounded), playerPos(player->localTransform.getPosition()) {
+            controller = player->getComponent<FreeCameraControllerComponent>();
+            playerRigidBody = player->getComponent<RigidBodyComponent>();
+            physicsWorld = player->getWorld()->getPhysicsWorld();
         }
 
-
-
+        
         // This should be called every frame to update all entities containing a MovementComponent. 
         void update(World* world, float deltaTime) {
-            r3d::PhysicsWorld* physicsWorld = world->getPhysicsWorld();
             if(!physicsWorld) return;
-            // Constant physics time step (60 FPS)
-            const float timeStep = 1.0f / 60.0f;
-            float delta = deltaTime;
-            // Get rigidbody of player 
-            RigidBodyComponent* playerRigidBody = player->getComponent<RigidBodyComponent>();
-            glm::mat4 matrix = player->localTransform.toMat4();
-
-            // front: the direction the camera is looking at projected on the xz plane
-            // up: global up vector (0,1,0)
-            // right: the vector to the right of the camera (x-axis)
-            glm::vec3 front = glm::normalize(glm::vec3(matrix * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)));
-            // project on xz plane
-            front.y = 0;
-            front = glm::normalize(front);
-            //global up
-            glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-            glm::vec3 right = glm::normalize(glm::vec3(matrix * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
-            // project on xz plane
-            right.y = 0;
-            right = glm::normalize(right);
-            FreeCameraControllerComponent* controller = player->getComponent<FreeCameraControllerComponent>();
-            while(delta > 0.0f){
-                // If the remaining time is smaller than the time step, use the remaining time
-                float step = glm::min(delta, timeStep);
-                glm::vec3 velf = glm::vec3(0.0f, 0.0f, 0.0f);
-                glm::vec3 velr = glm::vec3(0.0f, 0.0f, 0.0f);
-                r3d::Vector3 linearVelocity = playerRigidBody->getBody()->getLinearVelocity();
-                // if shift is pressed, speed up
-
-                if(app->getKeyboard().isPressed(GLFW_KEY_W)){
-                    // move forward
-                    velf = front * controller->positionSensitivity.z;
-                }
-                if(app->getKeyboard().isPressed(GLFW_KEY_S)){
-                    // move backward
-                    velf = -front * controller->positionSensitivity.z;
-                }
-                if(app->getKeyboard().isPressed(GLFW_KEY_A)){
-                    // move left
-                    velr = -right * controller->positionSensitivity.x;
-                }
-                if(app->getKeyboard().isPressed(GLFW_KEY_D)){
-                    // move right
-                    velr = right * controller->positionSensitivity.x;
-                }
-                glm::vec3 vel = velf + velr;
-                // if shift is pressed, speed up
-                if(app->getKeyboard().isPressed(GLFW_KEY_LEFT_SHIFT)){
-                    vel *= controller->speedupFactor;
-                }
-                playerRigidBody->getBody()->setLinearVelocity(r3d::Vector3(vel.x, linearVelocity.y, vel.z));
-
-                // Update the physics world
-                physicsWorld->update(step);
-                // Subtract the time step from the remaining time
-                delta -= step;
-            }
+            calculatePlayerVectors();
+            checkAttachment();
+            physicsUpdate(deltaTime);
             // For each entity in the world
-            for(auto entity : world->getEntities()){
+            for(const auto& [name, entity] : world->getEntities()){
+                if(entity == attachement) {
+                    attachToPlayer(entity);
+                    continue;
+                }
                 // Get the movement component if it exists
                 MovementComponent* movement = entity->getComponent<MovementComponent>();
                 // If the movement component exists
@@ -111,6 +105,7 @@ namespace portal
                 }
                 RigidBodyComponent* rgb = entity->getComponent<RigidBodyComponent>();
                 if(rgb){
+                    if(rgb->getBody()->getType() == r3d::BodyType::STATIC) continue;
                     FreeCameraControllerComponent* fcc = entity->getComponent<FreeCameraControllerComponent>();
                     r3d::Transform transform = rgb->getBody()->getTransform();
                     transform.setPosition(transform.getPosition() - rgb->relativePosition);

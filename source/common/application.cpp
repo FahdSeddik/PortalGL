@@ -238,7 +238,9 @@ int portal::Application::run(int run_for_frames) {
     // The time at which the last frame started. But there was no frames yet, so we'll just pick the current time.
     double last_frame_time = glfwGetTime();
     int current_frame = 0;
-
+    // For frame rate calculation
+    double last_fps_time = last_frame_time;
+    int frame_count = 0;
     //Game loop
     while(!glfwWindowShouldClose(window)){
         if(run_for_frames != 0 && current_frame >= run_for_frames) break;
@@ -270,6 +272,13 @@ int portal::Application::run(int run_for_frames) {
         // Call onDraw, in which we will draw the current frame, and send to it the time difference between the last and current frame
         if(currentState) currentState->onDraw(current_frame_time - last_frame_time);
         last_frame_time = current_frame_time; // Then update the last frame start time (this frame is now the last frame)
+        // For frame rate calculation
+        ++frame_count;
+        if(current_frame_time - last_fps_time >= 1.0){
+            std::cout << "FPS: " << frame_count << std::endl;
+            frame_count = 0;
+            last_fps_time = current_frame_time;
+        }
 
 #if defined(ENABLE_OPENGL_DEBUG_MESSAGES)
         // Since ImGui causes many messages to be thrown, we are temporarily disabling the debug messages till we render the ImGui

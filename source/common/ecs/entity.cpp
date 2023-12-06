@@ -25,7 +25,7 @@ namespace portal {
     // Deserializes the entity data and components from a json object
     void Entity::deserialize(const nlohmann::json& data){
         if(!data.is_object()) return;
-        name = data.value("name", name);
+        isAttachable = data.value("isAttachable", isAttachable);
         localTransform.deserialize(data);
         if(data.contains("components")){
             if(const auto& components = data["components"]; components.is_array()){

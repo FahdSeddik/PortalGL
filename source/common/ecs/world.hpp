@@ -9,8 +9,8 @@ namespace portal {
     class AnimationComponent;
     // This class holds a set of entities
     class World {
-        std::unordered_set<Entity*> entities; // These are the entities held by this world
-        std::unordered_set<Entity*> markedForRemoval; // These are the entities that are awaiting to be deleted
+        std::unordered_map<std::string, Entity*> entities; // These are the entities held by this world
+        std::unordered_set<std::string> markedForRemoval; // These are the entities that are awaiting to be deleted
                                                       // when deleteMarkedEntities is called
         r3d::PhysicsCommon physicsCommon; // Factory pattern for creating physics world objects , logging, and memory management
         r3d::PhysicsWorld* physicsWorld = nullptr; // This is the physics world that will be used for physics simulation
@@ -19,6 +19,7 @@ namespace portal {
         std::unordered_map<std::string, AnimationComponent *> playingAnimations;
         std::unordered_set<std::string> toStopPlaying;
     public:
+        bool isGrounded = false;
 
         World() = default;
 
@@ -29,7 +30,7 @@ namespace portal {
 
         // This will deserialize a json object of physics world settings and create a physics world
         // The physics world will be used for physics simulation
-        void deserialize_physics(const nlohmann::json& data);
+        void deserialize_physics(const nlohmann::json& data, const nlohmann::json* OnCollisionData = nullptr);
 
         // This adds an entity to the entities set and returns a pointer to that entity
         // WARNING The entity is owned by this world so don't use "delete" to delete it, instead, call "markForRemoval"
@@ -42,14 +43,16 @@ namespace portal {
             Entity* entity = new Entity();
             // set its world member variable to this
             entity->world = this;
-            // insert it in the suitable container
-            entities.insert(entity);
             return entity;
         }
 
         // This returns and immutable reference to the set of all entites in the world.
-        const std::unordered_set<Entity*>& getEntities() {
+        const std::unordered_map<std::string, Entity*>& getEntities() {
             return entities;
+        }
+
+        Entity* getEntityByName(const std::string& name) {
+            return entities[name];
         }
 
         // This marks an entity for removal by adding it to the "markedForRemoval" set.
@@ -57,8 +60,8 @@ namespace portal {
         void markForRemoval(Entity* entity){
             //TODO: (Req 8) If the entity is in this world, add it to the "markedForRemoval" set.
             // If the entity is in this world, add it to the "markedForRemoval" set.
-            if (entities.find(entity) != entities.end()) {
-                markedForRemoval.insert(entity);
+            if (entities.find(entity->name) != entities.end()) {
+                markedForRemoval.insert(entity->name);
             }
         }
 
@@ -67,9 +70,9 @@ namespace portal {
         void deleteMarkedEntities(){
             //TODO: (Req 8) Remove and delete all the entities that have been marked for removal
             // Remove all the entities that have been marked for removal
-            for (auto entity : markedForRemoval) {
-                entities.erase(entity);
-                delete entity;
+            for (auto& name : markedForRemoval) {
+                delete entities[name];
+                entities.erase(name);
             }
             markedForRemoval.clear();
         }
@@ -78,7 +81,7 @@ namespace portal {
         void clear(){
             //TODO: (Req 8) Delete all the entites and make sure that the containers are empty
             // Add every element in entities to markForRemoval list
-            for (auto entity : entities) {
+            for (const auto& [name, entity] : entities) {
                 markForRemoval(entity);
             }
             // Call deleteMarkedEntities function

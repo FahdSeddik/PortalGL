@@ -15,7 +15,12 @@ class Playstate: public portal::State {
     portal::World world;
     portal::ForwardRenderer renderer;
     portal::FreeCameraControllerSystem cameraController;
-    portal::MovementSystem movementSystem;
+    portal::MovementSystem* movementSystem;
+
+public:
+    // mark constructor to not delete
+    Playstate() = default;
+    private:
 
     void onInitialize() override {
         // First of all, we get the scene configuration from the app config
@@ -25,7 +30,7 @@ class Playstate: public portal::State {
             portal::deserializeAllAssets(config["assets"]);
         }
         if(config.contains("physicsWorld")){
-            world.deserialize_physics(config["physicsWorld"]);
+            world.deserialize_physics(config["physicsWorld"], config.contains("onCollisionEvents") ? &config["onCollisionEvents"] : nullptr);
         }
         // If we have a world in the scene config, we use it to populate our world
         if(config.contains("world")){
@@ -37,17 +42,12 @@ class Playstate: public portal::State {
         auto size = getApp()->getFrameBufferSize();
         renderer.initialize(size, config["renderer"]);
 
-        for(auto& entity : world.getEntities()) {
-            if(entity->name == "Player") {
-                movementSystem.init(entity, getApp());
-                break;
-            }
-        }
+        movementSystem = new portal::MovementSystem(world.getEntityByName("Player"), getApp());
     }
 
     void onDraw(double deltaTime) override {
         // Here, we just run a bunch of systems to control the world logic
-        movementSystem.update(&world, (float)deltaTime);
+        movementSystem->update(&world, (float)deltaTime);
         cameraController.update(&world, (float)deltaTime);
         
         // Loop on playing animations and play them given delta time
