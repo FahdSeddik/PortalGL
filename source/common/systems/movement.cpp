@@ -3,13 +3,17 @@
 namespace portal {
     void MovementSystem::attachToPlayer(Entity* entity) const {
         r3d::Transform temp;
+        // Set the position of the entity to be in front of the player
         temp.setPosition(playerPos + absoluteFront * 3);
+        // Set the orientation of the entity to be the same as it was picked up
         temp.setOrientation(entity->localTransform.getRotation());
         entity->localTransform.setTransform(temp);
         RigidBodyComponent* rgb = entity->getComponent<RigidBodyComponent>();
+        // Make sure rigidbody is synced with the transform of the entity
         rgb->getBody()->setTransform(temp);
         rgb->getBody()->setLinearVelocity(r3d::Vector3(0,0,0));
         rgb->getBody()->setAngularVelocity(r3d::Vector3(0,0,0));
+        // Make sure the collider is a trigger to avoid false collisions
         rgb->getCollider()->setIsTrigger(true);
     }
 
@@ -100,6 +104,8 @@ namespace portal {
                 attachement = potentialAttachement;
             }
         } else if (app->getKeyboard().justPressed(GLFW_KEY_E)) {
+            // If E is pressed and we have an attachement then we detach it
+            // attachment should return to not be a trigger to collide with other objects
             attachement->getComponent<RigidBodyComponent>()->getCollider()->setIsTrigger(false);
             attachement = nullptr;
             attachedName = "";
