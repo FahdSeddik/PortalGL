@@ -86,6 +86,7 @@ set(COMMON_SOURCES
         source/common/systems/forward-renderer.cpp
         source/common/systems/free-camera-controller.hpp
         source/common/systems/movement.hpp
+        source/common/systems/movement.cpp
         source/common/systems/event.hpp
 
         source/common/components/RigidBody.hpp

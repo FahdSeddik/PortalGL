@@ -934,7 +934,6 @@
             // Moving Objects
             //====================
             {
-                "name": "cube 1",
                 "position": [0, 1, 0],
                 "scale": [0.4, 0.4, 0.4],
                 "components":[
@@ -953,7 +952,30 @@
                         "type": "ModelLoader",
                         "model": "companion_cube"
                     }
-                ]
+                ],
+                "isAttachable": true
+            },
+            {
+                "position": [5, 1, 5],
+                "scale": [0.4, 0.4, 0.4],
+                "components":[
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Dynamic",
+                        "enableGravity": true,
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [0.9, 0.9, 0.9],
+                            "friction": 1.0,
+                            "bounciness":0.0
+                        }
+                    },
+                    {
+                        "type": "ModelLoader",
+                        "model": "companion_cube"
+                    }
+                ],
+                "isAttachable": true
             },
             //====================
             // Static Objects (floor, walls, etc)

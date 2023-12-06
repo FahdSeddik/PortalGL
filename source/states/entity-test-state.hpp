@@ -9,7 +9,7 @@
 // This is a helper function that will search for a component and will return the first one found
 template<typename T>
 T* find(portal::World *world){
-    for(auto& entity : world->getEntities()){
+    for(const auto&  [name, entity]: world->getEntities()){
         T* component = entity->getComponent<T>();
         if(component) return component;
     }
@@ -46,7 +46,7 @@ class EntityTestState: public portal::State {
         glm::ivec2 size = getApp()->getFrameBufferSize();
         //TODO: (Req 8) Change the following line to compute the correct view projection matrix 
         glm::mat4 VP = camera->getProjectionMatrix(size) * camera->getViewMatrix();
-        for(auto& entity : world.getEntities()){
+        for(const auto&  [name, entity]: world.getEntities()){
             // For each entity, we look for a mesh renderer (if none was found, we skip this entity)
             portal::MeshRendererComponent* meshRenderer = entity->getComponent<portal::MeshRendererComponent>();
             if(meshRenderer == nullptr) continue;

@@ -37,7 +37,7 @@ namespace portal
             // As soon as we find one, we break
             CameraComponent* camera = nullptr;
             FreeCameraControllerComponent *controller = nullptr;
-            for(auto entity : world->getEntities()){
+            for(const auto&  [name, entity] : world->getEntities()){
                 camera = entity->getComponent<CameraComponent>();
                 controller = entity->getComponent<FreeCameraControllerComponent>();
                 if(camera && controller) break;

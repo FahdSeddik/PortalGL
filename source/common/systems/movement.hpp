@@ -18,19 +18,18 @@ namespace portal
 
     // Class Handle player Grounded
     class RayCastInteraction : public r3d::RaycastCallback {
-        bool& isAttached;
+        std::string& attachedName;
         public:
-        RayCastInteraction(bool& isAttached) : isAttached(isAttached) {}
-        /// Called when a raycast hit a body
-        /**
-         * @param hit The raycast hit information
-         */
+        RayCastInteraction(std::string& attachedName) : attachedName(attachedName) {}
+        // Called when a raycast hits a body
         virtual r3d::decimal notifyRaycastHit(const r3d::RaycastInfo& raycastInfo) override {
-            // is grounded 
-            std::string name = *((std::string*)raycastInfo.body->getUserData());
-            std::cout << "RayCast Hit" << name << std::endl;
-            if(name == "cube 1")isAttached = true;
-            return raycastInfo.hitFraction;
+            // Get the name of the body that has been hit
+            if(raycastInfo.body->getCollider(0)->getIsTrigger()){
+                return r3d::decimal(1.0);
+            }
+            attachedName = *((std::string*)raycastInfo.body->getUserData());
+            std::cout << "RayCast Hit" << attachedName << std::endl;
+            return r3d::decimal(0.0);
         }
     };
 
@@ -44,117 +43,47 @@ namespace portal
         Application *app;
         FreeCameraControllerComponent* controller;
         RigidBodyComponent* playerRigidBody;
+        r3d::PhysicsWorld* physicsWorld;
         bool& isGrounded;
-        bool isAttached = false;
+        std::string attachedName = "";
         Entity* attachement = nullptr;
+
+        // Player Vectors
+        r3d::Vector3 absoluteFront;
+        glm::vec3 front;
+        glm::vec3 right;
+        // Player position reference
+        const r3d::Vector3 &playerPos;
+
+        void attachToPlayer(Entity *entity) const;
+
+        void physicsUpdate(float deltaTime);
+
+        // Returns velocity component of player
+        glm::vec3 handlePlayerMovement(bool &jumped);
+
+        void calculatePlayerVectors();
+
+        void checkAttachment();
+
     public:
-        MovementSystem(Entity* player, Application* app) : player(player), app(app), isGrounded(player->getWorld()->isGrounded) {
+        MovementSystem(Entity* player, Application* app) : player(player), app(app), isGrounded(player->getWorld()->isGrounded), playerPos(player->localTransform.getPosition()) {
             controller = player->getComponent<FreeCameraControllerComponent>();
             playerRigidBody = player->getComponent<RigidBodyComponent>();
+            physicsWorld = player->getWorld()->getPhysicsWorld();
         }
 
-
-
+        
         // This should be called every frame to update all entities containing a MovementComponent. 
         void update(World* world, float deltaTime) {
-            r3d::PhysicsWorld* physicsWorld = world->getPhysicsWorld();
             if(!physicsWorld) return;
-            // Constant physics time step (60 FPS)
-            const float timeStep = 1.0f / 60.0f;
-            float delta = deltaTime;
-            // Get rigidbody of player 
-            glm::mat4 matrix = player->localTransform.toMat4();
-            // front: the direction the camera is looking at projected on the xz plane
-            // up: global up vector (0,1,0)
-            // right: the vector to the right of the camera (x-axis)
-            glm::vec3 front = glm::normalize(glm::vec3(matrix * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)));
-            // project on xz plane
-            r3d::Vector3 frontdir(front.x, front.y, front.z);
-            frontdir.normalize();
-            front.y = 0;
-            front = glm::normalize(front);
-            //global up
-            glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-            glm::vec3 right = glm::normalize(glm::vec3(matrix * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
-            // project on xz plane
-            right.y = 0;
-            right = glm::normalize(right);
-            bool jumped = false;
-            // Player position
-            r3d::Vector3 playerPos = player->localTransform.getPosition();
-            // Check if E is pressed
-            if(!isAttached && app->getKeyboard().justPressed(GLFW_KEY_E)) {
-                // RayCast from player position to front direction with length 1.5
-                r3d::Ray ray(playerPos + frontdir,frontdir * 3 + playerPos);
-                player->getWorld()->getPhysicsWorld()->raycast(ray, new RayCastInteraction(isAttached));
-                if(isAttached) {
-                    // Get the entity that is attached
-                    for(auto entity : world->getEntities()){
-                        if(entity->name == "cube 1") {
-                            attachement = entity;
-                            break;
-                        }
-                    }
-                }
-            } else if (app->getKeyboard().justPressed(GLFW_KEY_E)) {
-                attachement->getComponent<RigidBodyComponent>()->getCollider()->setIsTrigger(false);
-                attachement = nullptr;
-                isAttached = false;
-            }
-
-            while(delta > 0.0f){
-                // If the remaining time is smaller than the time step, use the remaining time
-                float step = glm::min(delta, timeStep);
-                glm::vec3 velf = glm::vec3(0.0f, 0.0f, 0.0f);
-                glm::vec3 velr = glm::vec3(0.0f, 0.0f, 0.0f);
-                // Check if grounded and pressed space then jump
-                if(isGrounded && app->getKeyboard().isPressed(GLFW_KEY_SPACE)){
-                    // jump Apply force
-                    playerRigidBody->getBody()->applyWorldForceAtCenterOfMass(r3d::Vector3(0, controller->positionSensitivity.y * 60.0f, 0));
-                    jumped = true;
-                }
-                if(app->getKeyboard().isPressed(GLFW_KEY_W)){
-                    // move forward
-                    velf = front * controller->positionSensitivity.z;
-                }
-                if(app->getKeyboard().isPressed(GLFW_KEY_S)){
-                    // move backward
-                    velf = -front * controller->positionSensitivity.z;
-                }
-                if(app->getKeyboard().isPressed(GLFW_KEY_A)){
-                    // move left
-                    velr = -right * controller->positionSensitivity.x;
-                }
-                if(app->getKeyboard().isPressed(GLFW_KEY_D)){
-                    // move right
-                    velr = right * controller->positionSensitivity.x;
-                }
-                glm::vec3 vel = velf + velr;
-                // if shift is pressed, speed up
-                if(app->getKeyboard().isPressed(GLFW_KEY_LEFT_SHIFT)){
-                    vel *= controller->speedupFactor;
-                }
-                r3d::Vector3 linearVelocity = playerRigidBody->getBody()->getLinearVelocity();
-                playerRigidBody->getBody()->setLinearVelocity(r3d::Vector3(vel.x, linearVelocity.y, vel.z));
-
-                // Update the physics world
-                physicsWorld->update(step);
-                // Subtract the time step from the remaining time
-                delta -= step;
-            }
-            if(jumped) isGrounded = false;
+            calculatePlayerVectors();
+            checkAttachment();
+            physicsUpdate(deltaTime);
             // For each entity in the world
-            for(auto entity : world->getEntities()){
+            for(const auto& [name, entity] : world->getEntities()){
                 if(entity == attachement) {
-                    r3d::Transform temp;
-                    temp.setPosition(playerPos + frontdir * 3);
-                    temp.setOrientation(player->localTransform.getRotation());
-                    entity->localTransform.setTransform(temp);
-                    RigidBodyComponent* rgb = entity->getComponent<RigidBodyComponent>();
-                    rgb->getBody()->setTransform(temp);
-                    rgb->getBody()->setLinearVelocity(r3d::Vector3(0,0,0));
-                    rgb->getBody()->setAngularVelocity(r3d::Vector3(0,0,0));
-                    rgb->getCollider()->setIsTrigger(true);
+                    attachToPlayer(entity);
                     continue;
                 }
                 // Get the movement component if it exists

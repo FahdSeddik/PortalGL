@@ -252,7 +252,7 @@ namespace portal {
         opaqueCommands.clear();
         transparentCommands.clear();
         lights.clear();
-        for(auto entity : world->getEntities()){
+        for(const auto& [name, entity] : world->getEntities()){
             // If we hadn't found a camera yet, we look for a camera in this entity
             if(!camera) camera = entity->getComponent<CameraComponent>();
             // If this entity has a mesh renderer component

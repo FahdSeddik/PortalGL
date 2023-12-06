@@ -42,12 +42,7 @@ public:
         auto size = getApp()->getFrameBufferSize();
         renderer.initialize(size, config["renderer"]);
 
-        for(auto& entity : world.getEntities()) {
-            if(entity->name == "Player") {
-                movementSystem = new portal::MovementSystem(entity, getApp());
-                break;
-            }
-        }
+        movementSystem = new portal::MovementSystem(world.getEntityByName("Player"), getApp());
     }
 
     void onDraw(double deltaTime) override {

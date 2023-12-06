@@ -12,7 +12,9 @@ namespace portal {
         if(!data.is_array()) return;
         for(const auto& entityData : data){
             Entity* entity = add();
-                entity->parent = parent;
+            entity->parent = parent;
+            entity->name = entityData.value("name", std::to_string(entities.size()));
+            entities[entity->name] = entity;
             entity->deserialize(entityData);
             if(entityData.contains("children")){
                 deserialize(entityData["children"], entity);
@@ -27,10 +29,13 @@ namespace portal {
         gravity = data.value("gravity", gravity);
         settings.gravity = r3d::Vector3(gravity.x, gravity.y, gravity.z);
         settings.worldName = data.value("worldName", settings.worldName);
-        // TODO: Support world settings like gravity and world name
+        // TODO: Support other world settings if needed
 
         this->physicsWorld = this->physicsCommon.createPhysicsWorld(settings);
+        // Create a new eventsystem that would be used to detect collisions
+        // pass isGrounded by reference to allow the event system to change it
         EventSystem *eventSystem = new EventSystem(this, this->isGrounded);
+        // Deserialize OnCollisionEvents if exists
         if(OnCollisionData)eventSystem->deserialize(*OnCollisionData);
         this->physicsWorld->setEventListener(eventSystem);
     }

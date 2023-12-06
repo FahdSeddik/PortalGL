@@ -17,9 +17,12 @@ namespace portal {
          */
         virtual r3d::decimal notifyRaycastHit(const r3d::RaycastInfo& raycastInfo) override {
             // is grounded 
-            // std::cout << "Player Grounded: " << raycastInfo.hitFraction << std::endl;
+            // std::cout << "Player Grounded: " << *((std::string*)raycastInfo.body->getUserData()) << std::endl;
+            if(raycastInfo.body->getCollider(0)->getIsTrigger()){
+                return r3d::decimal(1.0);
+            }
             isGrounded = true;
-            return raycastInfo.hitFraction;
+            return r3d::decimal(0.0);
         }
     };
 
