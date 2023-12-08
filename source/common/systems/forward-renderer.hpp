@@ -79,6 +79,8 @@ namespace portal
         void drawRecursivePortals(glm::mat4 const& modelMat, glm::mat4 const &viewMat, glm::mat4 const &projMat, size_t maxRecursionLevel, size_t recursionLevel = 0);
         void drawPortal(glm::mat4 const& modelMat, glm::mat4 const &viewMat, glm::mat4 const &projMat, Entity* curportal);
         glm::mat4 const getClippedProjMat(const r3d::Quaternion& quat, const r3d::Vector3& pos, glm::mat4 const& viewMat, glm::mat4 const& projMat);
+        void ForwardRenderer::drawPortalsNonRecursive(glm::mat4 const& modelMat, glm::mat4 const &viewMat, 
+                                glm::mat4 const &projMat, Entity* portal1, Entity* portal2);
     public:
         // Initialize the renderer including the sky and the Postprocessing objects.
         // windowSize is the width & height of the window (in pixels).

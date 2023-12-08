@@ -3,6 +3,8 @@
 #include "../texture/texture-utils.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_access.inl>
+
+#define PI 3.14159265358979323846f
 namespace portal {
 
     void ForwardRenderer::initialize(glm::ivec2 windowSize, const nlohmann::json& config){
@@ -480,7 +482,7 @@ namespace portal {
             const r3d::Quaternion& temprot = curportal->localTransform.getRotation();
             glm::fquat rot(temprot.w, temprot.x, temprot.y, temprot.z);
             glm::mat4 destView = viewMat * portalModelMats[i]
-            * glm::rotate(glm::mat4(1.0f), 180.0f, glm::vec3(0.0f, 1.0f, 0.0f) * rot)
+            * glm::rotate(glm::mat4(1.0f), PI, glm::vec3(0.0f, 1.0f, 0.0f) * rot)
             * glm::inverse(portalModelMats[1-i]);
             // Base case, render inside of inner portal
             if (recursionLevel == maxRecursionLevel)
@@ -502,11 +504,11 @@ namespace portal {
                 glEnable(GL_STENCIL_TEST);
 
                 // Disable drawing into stencil buffer
-                glStencilMask(static_cast<GLuint>(0x00));
+                glStencilMask(0x00);
 
                 // Draw only where stencil value == recursionLevel + 1
                 // which is where we just drew the new portal
-                glStencilFunc(GL_EQUAL, (GLint)recursionLevel + 1, static_cast<GLuint>(0xFF));
+                glStencilFunc(GL_EQUAL, (GLint)recursionLevel + 1, 0xFF);
 
                 // Draw scene objects with destView, limited to stencil buffer
                 // use an edited projection matrix to set the near plane to the portal plane
@@ -542,7 +544,7 @@ namespace portal {
         }
         // Disable the stencil test and stencil writing
         glDisable(GL_STENCIL_TEST);
-        glStencilMask(static_cast<GLuint>(0x00));
+        glStencilMask(0x00);
 
         // Disable color writing
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
@@ -567,12 +569,12 @@ namespace portal {
 
         // Enable stencil test and disable writing to stencil buffer
         glEnable(GL_STENCIL_TEST);
-        glStencilMask(static_cast<GLuint>(0x00));
+        glStencilMask(0x00);
 
         // Draw at stencil >= recursionlevel
         // which is at the current level or higher (more to the inside)
         // This basically prevents drawing on the outside of this level.
-        glStencilFunc(GL_LEQUAL, (GLint)recursionLevel, static_cast<GLuint>(0xFF));
+        glStencilFunc(GL_LEQUAL, (GLint)recursionLevel, 0xFF);
 
         // Enable color and depth drawing again
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
@@ -594,7 +596,8 @@ namespace portal {
         Entity* portal1 = world->getEntityByName("Portal_1");
         Entity* portal2 = world->getEntityByName("Portal_2");
         for(const auto& [name, entity] : world->getEntities()){
-            if(entity == portal1 || entity == portal2) continue;
+            if(entity == portal1 || entity == portal2) 
+                continue;
             // If we hadn't found a camera yet, we look for a camera in this entity
             if(!camera) camera = entity->getComponent<CameraComponent>();
             // If this entity has a mesh renderer component
@@ -635,7 +638,87 @@ namespace portal {
         portals[0] = portal1, portals[1] = portal2;
         portalModelMats[0] = portal1->getLocalToWorldMatrix(), portalModelMats[1] = portal2->getLocalToWorldMatrix();
         size_t maxRecursionLevel = 1;
-        drawRecursivePortals(camera->getOwner()->getLocalToWorldMatrix(),camera->getViewMatrix(), camera->getProjectionMatrix(windowSize), maxRecursionLevel);
+        // drawRecursivePortals(camera->getOwner()->getLocalToWorldMatrix(),camera->getViewMatrix(), camera->getProjectionMatrix(windowSize), maxRecursionLevel);
+        drawPortalsNonRecursive(camera->getOwner()->getLocalToWorldMatrix(),camera->getViewMatrix(), camera->getProjectionMatrix(windowSize), portal1, portal2);
+    }
+
+    void ForwardRenderer::drawPortalsNonRecursive(glm::mat4 const& modelMat, glm::mat4 const &viewMat, 
+                                    glm::mat4 const &projMat, Entity* portal1, Entity* portal2) {
+
+        /*
+        * 1-Draw the normal scene without portals.
+        * 2-Draw the portals, writing a different value to the stencil buffer for each portal.
+        * 3-For each portal:
+        *    a. Position the camera facing out of the other portal.
+        *    b. Render the scene, with the stencil buffer condition set to only allow fragments corresponding to this portal.
+        */
+
+        // 1-Draw the normal scene without portals.
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+        glDepthMask(GL_TRUE);
+
+        // Enable the depth test
+        glEnable(GL_DEPTH_TEST);
+        drawNonPortalObjects(modelMat, viewMat, projMat);
+
+        // 2-Draw the portals, writing a different value to the stencil buffer for each portal.
+        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+        glDepthMask(GL_FALSE);
+
+        // Disable depth test
+        glDisable(GL_DEPTH_TEST);
+
+
+        glEnable(GL_STENCIL_TEST);
+
+        glStencilFunc(GL_ALWAYS, 1, 0xFF);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
+        drawPortal(portal1->getLocalToWorldMatrix(), viewMat, projMat, portal1);
+
+        glStencilFunc(GL_ALWAYS, 2, 0xFF);
+        drawPortal(portal2->getLocalToWorldMatrix(), viewMat, projMat, portal2);
+
+        // 3-For each portal:
+        //     a. Position the camera facing out of the other portal.
+        //     b. Render the scene, with the stencil buffer condition set to only allow fragments corresponding to this portal.
+
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+
+        glEnable(GL_STENCIL_TEST);
+        glStencilMask(0x00);
+
+        // Draw scene objects with destView, limited to stencil buffer
+        // use an edited projection matrix to set the near plane to the portal plane
+       
+        // get dest view
+        const r3d::Quaternion& temprot = portal1->localTransform.getRotation();
+        glm::fquat rot(temprot.w, temprot.x, temprot.y, temprot.z);
+        glm::mat4 destView = viewMat * portalModelMats[0]
+        * glm::rotate(glm::mat4(1.0f), PI, glm::vec3(0.0f, 1.0f, 0.0f) * rot)
+        * glm::inverse(portalModelMats[1]);
+
+        const r3d::Quaternion& temprot2 = portal2->localTransform.getRotation();
+        glm::fquat rot2(temprot2.w, temprot2.x, temprot2.y, temprot2.z);
+        glm::mat4 destView2 = viewMat * portalModelMats[1]
+        * glm::rotate(glm::mat4(1.0f), PI, glm::vec3(0.0f, 1.0f, 0.0f) * rot2)
+        * glm::inverse(portalModelMats[0]);
+
+
+        // Draw scene objects with destView, limited to stencil buffer
+        // use an edited projection matrix to set the near plane to the portal plane
+        glStencilFunc(GL_EQUAL, 1, 0xFF);
+        drawNonPortalObjects(portalModelMats[1], destView, getClippedProjMat(portal1->localTransform.getRotation(), portal1->localTransform.getPosition(), destView, projMat));
+
+        glStencilFunc(GL_EQUAL, 2, 0xFF);
+        drawNonPortalObjects(portalModelMats[0], destView2, getClippedProjMat(portal2->localTransform.getRotation(), portal2->localTransform.getPosition(), destView2, projMat));
+
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+        glDepthMask(GL_TRUE);
+
+        glDisable(GL_STENCIL_TEST);
     }
 
 }
