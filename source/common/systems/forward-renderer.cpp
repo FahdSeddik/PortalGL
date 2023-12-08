@@ -675,10 +675,10 @@ namespace portal {
         glStencilFunc(GL_ALWAYS, 1, 0xFF);
         glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 
-        drawPortal(portal1->getLocalToWorldMatrix(), viewMat, projMat, portal1);
+        drawPortal(portalModelMats[0], viewMat, projMat, portal1);
 
         glStencilFunc(GL_ALWAYS, 2, 0xFF);
-        drawPortal(portal2->getLocalToWorldMatrix(), viewMat, projMat, portal2);
+        drawPortal(portalModelMats[1], viewMat, projMat, portal2);
 
         // 3-For each portal:
         //     a. Position the camera facing out of the other portal.

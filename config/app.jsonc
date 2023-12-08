@@ -44,10 +44,12 @@
                 "monkey": "assets/textures/monkey.png",
                 
                 // Portal Specific Textures
-                "tex_floor_metal": "assets/textures/Floor/metal_modular_floor001.png",
+                "tex_floor_metal_1x1": "assets/textures/Floor/metal_modular_floor001.png",
+                "tex_floor_metal_3x3": "assets/textures/Floor/metal_floor_3x3.png",
                 "tex_wall_concrete_1": "assets/textures/Walls/concrete_modular_wall001f.png",
                 "tex_wall_concrete_2": "assets/textures/Walls/concrete_modular_wall003a.png",
                 "tex_wall_concrete_3": "assets/textures/Walls/concrete_modular_ceiling001a.png",
+                "tex_wall_concrete_3_3x3": "assets/textures/Walls/concrete_ceiling_3x3.png",
                 "tex_cube_corners": "assets/textures/Object Related/Cube/corners.jpg",
                 "tex_cube_internal": "assets/textures/Object Related/Cube/internal.jpg",
                 "tex_cube_circles": "assets/textures/Object Related/Cube/circles.jpg",
@@ -183,7 +185,7 @@
                     "albedo": "grass"
 
                 },
-                "mat_floor_metal":{
+                "mat_floor_metal_1x1":{
                     "type": "lit",
                     "shader": "lit",
                     "pipelineState": {
@@ -195,7 +197,22 @@
                         }
                     },
                     "tint": [1, 1, 1, 1],
-                    "albedo": "tex_floor_metal",
+                    "albedo": "tex_floor_metal_1x1",
+                    "sampler": "pixelated"
+                },
+                "mat_floor_metal_3x3":{
+                    "type": "lit",
+                    "shader": "lit",
+                    "pipelineState": {
+                        "faceCulling":{
+                            "enabled": false
+                        },
+                        "depthTesting":{
+                            "enabled": true
+                        }
+                    },
+                    "tint": [1, 1, 1, 1],
+                    "albedo": "tex_floor_metal_3x3",
                     "sampler": "pixelated"
                 },
                 "mat_wall_concrete_1":{
@@ -241,6 +258,21 @@
                     },
                     "tint": [1, 1, 1, 1],
                     "albedo": "tex_wall_concrete_3",
+                    "sampler": "default"
+                },
+                "mat_wall_concrete_3_3x3":{
+                    "type": "lit",
+                    "shader": "lit",
+                    "pipelineState": {
+                        "faceCulling":{
+                            "enabled": false
+                        },
+                        "depthTesting":{
+                            "enabled": true
+                        }
+                    },
+                    "tint": [1, 1, 1, 1],
+                    "albedo": "tex_wall_concrete_3_3x3",
                     "sampler": "default"
                 },
                 "mat_cube_corners":{
@@ -1080,12 +1112,12 @@
             {
                 "position": [0, 0, 0],
                 "rotation": [-90, 0, 0],
-                "scale": [5, 5, 1],
+                "scale": [15, 15, 1],
                 "components": [
                     {
                         "type": "Mesh Renderer",
                         "mesh": "plane",
-                        "material": "mat_floor_metal"
+                        "material": "mat_floor_metal_3x3"
                     },
                     {
                         "type": "RigidBody",
@@ -1093,214 +1125,7 @@
                         "relativePosition": [0, -1, 0],
                         "collider":{
                             "type": "Box Collider",
-                            "halfExtents": [5, 5, 1],
-                            "bounciness":0.0,
-                            "friction": 2.0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [-10, 0, 0],
-                "rotation": [-90, 0, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_floor_metal"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "relativePosition": [0, -1, 0],
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 1],
-                            "bounciness":0.0,
-                            "friction": 2.0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [10, 0, 0],
-                "rotation": [-90, 0, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_floor_metal"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "relativePosition": [0, -1, 0],
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 1],
-                            "bounciness":0.0,
-                            "friction": 2.0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [0, 0, 10],
-                "rotation": [-90, 0, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_floor_metal"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "relativePosition": [0, -1, 0],
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 1],
-                            "bounciness":0.0,
-                            "friction": 2.0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [0, 0, -10],
-                "rotation": [-90, 0, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_floor_metal"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "relativePosition": [0, -1, 0],
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 1],
-                            "bounciness":0.0,
-                            "friction": 2.0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [-10, 0, -10],
-                "rotation": [-90, 0, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_floor_metal"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "relativePosition": [0, -1, 0],
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 1],
-                            "bounciness":0.0,
-                            "friction": 2.0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [10, 0, -10],
-                "rotation": [-90, 0, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_floor_metal"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "relativePosition": [0, -1, 0],
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 1],
-                            "bounciness":0.0,
-                            "friction": 2.0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [10, 0, 10],
-                "rotation": [-90, 0, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_floor_metal"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "relativePosition": [0, -1, 0],
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 1],
-                            "bounciness":0.0,
-                            "friction": 2.0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [-10, 0, -10],
-                "rotation": [-90, 0, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_floor_metal"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "relativePosition": [0, -1, 0],
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 1],
-                            "bounciness":0.0,
-                            "friction": 2.0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [-10, 0, 10],
-                "rotation": [-90, 0, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_floor_metal"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "relativePosition": [0, -1, 0],
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 1],
+                            "halfExtents": [15, 15, 1],
                             "bounciness":0.0,
                             "friction": 2.0
                         }
@@ -1815,14 +1640,14 @@
             },
             //Ceiling
             {
-                "position": [0, 20, -10],
+                "position": [0, 20, 0],
                 "rotation": [90, 0, 0],
-                "scale": [5, 5, 1],
+                "scale": [15, 15, 1],
                 "components": [
                     {
                         "type": "Mesh Renderer",
                         "mesh": "plane",
-                        "material": "mat_wall_concrete_3"
+                        "material": "mat_wall_concrete_3_3x3"
                     },
                     {
                         "type": "RigidBody",
@@ -1830,175 +1655,7 @@
                         "relativePosition": [0, 0, 0],
                         "collider":{
                             "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness":0.0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [0, 20, 0],
-                "rotation": [90, 0, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_3"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness":0.0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [-10, 20, -10],
-                "rotation": [90, 0, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_3"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness":0.0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [10, 20, 10],
-                "rotation": [90, 0, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_3"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness":0.0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [10, 20, -10],
-                "rotation": [90, 0, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_3"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness":0.0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [-10, 20, 10],
-                "rotation": [90, 0, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_3"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness":0.0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [0, 20, 10],
-                "rotation": [90, 0, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_3"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness":0.0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [-10, 20, 0],
-                "rotation": [90, 0, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_3"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness":0.0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [10, 20, 0],
-                "rotation": [90, 0, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_3"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
+                            "halfExtents": [15, 15, 0.1],
                             "bounciness":0.0
                         }
                     }
@@ -2241,7 +1898,7 @@
             },
             {
                 "name": "Portal_2",
-                "position": [0, 2, 10],
+                "position": [10, 2, 10],
                 "rotation": [0, 180, 0],
                 "scale": [2, 2, 1],
                 "components":[
