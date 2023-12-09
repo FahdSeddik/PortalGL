@@ -430,8 +430,13 @@ namespace portal {
     glm::mat4 const ForwardRenderer::getClippedProjMat(const r3d::Quaternion& quat, const r3d::Vector3& pos, glm::mat4 const& viewMat, glm::mat4 const& projMat) {
         glm::vec3 d_position(pos.x, pos.y, pos.z);
         glm::fquat d_orientation(quat.w, quat.x, quat.y, quat.z);
-        float dist = glm::length(d_position);
-        glm::vec4 clipPlane(d_orientation * glm::vec3(0.0f, 0.0f, -1.0f), dist);
+        // Assuming the plane normal is the direction the object is facing after rotation
+        glm::vec3 normal = d_orientation * glm::vec3(0, 0, 1); // Assuming z-axis is the facing direction
+        // Normalize the normal vector
+        normal = glm::normalize(normal);
+        // Calculate the distance from the origin along the normal
+        float distance = -glm::dot(normal, d_position);
+        glm::vec4 clipPlane(normal, distance);
         clipPlane = glm::inverse(glm::transpose(viewMat)) * clipPlane;
 
         if (clipPlane.w > 0.0f)
@@ -710,10 +715,10 @@ namespace portal {
         // Draw scene objects with destView, limited to stencil buffer
         // use an edited projection matrix to set the near plane to the portal plane
         glStencilFunc(GL_EQUAL, 1, 0xFF);
-        drawNonPortalObjects(portalModelMats[1], destView, getClippedProjMat(portal1->localTransform.getRotation(), portal1->localTransform.getPosition(), destView, projMat));
+        drawNonPortalObjects(portalModelMats[1], destView, getClippedProjMat(portal2->localTransform.getRotation(), portal2->localTransform.getPosition(), destView, projMat));
 
         glStencilFunc(GL_EQUAL, 2, 0xFF);
-        drawNonPortalObjects(portalModelMats[0], destView2, getClippedProjMat(portal2->localTransform.getRotation(), portal2->localTransform.getPosition(), destView2, projMat));
+        drawNonPortalObjects(portalModelMats[0], destView2, getClippedProjMat(portal1->localTransform.getRotation(), portal1->localTransform.getPosition(), destView2, projMat));
 
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
         glDepthMask(GL_TRUE);
