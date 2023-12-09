@@ -517,14 +517,14 @@ namespace portal {
 
                 // Draw scene objects with destView, limited to stencil buffer
                 // use an edited projection matrix to set the near plane to the portal plane
-                drawNonPortalObjects(portalModelMats[1-i], destView, getClippedProjMat(curportal->localTransform.getRotation(), curportal->localTransform.getPosition(), destView, projMat));
+                drawNonPortalObjects(portalModelMats[1-i], destView, getClippedProjMat(portals[1-i]->localTransform.getRotation(), portals[1-i]->localTransform.getPosition(), destView, projMat));
                 //drawNonPortals(destView, projMat);
             }
             else
             {
                 // Recursion case
                 // Pass our new view matrix and the clipped projection matrix (see above)
-                drawRecursivePortals(portalModelMats[1-i], destView, getClippedProjMat(curportal->localTransform.getRotation(), curportal->localTransform.getPosition(), destView, projMat), maxRecursionLevel, recursionLevel + 1);
+                drawRecursivePortals(portalModelMats[1-i], destView, getClippedProjMat(portals[1-i]->localTransform.getRotation(), portals[1-i]->localTransform.getPosition(), destView, projMat), maxRecursionLevel, recursionLevel + 1);
             }
             // Disable color and depth drawing
             glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);

@@ -118,7 +118,7 @@
                     "shader": "tinted",
                     "pipelineState": {
                         "faceCulling":{
-                            "enabled": true
+                            "enabled": false
                         },
                         "depthTesting":{
                             "enabled": true
@@ -1264,6 +1264,7 @@
                 ]
             },
             {
+                "name": "testwall1",
                 "position": [0, 5, -15],
                 "rotation": [0, 0, 0],
                 "scale": [5, 5, 1],
@@ -1599,6 +1600,7 @@
                 ]
             },
             {
+                "name": "testwall2",
                 "position": [10, 5, 15],
                 "rotation": [0, 180, 0],
                 "scale": [5, 5, 1],
@@ -1931,6 +1933,17 @@
                         "type": "Mesh Renderer",
                         "mesh": "mesh_portal",
                         "material": "mat_portal"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "collider":{
+                            "type":"Box Collider",
+                            "halfExtents": [0.75, 0.75, 0.1],
+                            "friction": 1.0,
+                            "bounciness":0.0,
+                            "isTrigger": true // default is false
+                        }
                     }
                 ],
                 "children": [
@@ -1956,6 +1969,17 @@
                         "type": "Mesh Renderer",
                         "mesh": "mesh_portal",
                         "material": "mat_portal"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "collider":{
+                            "type":"Box Collider",
+                            "halfExtents": [0.75, 0.75, 0.1],
+                            "friction": 1.0,
+                            "bounciness":0.0,
+                            "isTrigger": true // default is false
+                        }
                     }
                 ],
                 "children": [
