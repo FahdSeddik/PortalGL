@@ -431,7 +431,7 @@ namespace portal {
         glm::vec3 d_position(pos.x, pos.y, pos.z);
         glm::fquat d_orientation(quat.w, quat.x, quat.y, quat.z);
         // Assuming the plane normal is the direction the object is facing after rotation
-        glm::vec3 normal = d_orientation * glm::vec3(0, 0, 1); // Assuming z-axis is the facing direction
+        glm::vec3 normal = d_orientation * glm::vec3(0, 0, 1) ; // Assuming z-axis is the facing direction
         // Normalize the normal vector
         normal = glm::normalize(normal);
         // Calculate the distance from the origin along the normal
@@ -439,21 +439,19 @@ namespace portal {
         glm::vec4 clipPlane(normal, distance);
         clipPlane = glm::inverse(glm::transpose(viewMat)) * clipPlane;
 
-        if (clipPlane.w > 0.0f)
-            return projMat;
-
-        glm::vec4 q = glm::inverse(projMat) * glm::vec4(
-            glm::sign(clipPlane.x),
-            glm::sign(clipPlane.y),
-            1.0f,
-            1.0f
-        );
+        glm::vec4 q;
+        q.x = (glm::sign(clipPlane.x) + projMat[2][0]) / projMat[0][0];
+        q.y = (glm::sign(clipPlane.y) + projMat[2][1]) / projMat[1][1];
+        q.z = -1.0f;
+        q.w = (1.0f + projMat[2][2]) / projMat[3][2];
 
         glm::vec4 c = clipPlane * (2.0f / (glm::dot(clipPlane, q)));
 
         glm::mat4 newProj = projMat;
-        // third row = clip plane - fourth row
-        newProj = glm::row(newProj, 2, c - glm::row(newProj, 3));
+        newProj[0][2] = c.x;
+        newProj[1][2] = c.y;
+        newProj[2][2] = c.z + 1.0f;
+        newProj[3][2] = c.w;
 
         return newProj;
     }
@@ -701,14 +699,31 @@ namespace portal {
         // get dest view
         const r3d::Quaternion& temprot = portal1->localTransform.getRotation();
         glm::fquat rot(temprot.w, temprot.x, temprot.y, temprot.z);
+        glm::vec3 normal = rot * glm::vec3(0, 0, 1) ; // Assuming z-axis is the facing direction
+        // Normalize the normal vector
+        normal = glm::normalize(normal);
+        glm::vec3 tomult;
+        if(std::abs(glm::dot(normal, glm::vec3(0.0f, 0.0f, 1.0f))) > 0.9f) {
+            tomult = glm::vec3(0.0f, 1.0f, 0.0f);
+        } else {
+            tomult = glm::vec3(0.0f, 0.0f, 1.0f);
+        }
         glm::mat4 destView = viewMat * portalModelMats[0]
-        * glm::rotate(glm::mat4(1.0f), PI, glm::vec3(0.0f, 1.0f, 0.0f) * rot)
+        * glm::rotate(glm::mat4(1.0f), PI, tomult * rot)
         * glm::inverse(portalModelMats[1]);
-
+        
         const r3d::Quaternion& temprot2 = portal2->localTransform.getRotation();
         glm::fquat rot2(temprot2.w, temprot2.x, temprot2.y, temprot2.z);
+        normal = rot2 * glm::vec3(0, 0, 1) ; // Assuming z-axis is the facing direction
+        // Normalize the normal vector
+        normal = glm::normalize(normal);
+        if(std::abs(glm::dot(normal, glm::vec3(0.0f, 0.0f, 1.0f))) > 0.9f) {
+            tomult = glm::vec3(0.0f, 1.0f, 0.0f);
+        } else {
+            tomult = glm::vec3(0.0f, 0.0f, 1.0f);
+        }
         glm::mat4 destView2 = viewMat * portalModelMats[1]
-        * glm::rotate(glm::mat4(1.0f), PI, glm::vec3(0.0f, 1.0f, 0.0f) * rot2)
+        * glm::rotate(glm::mat4(1.0f), PI, tomult * rot2)
         * glm::inverse(portalModelMats[0]);
 
 
