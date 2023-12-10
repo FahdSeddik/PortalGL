@@ -35,7 +35,7 @@ namespace portal {
         bool& isGrounded;
         typedef r3d::CollisionCallback::ContactPair::EventType EventType;
         typedef std::function<void()> EventCallback;
-        std::unordered_map<std::string, std::unordered_map<std::string, std::pair<int, std::pair<EventType, EventCallback>>>> collisionEvents;
+        std::unordered_map<std::string, std::unordered_map<std::string, std::vector<std::pair<int, std::pair<EventType, EventCallback>>>>> collisionEvents;
 
         void checkForGround(const r3d::CollisionCallback::ContactPair& contactPair, const std::string& name_1) {
             RayCastPlayerGrounded rayCastHandler(isGrounded);
@@ -101,8 +101,8 @@ namespace portal {
                         }
                     };
                     // add callback to map with reverse for time optimization
-                    collisionEvents[name_1][name_2] = std::make_pair(once ? 1:-1, std::make_pair(eventType, callback));
-                    collisionEvents[name_2][name_1] = std::make_pair(once ? 1:-1, std::make_pair(eventType, callback));
+                    collisionEvents[name_1][name_2].emplace_back(std::make_pair(once ? 1:-1, std::make_pair(eventType, callback)));
+                    collisionEvents[name_2][name_1].emplace_back(std::make_pair(once ? 1:-1, std::make_pair(eventType, callback)));
                 }
             }
         }
@@ -141,12 +141,14 @@ namespace portal {
                 // in map we store redundant reverse to not have to check for order of bodies
                 auto& event = collisionEvents[name_1][name_2];
                 auto& eventCopy = collisionEvents[name_2][name_1];
-                // if event (stay, start, exit) doesnt match then we dont call callback
-                if(event.second.first != contactPair.getEventType() || event.first == 0) continue;
-                // if event is once then we decrement uses to make it 0
-                if(event.first > 0) event.first--, eventCopy.first--;
-                // call callback
-                event.second.second();
+                for (int i = 0; i < event.size(); i++) {
+                    // if event (stay, start, exit) doesnt match then we dont call callback
+                    if(event[i].second.first != contactPair.getEventType() || event[i].first == 0) continue;
+                    // if event is once then we decrement uses to make it 0
+                    if(event[i].first > 0) event[i].first--, eventCopy[i].first--;
+                    // call callback
+                    event[i].second.second();
+                }
             }
         }
 
