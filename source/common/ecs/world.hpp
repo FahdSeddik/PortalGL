@@ -51,8 +51,8 @@ namespace portal {
             return entities;
         }
 
-        Entity* getEntityByName(const std::string& name) {
-            return entities[name];
+        Entity* getEntityByName(const std::string& name) const {
+            return entities.at(name);
         }
 
         // This marks an entity for removal by adding it to the "markedForRemoval" set.

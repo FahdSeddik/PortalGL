@@ -84,7 +84,7 @@ namespace portal
             physicsUpdate(deltaTime);
             // For each entity in the world
             for(const auto& [name, entity] : world->getEntities()){
-                if(entity == attachement) {
+                if(attachement && entity == attachement) {
                     attachToPlayer(entity);
                     continue;
                 }
