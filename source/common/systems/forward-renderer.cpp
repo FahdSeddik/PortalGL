@@ -704,17 +704,23 @@ namespace portal {
         glm::vec3 norm1 = rot * glm::vec3(0, 0, 1);
         glm::vec3 norm2 = rot2 * glm::vec3(0, 0, 1);
         glm::vec3 adjuster;
+
+        // check if cos the angle between the normal and the y axis is small (the angle is close to 90 degrees), 
+        // then the portal is vertical ex. on the wall. So, rotate along the y axis 
         if(std::abs(glm::dot(norm1, glm::vec3(0, 1, 0))) < 0.01f) {
             adjuster = glm::vec3(0, 1, 0);
-        } else {
+        } else { // otherwise if on the ceiling rotate along the z axis 
             adjuster = glm::vec3(0, 0, 1);
         }
         glm::mat4 destView = viewMat * portalModelMats[0]
         * glm::rotate(glm::mat4(1.0f), PI, adjuster * rot)
         * glm::inverse(portalModelMats[1]);
+        
+        // check if cos the angle between the normal and the y axis is small (the angle is close to 90 degrees), 
+        // then the portal is vertical ex. on the wall. So, rotate along the y axis
         if (std::abs(glm::dot(norm2, glm::vec3(0, 1, 0))) < 0.01f) {
             adjuster = glm::vec3(0, 1, 0);
-        } else {
+        } else { // otherwise if on the ceiling rotate along the z axis 
             adjuster = glm::vec3(0, 0, 1);
         }
         glm::mat4 destView2 = viewMat * portalModelMats[1]
