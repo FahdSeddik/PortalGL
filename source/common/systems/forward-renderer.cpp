@@ -699,31 +699,26 @@ namespace portal {
         // get dest view
         const r3d::Quaternion& temprot = portal1->localTransform.getRotation();
         glm::fquat rot(temprot.w, temprot.x, temprot.y, temprot.z);
-        glm::vec3 normal = rot * glm::vec3(0, 0, 1) ; // Assuming z-axis is the facing direction
-        // Normalize the normal vector
-        normal = glm::normalize(normal);
-        glm::vec3 tomult;
-        if(std::abs(glm::dot(normal, glm::vec3(0.0f, 0.0f, 1.0f))) > 0.9f) {
-            tomult = glm::vec3(0.0f, 1.0f, 0.0f);
-        } else {
-            tomult = glm::vec3(0.0f, 0.0f, 1.0f);
-        }
-        glm::mat4 destView = viewMat * portalModelMats[0]
-        * glm::rotate(glm::mat4(1.0f), PI, tomult * rot)
-        * glm::inverse(portalModelMats[1]);
-        
         const r3d::Quaternion& temprot2 = portal2->localTransform.getRotation();
         glm::fquat rot2(temprot2.w, temprot2.x, temprot2.y, temprot2.z);
-        normal = rot2 * glm::vec3(0, 0, 1) ; // Assuming z-axis is the facing direction
-        // Normalize the normal vector
-        normal = glm::normalize(normal);
-        if(std::abs(glm::dot(normal, glm::vec3(0.0f, 0.0f, 1.0f))) > 0.9f) {
-            tomult = glm::vec3(0.0f, 1.0f, 0.0f);
+        glm::vec3 norm1 = rot * glm::vec3(0, 0, 1);
+        glm::vec3 norm2 = rot2 * glm::vec3(0, 0, 1);
+        glm::vec3 adjuster;
+        if(std::abs(glm::dot(norm1, glm::vec3(0, 1, 0))) < 0.01f) {
+            adjuster = glm::vec3(0, 1, 0);
         } else {
-            tomult = glm::vec3(0.0f, 0.0f, 1.0f);
+            adjuster = glm::vec3(0, 0, 1);
+        }
+        glm::mat4 destView = viewMat * portalModelMats[0]
+        * glm::rotate(glm::mat4(1.0f), PI, adjuster * rot)
+        * glm::inverse(portalModelMats[1]);
+        if (std::abs(glm::dot(norm2, glm::vec3(0, 1, 0))) < 0.01f) {
+            adjuster = glm::vec3(0, 1, 0);
+        } else {
+            adjuster = glm::vec3(0, 0, 1);
         }
         glm::mat4 destView2 = viewMat * portalModelMats[1]
-        * glm::rotate(glm::mat4(1.0f), PI, tomult * rot2)
+        * glm::rotate(glm::mat4(1.0f), PI, adjuster * rot2)
         * glm::inverse(portalModelMats[0]);
 
 
