@@ -16,8 +16,8 @@
             "postprocess": "assets/shaders/postprocess/vignette.frag",
             "bloom": true,
             // "bloom": false,
-            "bloomIntensity": 1,
-            "bloomBlurIterations": 10,
+            "bloomIntensity": 1.5,
+            "bloomBlurIterations": 20,
             "exposure": 0.5
         },
         "assets":{
@@ -1926,8 +1926,8 @@
             },
             {
                 "name": "Portal_1",
-                "position": [0, 0.1, -10],
-                "rotation": [-90, 0, 0],
+                "position": [0, 2.7, -14.9],
+                "rotation": [0, 0, 0],
                 "scale": [1.3,1,1],
                 "components":[
                     {
@@ -1962,8 +1962,8 @@
             },
             {
                 "name": "Portal_2",
-                "position": [0, 7, -10],
-                "rotation": [90, 180, 0],
+                "position": [0, 2.7, 14.9],
+                "rotation": [0, 180, 0],
                 "scale": [1.3,1,1],
                 "components":[
                     {
