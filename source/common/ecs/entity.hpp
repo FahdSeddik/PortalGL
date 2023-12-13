@@ -10,12 +10,13 @@
 namespace portal {
 
     class World; // A forward declaration of the World Class
-
+    class Portal;
     class Entity{
         World *world; // This defines what world own this entity
         std::list<Component*> components; // A list of components that are owned by this entity
 
         friend World; // The world is a friend since it is the only class that is allowed to instantiate an entity
+        friend Portal;
         Entity() = default; // The entity constructor is private since only the world is allowed to instantiate an entity
     public:
         std::string name; // The name of the entity. It could be useful to refer to an entity by its name
@@ -25,7 +26,7 @@ namespace portal {
 
         bool isAttachable = false;
 
-        World* getWorld() const { return world; } // Returns the world to which this entity belongs
+        virtual World* getWorld() const { return world; } // Returns the world to which this entity belongs
 
         glm::mat4 getLocalToWorldMatrix() const; // Computes and returns the transformation from the entities local space to the world space
         void deserialize(const nlohmann::json&); // Deserializes the entity data and components from a json object

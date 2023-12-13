@@ -8,6 +8,7 @@
 #include <systems/movement.hpp>
 #include <asset-loader.hpp>
 #include "../common/components/animation.hpp"
+#include "systems/event.hpp"
 
 // This state shows how to use the ECS framework and deserialization.
 class Playstate: public portal::State {
@@ -35,6 +36,7 @@ public:
         // If we have a world in the scene config, we use it to populate our world
         if(config.contains("world")){
             world.deserialize(config["world"]);
+            world.initEventSystem();
         }
         // We initialize the camera controller system since it needs a pointer to the app
         cameraController.enter(getApp());
@@ -42,7 +44,7 @@ public:
         auto size = getApp()->getFrameBufferSize();
         renderer.initialize(size, config["renderer"]);
 
-        movementSystem = new portal::MovementSystem(world.getEntityByName("Player"), getApp());
+        movementSystem = new portal::MovementSystem(&world, getApp());
     }
 
     void onDraw(double deltaTime) override {

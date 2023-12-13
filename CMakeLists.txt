@@ -69,6 +69,8 @@ set(COMMON_SOURCES
         source/common/ecs/transform.cpp
         source/common/ecs/entity.hpp
         source/common/ecs/entity.cpp
+        source/common/ecs/portal.cpp
+        source/common/ecs/portal.hpp
         source/common/ecs/world.hpp
         source/common/ecs/world.cpp
 

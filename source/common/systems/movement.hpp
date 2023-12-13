@@ -4,7 +4,7 @@
 #include "../components/movement.hpp"
 #include "../components/RigidBody.hpp"
 #include "../components/free-camera-controller.hpp"
-
+#include "../ecs/portal.hpp"
 #include "../application.hpp"
 #include <reactphysics3d/reactphysics3d.h>
 namespace r3d = reactphysics3d;
@@ -43,12 +43,15 @@ namespace portal
     private:
         Entity* player = nullptr;
         Application *app;
+        World *world;
         FreeCameraControllerComponent* controller;
         RigidBodyComponent* playerRigidBody;
         r3d::PhysicsWorld* physicsWorld;
-        bool& isGrounded;
+        bool isGrounded = false;
         std::string attachedName = "";
         Entity* attachement = nullptr;
+        Portal* Portal_1 = nullptr;
+        Portal* Portal_2 = nullptr;
 
         // Player Vectors
         r3d::Vector3 absoluteFront;
@@ -62,23 +65,31 @@ namespace portal
         void physicsUpdate(float deltaTime);
 
         // Returns velocity component of player
-        glm::vec3 handlePlayerMovement(bool &jumped);
+        glm::vec3 handlePlayerMovement();
 
         void calculatePlayerVectors();
-
+        void checkForGround();
         void checkAttachment();
 
     public:
-        MovementSystem(Entity* player, Application* app) : player(player), app(app), isGrounded(player->getWorld()->isGrounded), playerPos(player->localTransform.getPosition()) {
+        MovementSystem(World* world, Application* app) : world(world), app(app), player(world->getEntityByName("Player")), playerPos(player->localTransform.getPosition()) {
             controller = player->getComponent<FreeCameraControllerComponent>();
             playerRigidBody = player->getComponent<RigidBodyComponent>();
             physicsWorld = player->getWorld()->getPhysicsWorld();
+            Portal_1 = dynamic_cast<Portal*>(world->getEntityByName("Portal_1"));
+            Portal_2 = dynamic_cast<Portal*>(world->getEntityByName("Portal_2"));
+            Portal_1->setDestination(Portal_2);
+            Portal_2->setDestination(Portal_1);
+            Portal_1->getSurface();
+            Portal_2->getSurface();
         }
 
         
         // This should be called every frame to update all entities containing a MovementComponent. 
         void update(World* world, float deltaTime) {
             if(!physicsWorld) return;
+            Portal_1->update();
+            Portal_2->update();
             calculatePlayerVectors();
             checkAttachment();
             physicsUpdate(deltaTime);

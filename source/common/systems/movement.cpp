@@ -1,6 +1,42 @@
 #include "movement.hpp"
 
 namespace portal {
+
+    // Class Handle player Grounded
+    class RayCastPlayerGrounded : public r3d::RaycastCallback {
+        bool& isGrounded;
+        public:
+        RayCastPlayerGrounded(bool& isGrounded) : isGrounded(isGrounded) {}
+        /// Called when a raycast hit a body
+        /**
+         * @param hit The raycast hit information
+         */
+        virtual r3d::decimal notifyRaycastHit(const r3d::RaycastInfo& raycastInfo) override {
+            // is grounded 
+            // std::cout << "Player Grounded: " << *((std::string*)raycastInfo.body->getUserData()) << std::endl;
+            if(raycastInfo.body->getCollider(0)->getCollideWithMaskBits() != 0x0001 || raycastInfo.body->getCollider(0)->getIsTrigger()){
+                // if trigger, return 1.0 to continue raycast
+                return r3d::decimal(1.0);
+            }
+            isGrounded = true;
+            // return 0 to stop raycast
+            return r3d::decimal(0.0);
+        }
+    };
+
+    void MovementSystem::checkForGround() {
+        RayCastPlayerGrounded rayCastHandler(isGrounded);
+        // get player position and bounds
+        r3d::Vector3 pos, min, max;
+        pos = playerRigidBody->getBody()->getTransform().getPosition();
+        playerRigidBody->getCollider()->getCollisionShape()->getLocalBounds(min, max);
+        // RayCast to check if player is grounded
+        r3d::decimal y = max.y - min.y;
+        // Ray Cast from center of player to bottom of player
+        r3d::Ray ray(pos, pos - r3d::Vector3(0, y/2, 0));
+        physicsWorld->raycast(ray, &rayCastHandler);
+    }
+
     void MovementSystem::attachToPlayer(Entity* entity) const {
         r3d::Transform temp;
         // Set the position of the entity to be in front of the player
@@ -13,18 +49,20 @@ namespace portal {
         rgb->getBody()->setTransform(temp);
         rgb->getBody()->setLinearVelocity(r3d::Vector3(0,0,0));
         rgb->getBody()->setAngularVelocity(r3d::Vector3(0,0,0));
-        // Make sure the collider is a trigger to avoid false collisions
-        rgb->getCollider()->setIsTrigger(true);
+        rgb->getCollider()->setCollideWithMaskBits(0);
+        rgb->getCollider()->setCollisionCategoryBits(0);
     }
 
     void MovementSystem::physicsUpdate(float deltaTime) {
+        if(app->getKeyboard().isPressed(GLFW_KEY_SPACE)) {
+            checkForGround();
+        }
         // Constant physics time step (60 FPS)
         const float timeStep = 1.0f / 60.0f;
         float delta = deltaTime;
-        bool jumped = false;
         while(delta > 0.0f){
             // If the remaining time is smaller than the time step, use the remaining time
-            glm::vec3 vel = handlePlayerMovement(jumped);
+            glm::vec3 vel = handlePlayerMovement();
             r3d::Vector3 linearVelocity = playerRigidBody->getBody()->getLinearVelocity();
             playerRigidBody->getBody()->setLinearVelocity(r3d::Vector3(vel.x, linearVelocity.y, vel.z));
             float step = glm::min(delta, timeStep);
@@ -33,17 +71,16 @@ namespace portal {
             // Subtract the time step from the remaining time
             delta -= step;
         }
-        if(jumped) isGrounded = false;
     }
 
-    glm::vec3 MovementSystem::handlePlayerMovement(bool& jumped) {
+    glm::vec3 MovementSystem::handlePlayerMovement() {
         glm::vec3 velf = glm::vec3(0.0f, 0.0f, 0.0f);
         glm::vec3 velr = glm::vec3(0.0f, 0.0f, 0.0f);
         // Check if grounded and pressed space then jump
         if(isGrounded && app->getKeyboard().isPressed(GLFW_KEY_SPACE)){
             // jump Apply force
             playerRigidBody->getBody()->applyWorldForceAtCenterOfMass(r3d::Vector3(0, controller->positionSensitivity.y * 60.0f, 0));
-            jumped = true;
+            isGrounded = false;
         }
         if(app->getKeyboard().isPressed(GLFW_KEY_W)){
             // move forward
@@ -72,8 +109,8 @@ namespace portal {
 
 
     void MovementSystem::calculatePlayerVectors() {
-        // Get rigidbody of player 
-        glm::mat4 matrix = player->localTransform.toMat4();
+        // Get Matrix of player
+        glm::mat4 matrix = player->getLocalToWorldMatrix();
         // front: the direction the camera is looking at projected on the xz plane
         // up: global up vector (0,1,0)
         // right: the vector to the right of the camera (x-axis)
@@ -106,7 +143,9 @@ namespace portal {
         } else if (app->getKeyboard().justPressed(GLFW_KEY_E)) {
             // If E is pressed and we have an attachement then we detach it
             // attachment should return to not be a trigger to collide with other objects
-            attachement->getComponent<RigidBodyComponent>()->getCollider()->setIsTrigger(false);
+            r3d::Collider *collider = attachement->getComponent<RigidBodyComponent>()->getCollider();
+            collider->setCollideWithMaskBits(1);
+            collider->setCollisionCategoryBits(1);
             attachement = nullptr;
             attachedName = "";
         }

@@ -2,63 +2,49 @@
 #include <reactphysics3d/reactphysics3d.h>
 #include "../../states/play-state.hpp"
 #include "../deserialize-utils.hpp"
+#include "../ecs/portal.hpp"
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_access.inl>
 namespace r3d = reactphysics3d;
 
 namespace portal {
     
-    // Class Handle player Grounded
-    class RayCastPlayerGrounded : public r3d::RaycastCallback {
-        bool& isGrounded;
-        public:
-        RayCastPlayerGrounded(bool& isGrounded) : isGrounded(isGrounded) {}
-        /// Called when a raycast hit a body
-        /**
-         * @param hit The raycast hit information
-         */
-        virtual r3d::decimal notifyRaycastHit(const r3d::RaycastInfo& raycastInfo) override {
-            // is grounded 
-            // std::cout << "Player Grounded: " << *((std::string*)raycastInfo.body->getUserData()) << std::endl;
-            if(raycastInfo.body->getCollider(0)->getIsTrigger()){
-                // if trigger, return 1.0 to continue raycast
-                return r3d::decimal(1.0);
-            }
-            isGrounded = true;
-            // return 0 to stop raycast
-            return r3d::decimal(0.0);
-        }
-    };
 
 
     class EventSystem : public r3d::EventListener {
         r3d::PhysicsWorld* physicsWorld;
         World* world;
-        bool& isGrounded;
+        Entity *player;
+        RigidBodyComponent* playerRigidBody;
+        std::unordered_map<std::string, double> lastTPtime;
+        double teleportationCooldown = 0.2;
         typedef r3d::CollisionCallback::ContactPair::EventType EventType;
         typedef std::function<void()> EventCallback;
         std::unordered_map<std::string, std::unordered_map<std::string, std::vector<std::pair<int, std::pair<EventType, EventCallback>>>>> collisionEvents;
 
-        void checkForGround(const r3d::CollisionCallback::ContactPair& contactPair, const std::string& name_1) {
-            RayCastPlayerGrounded rayCastHandler(isGrounded);
-            // get player position and bounds
-            r3d::Vector3 pos, min, max;
-            if(name_1=="Player") {
-                pos = contactPair.getBody1()->getTransform().getPosition();
-                contactPair.getCollider1()->getCollisionShape()->getLocalBounds(min, max);
-            } else {
-                pos = contactPair.getBody2()->getTransform().getPosition();
-                contactPair.getCollider2()->getCollisionShape()->getLocalBounds(min, max);
+
+        void handleTeleport(r3d::Collider* objectCollider, const std::string& objectName, const std::string& portalName) {
+            // cast to portal
+            Portal* portal = dynamic_cast<Portal*>(world->getEntityByName(portalName));
+            if (!portal) return;
+            if (!portal->destination || !portal->surface || !portal->surfaceCollider) return;
+            if(portal->surface->name == objectName) return;
+            if(lastTPtime.count(objectName) && glfwGetTime() - lastTPtime[objectName] < teleportationCooldown) {
+                portal->destination->assertRemoval(objectName);
+                return;
             }
-            // RayCast to check if player is grounded
-            r3d::decimal y = max.y - min.y;
-            // Ray Cast from center of player to bottom of player
-            r3d::Ray ray(pos, pos - r3d::Vector3(0, y/2, 0));
-            physicsWorld->raycast(ray, &rayCastHandler);
+            if(portal->addToPassing(objectCollider, objectName)) lastTPtime[objectName] = glfwGetTime();
         }
 
         public:
-        EventSystem(World* world, bool& isGrounded) : isGrounded(isGrounded) {
+        EventSystem(World* world) {
             this->world = world;
             this->physicsWorld = world->getPhysicsWorld();
+        }
+
+        void init() {
+            player = world->getEntityByName("Player");
+            playerRigidBody = player->getComponent<RigidBodyComponent>();
         }
 
         void deserialize(const nlohmann::json& data) {
@@ -125,14 +111,6 @@ namespace portal {
                 // User data is stored as a void pointer so we need to cast it to the correct type
                 std::string name_1 = *((std::string*)contactPair.getBody1()->getUserData());
                 std::string name_2 = *((std::string*)contactPair.getBody2()->getUserData());
-                // We need to cast ray if collision with player to check if player is grounded
-                // We check on ContactStay to avoid isGrounded to be out of sync
-                if(contactPair.getEventType() == EventType::ContactStay){
-                    // Any collision with player we need to update isGrounded
-                    if(name_1 == "Player" || name_2 == "Player") {
-                        checkForGround(contactPair, name_1);
-                    }
-                }
                 // Call the callback if exists
                 // if the name of the body is not in the map, it means that it doesn't have any callback
                 if(collisionEvents.find(name_1) == collisionEvents.end()) continue;
@@ -166,126 +144,11 @@ namespace portal {
                 // overlapPair.getEventType() is the type of event (OverlapStart/OverlapStay/OverlapExit)
                 std::string name_1 = *((std::string*)overlapPair.getBody1()->getUserData());
                 std::string name_2 = *((std::string*)overlapPair.getBody2()->getUserData());
-                if((name_1=="Portal_1" && name_2!="testwall1" )||(name_2=="Portal_1" && name_1!="testwall1" )) {
-                    r3d::Collider *col = world->getEntityByName("testwall1")->getComponent<RigidBodyComponent>()->getCollider();
-                    r3d::Collider *col2 = world->getEntityByName("testwall2")->getComponent<RigidBodyComponent>()->getCollider();
-                    if(overlapPair.getEventType() == r3d::OverlapCallback::OverlapPair::EventType::OverlapStart) {
-                        col->setIsTrigger(true);
-                        col2->setIsTrigger(true);
-                    } else if(overlapPair.getEventType() == r3d::OverlapCallback::OverlapPair::EventType::OverlapExit) {
-                        col->setIsTrigger(false);
-                        col2->setIsTrigger(false);
-                    }
-                    // name_1 is portal_1
-                    if(name_1=="Portal_1"){
-                        //rgb 2 is what needs to be teleported
-                        // Check dot product if negative with normal of portal then teleport
-                        // Get normal of portal
-                        r3d::Quaternion quat = overlapPair.getBody1()->getTransform().getOrientation();
-                        glm::fquat d_orientation(quat.w, quat.x, quat.y, quat.z);
-                        // Assuming the plane normal is the direction the object is facing after rotation
-                        glm::vec3 tempNorm = d_orientation * glm::vec3(0, 0, 1);
-                        r3d::Vector3 normal = r3d::Vector3(tempNorm.x, tempNorm.y, tempNorm.z);
-                        // Get vector from center of portal to player
-                        r3d::Vector3 playerPos = overlapPair.getBody2()->getTransform().getPosition();
-                        r3d::Vector3 portalPos = overlapPair.getBody1()->getTransform().getPosition();
-                        r3d::Vector3 portalToPlayer = playerPos - portalPos;
-                        // Get dot product
-                        r3d::decimal dot = normal.dot(portalToPlayer);
-                        // If dot product is negative then we teleport
-                        if(dot < 0) {
-                            // Get other portal
-                            Entity* portal_2 = world->getEntityByName("Portal_2");
-                            r3d::Vector3 portal_2_pos = portal_2->localTransform.getPosition() + portalToPlayer;
-                            // Get transform of other portal
-                            r3d::Transform portal_2_transform(portal_2_pos, portal_2->localTransform.getRotation() * overlapPair.getBody2()->getTransform().getOrientation());
-                            overlapPair.getBody2()->setTransform(portal_2_transform);
-                        }
-                    }else {
-                        //rgb 1 is what needs to be teleported
-                        // Check dot product if negative with normal of portal then teleport
-                        // Get normal of portal
-                        r3d::Quaternion quat = overlapPair.getBody2()->getTransform().getOrientation();
-                        glm::fquat d_orientation(quat.w, quat.x, quat.y, quat.z);
-                        // Assuming the plane normal is the direction the object is facing after rotation
-                        glm::vec3 tempNorm = d_orientation * glm::vec3(0, 0, 1);
-                        r3d::Vector3 normal = r3d::Vector3(tempNorm.x, tempNorm.y, tempNorm.z);
-                        // Get vector from center of portal to player
-                        r3d::Vector3 playerPos = overlapPair.getBody1()->getTransform().getPosition();
-                        r3d::Vector3 portalPos = overlapPair.getBody2()->getTransform().getPosition();
-                        r3d::Vector3 portalToPlayer = playerPos - portalPos;
-                        // Get dot product
-                        r3d::decimal dot = normal.dot(portalToPlayer);
-                        // If dot product is negative then we teleport
-                        if(dot < 0) {
-                            // Get other portal
-                            Entity* portal_2 = world->getEntityByName("Portal_2");
-                            r3d::Vector3 portal_2_pos = portal_2->localTransform.getPosition() + portalToPlayer;
-                            // Get transform of other portal
-                            r3d::Transform portal_2_transform(portal_2_pos, portal_2->localTransform.getRotation()* overlapPair.getBody1()->getTransform().getOrientation());
-                            overlapPair.getBody1()->setTransform(portal_2_transform);
-                        }
-                    }
-                } else if(name_1=="Portal_2" && name_2!="testwall2" || name_2=="Portal_2" && name_1!="testwall2") {
-                    r3d::Collider *col = world->getEntityByName("testwall1")->getComponent<RigidBodyComponent>()->getCollider();
-                    r3d::Collider *col2 = world->getEntityByName("testwall2")->getComponent<RigidBodyComponent>()->getCollider();
-                    if(overlapPair.getEventType() == r3d::OverlapCallback::OverlapPair::EventType::OverlapStart) {
-                        col->setIsTrigger(true);
-                        col2->setIsTrigger(true);
-                    } else if(overlapPair.getEventType() == r3d::OverlapCallback::OverlapPair::EventType::OverlapExit) {
-                        col->setIsTrigger(false);
-                        col2->setIsTrigger(false);
-                    }
-                    // name_1 is portal_2
-                    if(name_1=="Portal_2"){
-                        //rgb 2 is what needs to be teleported
-                        // Check dot product if negative with normal of portal then teleport
-                        // Get normal of portal
-                        r3d::Quaternion quat = overlapPair.getBody1()->getTransform().getOrientation();
-                        glm::fquat d_orientation(quat.w, quat.x, quat.y, quat.z);
-                        // Assuming the plane normal is the direction the object is facing after rotation
-                        glm::vec3 tempNorm = d_orientation * glm::vec3(0, 0, 1);
-                        r3d::Vector3 normal = r3d::Vector3(tempNorm.x, tempNorm.y, tempNorm.z);
-                        // Get vector from center of portal to player
-                        r3d::Vector3 playerPos = overlapPair.getBody2()->getTransform().getPosition();
-                        r3d::Vector3 portalPos = overlapPair.getBody1()->getTransform().getPosition();
-                        r3d::Vector3 portalToPlayer = playerPos - portalPos;
-                        // Get dot product
-                        r3d::decimal dot = normal.dot(portalToPlayer);
-                        // If dot product is negative then we teleport
-                        if(dot < 0) {
-                            // Get other portal
-                            Entity* portal_2 = world->getEntityByName("Portal_1");
-                            r3d::Vector3 portal_2_pos = portal_2->localTransform.getPosition() + portalToPlayer;
-                            // Get transform of other portal
-                            r3d::Transform portal_2_transform(portal_2_pos, portal_2->localTransform.getRotation() * overlapPair.getBody2()->getTransform().getOrientation());
-                            overlapPair.getBody2()->setTransform(portal_2_transform);
-                        }
-                    }else {
-                        //rgb 1 is what needs to be teleported
-                        // Check dot product if negative with normal of portal then teleport
-                        // Get normal of portal
-                        r3d::Quaternion quat = overlapPair.getBody2()->getTransform().getOrientation();
-                        glm::fquat d_orientation(quat.w, quat.x, quat.y, quat.z);
-                        // Assuming the plane normal is the direction the object is facing after rotation
-                        glm::vec3 tempNorm = d_orientation * glm::vec3(0, 0, 1);
-                        r3d::Vector3 normal = r3d::Vector3(tempNorm.x, tempNorm.y, tempNorm.z);
-                        // Get vector from center of portal to player
-                        r3d::Vector3 playerPos = overlapPair.getBody1()->getTransform().getPosition();
-                        r3d::Vector3 portalPos = overlapPair.getBody2()->getTransform().getPosition();
-                        r3d::Vector3 portalToPlayer = playerPos - portalPos;
-                        // Get dot product
-                        r3d::decimal dot = normal.dot(portalToPlayer);
-                        // If dot product is negative then we teleport
-                        if(dot < 0) {
-                            // Get other portal
-                            Entity* portal_2 = world->getEntityByName("Portal_1");
-                            r3d::Vector3 portal_2_pos = portal_2->localTransform.getPosition() + portalToPlayer;
-                            // Get transform of other portal
-                            r3d::Transform portal_2_transform(portal_2_pos, portal_2->localTransform.getRotation()* overlapPair.getBody1()->getTransform().getOrientation());
-                            overlapPair.getBody1()->setTransform(portal_2_transform);
-                        }
-                    }
+                bool checkIfTeleport = false;
+                if (name_1=="Portal_1" || name_1=="Portal_2") {
+                    handleTeleport(overlapPair.getBody2()->getCollider(0), name_2, name_1);
+                } else if(name_2=="Portal_1" || name_2=="Portal_2") {
+                    handleTeleport(overlapPair.getBody1()->getCollider(0), name_1, name_2);
                 }
             }
         }
