@@ -16,6 +16,7 @@ namespace portal {
         std::list<Component*> components; // A list of components that are owned by this entity
 
         friend World; // The world is a friend since it is the only class that is allowed to instantiate an entity
+        // Declare the portal as a friend
         friend Portal;
         Entity() = default; // The entity constructor is private since only the world is allowed to instantiate an entity
     public:

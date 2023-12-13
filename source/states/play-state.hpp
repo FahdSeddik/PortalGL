@@ -36,6 +36,7 @@ public:
         // If we have a world in the scene config, we use it to populate our world
         if(config.contains("world")){
             world.deserialize(config["world"]);
+            // After making sure that the world is populated, we initialize the event system
             world.initEventSystem();
         }
         // We initialize the camera controller system since it needs a pointer to the app

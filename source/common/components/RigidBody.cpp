@@ -80,6 +80,7 @@ namespace portal {
         material.setMassDensity(data.value("massDensity", material.getMassDensity()));
         // trigger
         collider->setIsTrigger(data.value("isTrigger", false));
+        // sett all colliders to be on category 1
         collider->setCollisionCategoryBits(1);
         collider->setCollideWithMaskBits(1);
     }

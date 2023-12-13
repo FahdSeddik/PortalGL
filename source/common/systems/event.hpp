@@ -16,7 +16,10 @@ namespace portal {
         World* world;
         Entity *player;
         RigidBodyComponent* playerRigidBody;
+        // Handles and stores last tp time for each object to prevent teleportation spam
+        // and bugs with teleportation
         std::unordered_map<std::string, double> lastTPtime;
+        // Cooldown for teleportation for each object
         double teleportationCooldown = 0.2;
         typedef r3d::CollisionCallback::ContactPair::EventType EventType;
         typedef std::function<void()> EventCallback;
@@ -24,15 +27,20 @@ namespace portal {
 
 
         void handleTeleport(r3d::Collider* objectCollider, const std::string& objectName, const std::string& portalName) {
-            // cast to portal
+            // Get portal entity and check if it is valid
             Portal* portal = dynamic_cast<Portal*>(world->getEntityByName(portalName));
+            // Check if portal is valid
             if (!portal) return;
             if (!portal->destination || !portal->surface || !portal->surfaceCollider) return;
+            // if object is surface then do nothing
             if(portal->surface->name == objectName) return;
+            // if object is in cooldown make sure other portal
+            // does not have it included to prevent issues with multithreading & thread safety
             if(lastTPtime.count(objectName) && glfwGetTime() - lastTPtime[objectName] < teleportationCooldown) {
                 portal->destination->assertRemoval(objectName);
                 return;
             }
+            // if object is not in cooldown then add to passing and update last tp time
             if(portal->addToPassing(objectCollider, objectName)) lastTPtime[objectName] = glfwGetTime();
         }
 
@@ -144,10 +152,11 @@ namespace portal {
                 // overlapPair.getEventType() is the type of event (OverlapStart/OverlapStay/OverlapExit)
                 std::string name_1 = *((std::string*)overlapPair.getBody1()->getUserData());
                 std::string name_2 = *((std::string*)overlapPair.getBody2()->getUserData());
-                bool checkIfTeleport = false;
                 if (name_1=="Portal_1" || name_1=="Portal_2") {
+                    // if name_1 is a portal then name_2 is object
                     handleTeleport(overlapPair.getBody2()->getCollider(0), name_2, name_1);
                 } else if(name_2=="Portal_1" || name_2=="Portal_2") {
+                    // same case but reversed
                     handleTeleport(overlapPair.getBody1()->getCollider(0), name_1, name_2);
                 }
             }

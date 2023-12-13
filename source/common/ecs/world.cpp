@@ -14,6 +14,8 @@ namespace portal {
         for(const auto& entityData : data){
             bool isportal = entityData.value("isPortal", false);
             Entity *entity;
+            // if entity is a portal, then we create a portal object
+            // instead of a normal entity (portal inherits from entity)
             if(isportal) {
                 entity = new Portal();
                 entity->world = this;

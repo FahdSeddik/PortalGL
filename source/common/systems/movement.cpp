@@ -49,12 +49,14 @@ namespace portal {
         rgb->getBody()->setTransform(temp);
         rgb->getBody()->setLinearVelocity(r3d::Vector3(0,0,0));
         rgb->getBody()->setAngularVelocity(r3d::Vector3(0,0,0));
+        // transfer collider to separate layer to disable it from colliding with other objects
         rgb->getCollider()->setCollideWithMaskBits(0);
         rgb->getCollider()->setCollisionCategoryBits(0);
     }
 
     void MovementSystem::physicsUpdate(float deltaTime) {
         if(app->getKeyboard().isPressed(GLFW_KEY_SPACE)) {
+            // if space pressed make sure to update isGrounded
             checkForGround();
         }
         // Constant physics time step (60 FPS)
@@ -144,6 +146,7 @@ namespace portal {
             // If E is pressed and we have an attachement then we detach it
             // attachment should return to not be a trigger to collide with other objects
             r3d::Collider *collider = attachement->getComponent<RigidBodyComponent>()->getCollider();
+            // return collider to same layer as other objects to collide with them again
             collider->setCollideWithMaskBits(1);
             collider->setCollisionCategoryBits(1);
             attachement = nullptr;

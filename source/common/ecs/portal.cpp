@@ -70,7 +70,7 @@ namespace portal {
             else {
                 surfaceCollider->setIsTrigger(false);
             }
-            markedForRemoval.insert(objectName);
+            assertRemoval(objectName);
             return true;
         }
         return false;
@@ -155,7 +155,6 @@ namespace portal {
         localToWorld = getLocalToWorldMatrix();
         invLocalToWorld = glm::inverse(localToWorld);
         portalNormal = glm::vec4(portalRot * glm::vec3(0, 0, 1), 0);
-        isCalculated = true;
         togObj = std::abs(portalNormal.y) > 0.7f;
     }
     void Portal::getSurface() {

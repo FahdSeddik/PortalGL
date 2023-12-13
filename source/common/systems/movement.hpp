@@ -50,6 +50,9 @@ namespace portal
         bool isGrounded = false;
         std::string attachedName = "";
         Entity* attachement = nullptr;
+        // Hold portals 
+        // TODO: this needs to be dynamic 
+        // for shooting portals
         Portal* Portal_1 = nullptr;
         Portal* Portal_2 = nullptr;
 
@@ -59,16 +62,19 @@ namespace portal
         glm::vec3 right;
         // Player position reference
         const r3d::Vector3 &playerPos;
-
+        
+        // Attach an "isAttachable" entity to the player
         void attachToPlayer(Entity *entity) const;
-
+        // Handles all physics updates
         void physicsUpdate(float deltaTime);
 
         // Returns velocity component of player
         glm::vec3 handlePlayerMovement();
-
+        // gets the front, right, and absoluteFront of player
         void calculatePlayerVectors();
+        // RayCasts and updates isGrounded
         void checkForGround();
+        // Handles disattaching and attaching of an entity
         void checkAttachment();
 
     public:
@@ -88,6 +94,7 @@ namespace portal
         // This should be called every frame to update all entities containing a MovementComponent. 
         void update(World* world, float deltaTime) {
             if(!physicsWorld) return;
+            // TODO: this needs to be dynamic for shooting portals
             Portal_1->update();
             Portal_2->update();
             calculatePlayerVectors();
