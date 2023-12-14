@@ -48,6 +48,8 @@ namespace portal
         RigidBodyComponent* playerRigidBody;
         r3d::PhysicsWorld* physicsWorld;
         bool isGrounded = false;
+        double lastJumpTime = 0;
+        double JumpCoolDown = 0.2;
         std::string attachedName = "";
         Entity* attachement = nullptr;
         // Hold portals 

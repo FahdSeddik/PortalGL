@@ -55,7 +55,7 @@ namespace portal {
     }
 
     void MovementSystem::physicsUpdate(float deltaTime) {
-        if(app->getKeyboard().isPressed(GLFW_KEY_SPACE)) {
+        if(!playerRigidBody->getCollider()->getIsTrigger() && glfwGetTime() - lastJumpTime > JumpCoolDown && app->getKeyboard().isPressed(GLFW_KEY_SPACE)) {
             // if space pressed make sure to update isGrounded
             checkForGround();
         }
@@ -83,24 +83,28 @@ namespace portal {
             // jump Apply force
             playerRigidBody->getBody()->applyWorldForceAtCenterOfMass(r3d::Vector3(0, controller->positionSensitivity.y * 60.0f, 0));
             isGrounded = false;
+            lastJumpTime = glfwGetTime();
         }
         if(app->getKeyboard().isPressed(GLFW_KEY_W)){
             // move forward
-            velf += front * controller->positionSensitivity.z;
+            velf += front;
         }
         if(app->getKeyboard().isPressed(GLFW_KEY_S)){
             // move backward
-            velf += -front * controller->positionSensitivity.z;
+            velf += -front;
         }
         if(app->getKeyboard().isPressed(GLFW_KEY_A)){
             // move left
-            velr += -right * controller->positionSensitivity.x;
+            velr += -right;
         }
         if(app->getKeyboard().isPressed(GLFW_KEY_D)){
             // move right
-            velr += right * controller->positionSensitivity.x;
+            velr += right;
         }
         glm::vec3 vel = velf + velr;
+        if(vel == glm::vec3(0.0f, 0.0f, 0.0f)) return vel;
+        vel = glm::normalize(vel);
+        vel *= controller->positionSensitivity;
         // if shift is pressed, speed up
         if(app->getKeyboard().isPressed(GLFW_KEY_LEFT_SHIFT)){
             vel *= controller->speedupFactor;

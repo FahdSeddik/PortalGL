@@ -18,7 +18,29 @@ namespace portal {
         this->getComponent<RigidBodyComponent>()->getCollider()->setCollideWithMaskBits(1 | 2);
     }
 
-    bool Portal::hasPassed(const std::string& objectName) const {
+    void Portal::calculateFailSafeLocation(const std::string& objectName) {
+        Entity* object = getWorld()->getEntityByName(objectName);
+        if(object == nullptr) return;
+        // Object position from model matrix of object + the relative position of the collider
+        glm::vec3 objectPosition = glm::vec3(object->getLocalToWorldMatrix() * glm::vec4(0, 0, 0, 1));
+        // vector from portal center to object center
+        glm::vec4 portalToObj(objectPosition - portalPosition, 0);
+        // project vector onto plane of portal
+        glm::vec4 projected = portalToObj - glm::dot(portalToObj, portalNormal) * portalNormal;
+        // add projected vector to portal position to get failSafeTeleportLocation
+        glm::vec4 failSafeTeleportLocation_glm = glm::vec4(portalPosition, 1) + projected;
+        failSafeTeleportLocation[objectName] = failSafeTeleportLocation_glm;
+    }
+
+    bool Portal::shouldUseFailSafeLocation(const r3d::Vector3 &objectPosition) const {
+        // check length of vector from portal to object 
+        glm::vec4 portalToObj(objectPosition.x - portalPosition.x, objectPosition.y - portalPosition.y, objectPosition.z - portalPosition.z, 0);
+        float length = glm::length(portalToObj);
+        return length > 2.0f;
+    }
+
+
+    float Portal::hasPassed(const std::string& objectName) const {
         // Get entity
         // Calculate dot product between portal normal and vector from portal to object
         // if dot product is negative then object has passed through portal
@@ -27,14 +49,10 @@ namespace portal {
         glm::vec3 relative_glm(ObjectRgb->relativePosition.x, ObjectRgb->relativePosition.y, ObjectRgb->relativePosition.z);
         // Object position from model matrix of object + the relative position of the collider
         glm::vec3 objectPosition = glm::vec3(object->getLocalToWorldMatrix() * glm::vec4(0, 0, 0, 1)) + relative_glm;
-        // Portal position from model matrix of portal
-        glm::vec3 portalPosition(localToWorld * glm::vec4(0, 0, 0, 1));
         // vector from portal center to object center
         glm::vec4 portalToObj(objectPosition - portalPosition, 0);
-        float dot = glm::dot(glm::normalize(portalToObj), portalNormal);
-        // TODO: explore teleporting before portal to remove
-        // flickering
-        return dot < 0;
+        float dot = glm::dot(portalToObj, portalNormal);
+        return dot;
     }
     bool Portal::addToPassing(r3d::Collider* objectCollider, const std::string& objectName) {
         // if object is already in passedObjects then no need to add it again
@@ -47,10 +65,13 @@ namespace portal {
         // when another pointer is still pointing to it to not delete a collider that
         // is pointed to by the physicsL library by mistake
         passedObjects[objectName] = std::make_shared<r3d::Collider*>(objectCollider);
+        // Add object to failSafeTeleportLocation
+        calculateFailSafeLocation(objectName);
         return true;
     }
 
     void Portal::update() {
+        if(!surface || !destination || !surfaceCollider) return;
         // if no passedObjects and no markedForRemoval
         // then make sure that the surface collider is not a trigger
         // as there is no need for it to be a trigger (handles thread safety)
@@ -63,6 +84,7 @@ namespace portal {
             r3d::Collider *coll = dynamic_cast<r3d::Collider *>(*passedObjects[objectName].get());
             if(!coll->getIsTrigger())coll->setIsTrigger(false);
             passedObjects.erase(objectName);
+            failSafeTeleportLocation.erase(objectName);
         }
         markedForRemoval.clear();
         // loop over passedObjects and send them to passObject
@@ -85,7 +107,8 @@ namespace portal {
             // if on wall then disable surface collider
             surfaceCollider->setIsTrigger(true);
         }
-        if (hasPassed(objectName)) {
+        float dot = hasPassed(objectName);
+        if (dot < 0.0f && dot > -2.0f) {
             // if object has passed then teleport it
             teleportObject(objectName);
             // revert back collision correctly
@@ -98,6 +121,16 @@ namespace portal {
             // add object to be removed
             assertRemoval(objectName);
             return true;
+        } else if (dot > 2.0f || dot < -2.0f) {
+            // object too far away from portal
+            if(togObj) {
+                objectCollider->setIsTrigger(false);
+            }
+            else {
+                surfaceCollider->setIsTrigger(false);
+            }
+            // add object to be removed
+            assertRemoval(objectName);
         }
         return false;
     }
@@ -115,7 +148,7 @@ namespace portal {
 
         // Call teleportation functions
         // on position, orientation, and velocity
-        r3d::Vector3 newPosition = teleportedPosition(object->localTransform.getPosition());
+        r3d::Vector3 newPosition = teleportedPosition(ObjectName, object->localTransform.getPosition());
         r3d::Quaternion newRotation = teleportedRotation(object->localTransform.getRotation(), ObjectName);
         r3d::Vector3 newVelocity = teleportedVelocity(objectRgb->getBody()->getLinearVelocity());
         
@@ -177,8 +210,17 @@ namespace portal {
         return r3d::Quaternion(newObjectRotation_glm.x, newObjectRotation_glm.y, newObjectRotation_glm.z, newObjectRotation_glm.w);
     }
 
-    r3d::Vector3 Portal::teleportedPosition(const r3d::Vector3& objectPosition) const {
-        glm::vec4 objectPosition_glm(objectPosition.x, objectPosition.y, objectPosition.z, 1);
+    r3d::Vector3 Portal::teleportedPosition(const std::string& ObjectName, const r3d::Vector3& objectPosition) const {
+        glm::vec4 objectPosition_glm;
+        if (failSafeTeleportLocation.count(ObjectName) && shouldUseFailSafeLocation(objectPosition)) {
+            // if failSafeTeleportLocation exists and we should use it
+            // then use it
+            objectPosition_glm = failSafeTeleportLocation.at(ObjectName);
+            objectPosition_glm.w = 1;
+        } else {
+            // else use object position
+            objectPosition_glm = glm::vec4(objectPosition.x, objectPosition.y, objectPosition.z, 1);
+        }
         // For a position we need to apply the model matrices of each of the portals
         glm::vec4 relativePos = invLocalToWorld * objectPosition_glm;
         relativePos = halfTurn * relativePos;
@@ -211,6 +253,7 @@ namespace portal {
         localToWorld = getLocalToWorldMatrix();
         invLocalToWorld = glm::inverse(localToWorld);
         portalNormal = glm::vec4(portalRot * glm::vec3(0, 0, 1), 0);
+        portalPosition = glm::vec3(localToWorld * glm::vec4(0, 0, 0, 1));
         togObj = std::abs(portalNormal.y) > 0.7f;
     }
     void Portal::getSurface() {

@@ -43,18 +43,25 @@ namespace portal {
         std::unordered_map<std::string, std::shared_ptr<r3d::Collider*>> passedObjects;
         // Objects that got teleported and need to be removed from passedObjects
         std::unordered_set<std::string> markedForRemoval;
+        // Fail Safe teleport location of objects in case of failure (e.g. player runs too far from portal)
+        std::unordered_map<std::string, glm::vec4> failSafeTeleportLocation;
+        // To project point of player onto plane of portal and store that point as failSafeTeleportLocation
+        void calculateFailSafeLocation(const std::string &objectName);
+        // To check if we should use failsafeLocation on object or not given object position
+        bool shouldUseFailSafeLocation(const r3d::Vector3 &objectPosition) const;
+
 
         // Calculate cached matrices and rotations to be used every teleportation operation
         void calculateCachedValues();
         // Given the position of an object, calculate the position of the object after teleportation
-        r3d::Vector3 teleportedPosition(const r3d::Vector3 &objectPosition) const;
+        r3d::Vector3 teleportedPosition(const std::string& ObjectName, const r3d::Vector3 &objectPosition) const;
         // Given the rotation of an object, calculate the rotation of the object after teleportation
         r3d::Quaternion teleportedRotation(const r3d::Quaternion &objectRotation, const std::string &objectName) const;
         // Given the velocity of an object, calculate the velocity of the object after teleportation
         r3d::Vector3 teleportedVelocity(const r3d::Vector3 &objectVelocity) const;
 
         // Check if an object has passed through the portal
-        bool hasPassed(const std::string &objectName) const;
+        float hasPassed(const std::string &objectName) const;
         // Set the surface that the portal is currently on
         void setSurface(Entity *surf);
         // Handle teleportation of an object
@@ -75,6 +82,7 @@ namespace portal {
         glm::mat4 invLocalToWorld;
         glm::mat4 localToWorld;
         glm::vec4 portalNormal; //(x,y,z,0)
+        glm::vec3 portalPosition; //(x,y,z)
 
         // Once a destination is set then we can calculate
         // the cached values

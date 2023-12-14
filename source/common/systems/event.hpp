@@ -36,10 +36,7 @@ namespace portal {
             if(portal->surface->name == objectName) return;
             // if object is in cooldown make sure other portal
             // does not have it included to prevent issues with multithreading & thread safety
-            if(lastTPtime.count(objectName) && glfwGetTime() - lastTPtime[objectName] < teleportationCooldown) {
-                portal->destination->assertRemoval(objectName);
-                return;
-            }
+            if(lastTPtime.count(objectName) && glfwGetTime() - lastTPtime[objectName] < teleportationCooldown) return;
             // if object is not in cooldown then add to passing and update last tp time
             if(portal->addToPassing(objectCollider, objectName)) lastTPtime[objectName] = glfwGetTime();
         }
