@@ -15,6 +15,9 @@
 #include <glm/gtc/quaternion.hpp>
 #include<glm/common.hpp>
 
+#include <string>
+#include <reactphysics3d/reactphysics3d.h>
+
 namespace portal
 {
 
@@ -24,11 +27,31 @@ namespace portal
     class FreeCameraControllerSystem {
         Application* app; // The application in which the state runs
         bool mouse_locked = false; // Is the mouse locked
+        r3d::Quaternion qt;
 
     public:
         // When a state enters, it should call this function and give it the pointer to the application
         void enter(Application* app){
             this->app = app;
+
+            // we need to get only the rotation around the y-axis
+            glm::vec3 forced_up(0, 1, 0);
+            glm::vec3 forced_front = glm::vec3(0, 0, 1);
+            glm::vec3 right = glm::cross(forced_up, forced_front);
+            // Quaternion.LockRotation((0, 1, 0), right);
+            glm::mat4 newRotation = glm::mat4(1.0f);
+            // Move player to new axis and force up direction
+            newRotation[0][0] = right.x;
+            newRotation[1][0] = right.y;
+            newRotation[2][0] = right.z;
+            newRotation[0][1] = forced_up.x;
+            newRotation[1][1] = forced_up.y;
+            newRotation[2][1] = forced_up.z;
+            newRotation[0][2] = forced_front.x;
+            newRotation[1][2] = forced_front.y;
+            newRotation[2][2] = forced_front.z;
+            glm::fquat q = glm::quat_cast(newRotation);
+            qt = r3d::Quaternion(q.x, q.y, q.z, q.w);
         }
 
         // This should be called every frame to update all entities containing a FreeCameraControllerComponent 
@@ -48,14 +71,14 @@ namespace portal
             Entity* entity = camera->getOwner();
 
             // If the left mouse button is pressed, we lock and hide the mouse. This common in First Person Games.
-            if(app->getMouse().isPressed(GLFW_MOUSE_BUTTON_1) && !mouse_locked){
-                app->getMouse().lockMouse(app->getWindow());
-                mouse_locked = true;
-            // If the left mouse button is released, we unlock and unhide the mouse.
-            } else if(!app->getMouse().isPressed(GLFW_MOUSE_BUTTON_1) && mouse_locked) {
-                app->getMouse().unlockMouse(app->getWindow());
-                mouse_locked = false;
-            }
+            // if(app->getMouse().isPressed(GLFW_MOUSE_BUTTON_1) && !mouse_locked){
+            //     app->getMouse().lockMouse(app->getWindow());
+            //     mouse_locked = true;
+            // // If the left mouse button is released, we unlock and unhide the mouse.
+            // } else if(!app->getMouse().isPressed(GLFW_MOUSE_BUTTON_1) && mouse_locked) {
+            //     app->getMouse().unlockMouse(app->getWindow());
+            //     mouse_locked = false;
+            // }
 
             // We get a reference to the entity's position and rotation
             const r3d::Vector3& pos = entity->localTransform.getPosition();
@@ -64,7 +87,7 @@ namespace portal
             glm::quat rotation((float)rot.w, (float)rot.x, (float)rot.y, (float)rot.z);
             // If the left mouse button is pressed, we get the change in the mouse location
             // and use it to update the camera rotation
-            if(app->getMouse().isPressed(GLFW_MOUSE_BUTTON_1)){
+            // if(app->getMouse().isPressed(GLFW_MOUSE_BUTTON_1)){
                 glm::vec2 delta = app->getMouse().getMouseDelta();
                 float pitch = -delta.y * controller->rotationSensitivity; // The y-axis controls the pitch
                 float yaw = -delta.x * controller->rotationSensitivity; // The x-axis controls the yaw
@@ -80,7 +103,7 @@ namespace portal
                 // Combine the pitch and yaw rotations
                 rotation = yawQuat * rotation * pitchQuat;
                 rotation = glm::normalize(rotation);
-            }
+            // }
 
             // We update the camera fov based on the mouse wheel scrolling amount
             float fov = camera->fovY + app->getMouse().getScrollOffset().y * controller->fovSensitivity;
@@ -122,36 +145,12 @@ namespace portal
             entity->localTransform.setRotation(rotation);
             RigidBodyComponent* rgb = entity->getComponent<RigidBodyComponent>();
             if (rgb){
-                // we need to get only the rotation around the y-axis
-                glm::quat q = rotation;
-
-                // Get the forward direction (z-axis) of the quaternion
-                glm::vec3 forward = glm::rotate(q, glm::vec3(0.0f, 0.0f, -1.0f));
-
-                // Remove the y-component of the forward direction
-                forward.y = 0.0f;
-
-                // Normalize the forward direction
-                forward = glm::normalize(forward);
-
-                // Compute the angle between the forward direction and the negative z-axis
-                float angle = glm::acos(glm::dot(forward, glm::vec3(0.0f, 0.0f, -1.0f)));
-
-                // Compute the cross product of the forward direction and the negative z-axis
-                glm::vec3 cross = glm::cross(forward, glm::vec3(0.0f, 0.0f, -1.0f));
-
-                // If the y-component of the cross product is negative, negate the angle
-                if (cross.y < 0.0f)
-                    angle = -angle;
-
-                // Create a new quaternion representing the rotation around the y-axis
-                glm::quat yRotation = glm::angleAxis(angle, glm::vec3(0.0f, 1.0f, 0.0f));
-                r3d::Quaternion qt(yRotation.x, yRotation.y, yRotation.z, yRotation.w);
                 r3d::Transform transform = rgb->getBody()->getTransform();
                 transform.setOrientation(qt);
                 transform.setPosition(entity->localTransform.getPosition() + rgb->relativePosition);
                 rgb->getBody()->setTransform(transform);
             }
+
         }
 
         // When the state exits, it should call this function to ensure the mouse is unlocked

@@ -46,6 +46,10 @@ public:
         renderer.initialize(size, config["renderer"]);
 
         movementSystem = new portal::MovementSystem(&world, getApp());
+
+        getApp()->getMouse().lockMouse(getApp()->getWindow());
+        getApp()->getMouse().enable(getApp()->getWindow());
+
     }
 
     void onDraw(double deltaTime) override {
@@ -87,6 +91,8 @@ public:
     }
 
     void onDestroy() override {
+        // Unlock the mouse 
+        getApp()->getMouse().unlockMouse(getApp()->getWindow());
         // Don't forget to destroy the renderer
         renderer.destroy();
         // On exit, we call exit for the camera controller system to make sure that the mouse is unlocked

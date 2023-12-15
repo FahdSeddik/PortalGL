@@ -50,9 +50,6 @@ namespace portal {
         // To check if we should use failsafeLocation on object or not given object position
         bool shouldUseFailSafeLocation(const r3d::Vector3 &objectPosition) const;
 
-
-        // Calculate cached matrices and rotations to be used every teleportation operation
-        void calculateCachedValues();
         // Given the position of an object, calculate the position of the object after teleportation
         r3d::Vector3 teleportedPosition(const std::string& ObjectName, const r3d::Vector3 &objectPosition) const;
         // Given the rotation of an object, calculate the rotation of the object after teleportation
@@ -88,9 +85,10 @@ namespace portal {
         // the cached values
         void setDestination(Portal* dest) {
             destination = dest;
-            calculateCachedValues();
+            // calculateCachedValues();
         }
-
+        // Calculate cached matrices and rotations to be used every teleportation operation
+        void calculateCachedValues();
         // RayCast behind portal to get surface
         void getSurface();
         // Adds an object to the list of objects that need to be checked for passing

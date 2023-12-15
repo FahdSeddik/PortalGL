@@ -27,6 +27,8 @@ namespace portal {
 
         bool isAttachable = false;
 
+        bool canHoldPortal = true;
+
         virtual World* getWorld() const { return world; } // Returns the world to which this entity belongs
 
         glm::mat4 getLocalToWorldMatrix() const; // Computes and returns the transformation from the entities local space to the world space

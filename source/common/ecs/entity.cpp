@@ -26,6 +26,7 @@ namespace portal {
     void Entity::deserialize(const nlohmann::json& data){
         if(!data.is_object()) return;
         isAttachable = data.value("isAttachable", isAttachable);
+        canHoldPortal = data.value("canHoldPortal", canHoldPortal);
         localTransform.deserialize(data);
         if(data.contains("components")){
             if(const auto& components = data["components"]; components.is_array()){

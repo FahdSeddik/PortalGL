@@ -13,28 +13,7 @@ namespace r3d = reactphysics3d;
 #include <glm/trigonometric.hpp>
 #include <glm/gtx/fast_trigonometry.hpp>
 
-namespace portal
-{
-
-    // Class Handle player Grounded
-    class RayCastInteraction : public r3d::RaycastCallback {
-        std::string& attachedName;
-        public:
-        RayCastInteraction(std::string& attachedName) : attachedName(attachedName) {}
-        // Called when a raycast hits a body
-        virtual r3d::decimal notifyRaycastHit(const r3d::RaycastInfo& raycastInfo) override {
-            // Get the name of the body that has been hit
-            if(raycastInfo.body->getCollider(0)->getIsTrigger()){
-                // if trigger, return 1.0 to continue raycast
-                return r3d::decimal(1.0);
-            }
-            attachedName = *((std::string*)raycastInfo.body->getUserData());
-            std::cout << "RayCast Hit" << attachedName << std::endl;
-            // return 0 to stop raycast
-            return r3d::decimal(0.0);
-        }
-    };
-
+namespace portal {
 
     // The movement system is responsible for moving every entity which contains a MovementComponent.
     // This system is added as a simple example for how use the ECS framework to implement logic. 
@@ -57,6 +36,8 @@ namespace portal
         // for shooting portals
         Portal* Portal_1 = nullptr;
         Portal* Portal_2 = nullptr;
+        bool isPortal1Shot = false;
+        bool isPortal2Shot = false;
 
         // Player Vectors
         r3d::Vector3 absoluteFront;
@@ -78,6 +59,10 @@ namespace portal
         void checkForGround();
         // Handles disattaching and attaching of an entity
         void checkAttachment();
+        // Validates and casts portals
+        void checkPortalShot();
+        // Casts a portal
+        void castPortal(Entity* surface, Portal* portal, glm::vec3 hitPoint);
 
     public:
         MovementSystem(World* world, Application* app) : world(world), app(app), player(world->getEntityByName("Player")), playerPos(player->localTransform.getPosition()) {
@@ -86,21 +71,21 @@ namespace portal
             physicsWorld = player->getWorld()->getPhysicsWorld();
             Portal_1 = dynamic_cast<Portal*>(world->getEntityByName("Portal_1"));
             Portal_2 = dynamic_cast<Portal*>(world->getEntityByName("Portal_2"));
-            Portal_1->setDestination(Portal_2);
-            Portal_2->setDestination(Portal_1);
-            Portal_1->getSurface();
-            Portal_2->getSurface();
+            // Portal_1->setDestination(Portal_2);
+            // Portal_2->setDestination(Portal_1);
+            // Portal_1->getSurface();
+            // Portal_2->getSurface();
         }
 
         
         // This should be called every frame to update all entities containing a MovementComponent. 
         void update(World* world, float deltaTime) {
             if(!physicsWorld) return;
-            // TODO: this needs to be dynamic for shooting portals
             Portal_1->update();
             Portal_2->update();
             calculatePlayerVectors();
             checkAttachment();
+            checkPortalShot();
             physicsUpdate(deltaTime);
             // For each entity in the world
             for(const auto& [name, entity] : world->getEntities()){
