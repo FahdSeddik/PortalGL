@@ -32,8 +32,6 @@ namespace portal {
         doneLoading = false;
         progress = 0;
         total = 0;
-        // set AssetLoader<T>::separateThread to true to load assets in a separate thread
-        AssetLoader<Mesh>::separateThread = true;
         // Load the loading screen material
         menuMaterial = new TexturedMaterial();
         menuMaterial->shader = new ShaderProgram();
@@ -115,7 +113,6 @@ namespace portal {
         else {
             fillAssetLoader();
         }
-        AssetLoader<Mesh>::separateThread = false;
         cleanUp();
     }
 

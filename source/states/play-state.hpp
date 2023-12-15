@@ -60,8 +60,11 @@ public:
         [&config, this](){
             // A function that updates LoadingScreen::progress
             // Sets LoadingScreen::doneLoading to true when done
+            // set AssetLoader<T>::separateThread to true to load assets in a separate thread
+            portal::AssetLoader<portal::Mesh>::separateThread = true;
             glfwMakeContextCurrent(getApp()->getSharedWindow());
             loadConfig(config);
+            portal::AssetLoader<portal::Mesh>::separateThread = false;
         },
         [&config](){
             // This function should be responsible to compute
