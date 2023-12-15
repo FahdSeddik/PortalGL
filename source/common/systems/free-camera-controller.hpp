@@ -28,12 +28,10 @@ namespace portal
         Application* app; // The application in which the state runs
         bool mouse_locked = false; // Is the mouse locked
         r3d::Quaternion qt;
-
     public:
         // When a state enters, it should call this function and give it the pointer to the application
         void enter(Application* app){
             this->app = app;
-
             // we need to get only the rotation around the y-axis
             glm::vec3 forced_up(0, 1, 0);
             glm::vec3 forced_front = glm::vec3(0, 0, 1);
