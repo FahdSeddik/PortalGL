@@ -15,7 +15,7 @@ namespace portal {
     void Portal::setSurface(Entity *surf) {
         surface = surf;
         surfaceCollider = surface->getComponent<RigidBodyComponent>()->getCollider();
-        this->getComponent<RigidBodyComponent>()->getCollider()->setCollideWithMaskBits(1 | 2);
+        this->getComponent<RigidBodyComponent>()->getCollider()->setCollideWithMaskBits(1);
     }
 
     void Portal::calculateFailSafeLocation(const std::string& objectName) {
@@ -82,7 +82,7 @@ namespace portal {
         // clears markedForRemoval objects
         for (auto& objectName : markedForRemoval) {
             r3d::Collider *coll = dynamic_cast<r3d::Collider *>(*passedObjects[objectName].get());
-            if(!coll->getIsTrigger())coll->setIsTrigger(false);
+            if(coll->getIsTrigger())coll->setIsTrigger(false);
             passedObjects.erase(objectName);
             failSafeTeleportLocation.erase(objectName);
         }
