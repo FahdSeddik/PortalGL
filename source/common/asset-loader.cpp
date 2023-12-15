@@ -8,6 +8,7 @@
 #include "mesh/mesh-utils.hpp"
 #include "material/material.hpp"
 #include "deserialize-utils.hpp"
+#include "loading-screen.hpp"
 
 namespace portal {
 
@@ -18,6 +19,7 @@ namespace portal {
     void AssetLoader<ShaderProgram>::deserialize(const nlohmann::json& data) {
         if(data.is_object()){
             for(auto& [name, desc] : data.items()){
+                LoadingScreen::progress++;
                 std::string vsPath = desc.value("vs", "");
                 std::string fsPath = desc.value("fs", "");
                 auto shader = new ShaderProgram();
@@ -36,6 +38,7 @@ namespace portal {
     void AssetLoader<Texture2D>::deserialize(const nlohmann::json& data) {
         if(data.is_object()){
             for(auto& [name, desc] : data.items()){
+                LoadingScreen::progress++;
                 std::string path = desc.get<std::string>();
                 assets[name] = texture_utils::loadImage(path);
             }
@@ -53,6 +56,7 @@ namespace portal {
     void AssetLoader<Sampler>::deserialize(const nlohmann::json& data) {
         if(data.is_object()){
             for(auto& [name, desc] : data.items()){
+                LoadingScreen::progress++;
                 auto sampler = new Sampler();
                 sampler->deserialize(desc);
                 assets[name] = sampler;
@@ -67,6 +71,7 @@ namespace portal {
     void AssetLoader<Mesh>::deserialize(const nlohmann::json& data) {
         if(data.is_object()){
             for(auto& [name, desc] : data.items()){
+                LoadingScreen::progress++;
                 std::string path = desc.get<std::string>();
                 assets[name] = mesh_utils::loadOBJ(path);
             }
@@ -89,6 +94,7 @@ namespace portal {
     void AssetLoader<Material>::deserialize(const nlohmann::json& data) {
         if(data.is_object()){
             for(auto& [name, desc] : data.items()){
+                LoadingScreen::progress++;
                 std::string type = desc.value("type", "");
                 auto material = createMaterialFromType(type);
                 material->deserialize(desc);
@@ -103,6 +109,7 @@ namespace portal {
     void AssetLoader<nlohmann::json>::deserialize(const nlohmann::json& data) {
         if(data.is_object()){
             for(auto& [name, desc] : data.items()){
+                LoadingScreen::progress++;
                 // Create Json object and store its pointer in assets
                 assets[name] = new nlohmann::json(desc);
             }
@@ -118,12 +125,18 @@ namespace portal {
             AssetLoader<Texture2D>::deserialize(assetData["textures"]);
         if(assetData.contains("samplers"))
             AssetLoader<Sampler>::deserialize(assetData["samplers"]);
-        if(assetData.contains("meshes"))
-            AssetLoader<Mesh>::deserialize(assetData["meshes"]);
+        if(assetData.contains("meshes")) {
+            if (AssetLoader<Mesh>::separateThread) {
+                LoadingScreen::deserializeMesh(assetData["meshes"]);
+            } else {
+                AssetLoader<Mesh>::deserialize(assetData["meshes"]);
+            }
+        }
         if(assetData.contains("materials"))
             AssetLoader<Material>::deserialize(assetData["materials"]);
         if(assetData.contains("models")) 
             AssetLoader<nlohmann::json>::deserialize(assetData["models"]);
+        LoadingScreen::doneLoading = true;
     }
 
     void clearAllAssets(){

@@ -42,6 +42,8 @@ set(COMMON_SOURCES
         source/common/asset-loader.cpp
         source/common/asset-loader.hpp
         source/common/deserialize-utils.hpp
+        source/common/loading-screen.hpp
+        source/common/loading-screen.cpp
         
         source/common/shader/shader.hpp
         source/common/shader/shader.cpp

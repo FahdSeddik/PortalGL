@@ -53,7 +53,7 @@ namespace portal {
     class Application {
     protected:
         GLFWwindow * window = nullptr;      // Pointer to the window created by GLFW using "glfwCreateWindow()".
-        
+        GLFWwindow * share = nullptr;       // Pointer to the window that will be shared        
         Keyboard keyboard;                  // Instance of "our" keyboard class that handles keyboard functionalities.
         Mouse mouse;                        // Instance of "our" mouse class that handles mouse functionalities.
 
@@ -111,7 +111,9 @@ namespace portal {
 
         // Class Getters.
         GLFWwindow* getWindow(){ return window; }
+        GLFWwindow* getSharedWindow(){ return share; }
         [[nodiscard]] const GLFWwindow* getWindow() const { return window; }
+        [[nodiscard]] const GLFWwindow* getSharedWindow() const { return share; }
         Keyboard& getKeyboard() { return keyboard; }
         [[nodiscard]] const Keyboard& getKeyboard() const { return keyboard; }
         Mouse& getMouse() { return mouse; }
