@@ -69,10 +69,11 @@ namespace portal {
             // The depth format can be (Depth component with 24 bits).
             colorTexture = texture_utils::empty(GL_RGBA16F, windowSize);
             brightColorTexture = texture_utils::empty(GL_RGBA16F, windowSize);
-            depthTarget = texture_utils::empty(GL_DEPTH_COMPONENT24, windowSize);
+            depthTarget = texture_utils::empty(GL_DEPTH24_STENCIL8, windowSize);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTexture->getOpenGLName(), 0);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, brightColorTexture->getOpenGLName(), 0);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthTarget->getOpenGLName(), 0);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthTarget->getOpenGLName(), 0);
+
             
             unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
             glDrawBuffers(2, attachments);
@@ -279,14 +280,7 @@ namespace portal {
         // glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
         // glDepthMask(GL_TRUE);
 
-        // if(bloom){
-        //     glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
-        // }
-        // // If there is a postprocess material, bind the framebuffer
-        // else if(postprocessMaterial){
-        //     //TODO: (Req 11) bind the framebuffer
-        //     glBindFramebuffer(GL_FRAMEBUFFER, postprocessFrameBuffer);
-        // }
+        
         
 
         //TODO: (Req 9) Clear the color and depth buffers
@@ -354,64 +348,6 @@ namespace portal {
             }
             command.mesh->draw();
         }
-
-        // apply the pingpong blur
-        // bool horizontal = true, first_iteration = true;
-        // for (int i = 0; i < bloomBlurIterations; i++)
-        // {
-        //     glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
-        //     pingpongMaterial->setup();
-        //     pingpongMaterial->shader->set("horizontal", horizontal);
-        //     if (first_iteration){
-        //         glActiveTexture(GL_TEXTURE1);
-        //         brightColorTexture->bind();
-        //         if(pingpongMaterial->sampler)
-        //             pingpongMaterial->sampler->bind(1);
-        //         pingpongMaterial->shader->set("tex2", 1);
-        //     } 
-        //     glBindVertexArray(postProcessVertexArray);
-        //     glDrawArrays(GL_TRIANGLES, 0, 3);
-        //     horizontal = !horizontal;
-        //     if (first_iteration)
-        //         first_iteration = false;
-        // }
-
-        // if(bloom){ 
-        //    if(postprocessMaterial){
-        //         // if there is a postprocess material, draw the scene to the framebuffer after applying bloom
-        //         // and then draw the framebuffer to the screen using the postprocess material
-        //         glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
-        //         // glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        //         glBindVertexArray(postProcessVertexArray);
-        //         hdrMaterial->setup();
-        //         hdrMaterial->shader->set("bloomIntensity", bloomIntensity);
-        //         hdrMaterial->shader->set("exposure", exposure);       
-        //         glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        //         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        //         glBindVertexArray(postProcessVertexArray);
-        //         postprocessMaterial->setup();
-        //         glDrawArrays(GL_TRIANGLES, 0, 3);
-
-        //     } else {
-        //         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        //         glBindVertexArray(postProcessVertexArray);
-        //         hdrMaterial->setup();
-        //         hdrMaterial->shader->set("bloomIntensity", bloomIntensity);
-        //         hdrMaterial->shader->set("exposure", exposure);       
-        //         glDrawArrays(GL_TRIANGLES, 0, 3);
-        //     }
-
-        // }
-        // // If there is a postprocess material, draw the scene to the framebuffer
-        // else  if(postprocessMaterial){
-        //     //TODO: (Req 11) Return to the default framebuffer
-        //     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        //     //TODO: (Req 11) Setup the postprocess material and draw the fullscreen triangle
-        //     glBindVertexArray(postProcessVertexArray);
-        //     postprocessMaterial->setup();
-        //     glDrawArrays(GL_TRIANGLES, 0, 3);
-        // }
     }
 
     void ForwardRenderer::drawPortal(glm::mat4 const& modelMat, glm::mat4 const &viewMat, glm::mat4 const &projMat, Entity* curportal) {
@@ -515,14 +451,14 @@ namespace portal {
 
                 // Draw scene objects with destView, limited to stencil buffer
                 // use an edited projection matrix to set the near plane to the portal plane
-                drawNonPortalObjects(portalModelMats[1-i], destView, getClippedProjMat(curportal->localTransform.getRotation(), curportal->localTransform.getPosition(), destView, projMat));
+                drawNonPortalObjects(portalModelMats[1-i], destView, getClippedProjMat(portals[1-i]->localTransform.getRotation(), portals[1-i]->localTransform.getPosition(), destView, projMat));
                 //drawNonPortals(destView, projMat);
             }
             else
             {
                 // Recursion case
                 // Pass our new view matrix and the clipped projection matrix (see above)
-                drawRecursivePortals(portalModelMats[1-i], destView, getClippedProjMat(curportal->localTransform.getRotation(), curportal->localTransform.getPosition(), destView, projMat), maxRecursionLevel, recursionLevel + 1);
+                drawRecursivePortals(portalModelMats[1-i], destView, getClippedProjMat(portals[1-i]->localTransform.getRotation(), portals[1-i]->localTransform.getPosition(), destView, projMat), maxRecursionLevel, recursionLevel + 1);
             }
             // Disable color and depth drawing
             glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
@@ -625,6 +561,16 @@ namespace portal {
                 lights.push_back(light);
             }
         }
+
+        if(bloom){
+            glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
+        }
+        // If there is a postprocess material, bind the framebuffer
+        else if(postprocessMaterial){
+            //TODO: (Req 11) bind the framebuffer
+            glBindFramebuffer(GL_FRAMEBUFFER, postprocessFrameBuffer);
+        }
+
         // CLear the screen
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
@@ -643,6 +589,66 @@ namespace portal {
         size_t maxRecursionLevel = 1;
         // drawRecursivePortals(camera->getOwner()->getLocalToWorldMatrix(),camera->getViewMatrix(), camera->getProjectionMatrix(windowSize), maxRecursionLevel);
         drawPortalsNonRecursive(camera->getOwner()->getLocalToWorldMatrix(),camera->getViewMatrix(), camera->getProjectionMatrix(windowSize), portal1, portal2);
+
+
+        if(bloom){ 
+            // apply the pingpong blur
+            bool horizontal = true, first_iteration = true;
+            for (int i = 0; i < bloomBlurIterations; i++)
+            {
+                glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
+                pingpongMaterial->setup();
+                pingpongMaterial->shader->set("horizontal", horizontal);
+                if (first_iteration){
+                    glActiveTexture(GL_TEXTURE1);
+                    brightColorTexture->bind();
+                    if(pingpongMaterial->sampler)
+                        pingpongMaterial->sampler->bind(1);
+                    pingpongMaterial->shader->set("tex2", 1);
+                } 
+                glBindVertexArray(postProcessVertexArray);
+                glDrawArrays(GL_TRIANGLES, 0, 3);
+                horizontal = !horizontal;
+                if (first_iteration)
+                    first_iteration = false;
+            }
+
+           if(postprocessMaterial){
+                // if there is a postprocess material, draw the scene to the framebuffer after applying bloom
+                // and then draw the framebuffer to the screen using the postprocess material
+                glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
+                // glBindFramebuffer(GL_FRAMEBUFFER, 0);
+                glBindVertexArray(postProcessVertexArray);
+                hdrMaterial->setup();
+                hdrMaterial->shader->set("bloomIntensity", bloomIntensity);
+                hdrMaterial->shader->set("exposure", exposure);       
+                glDrawArrays(GL_TRIANGLES, 0, 3);
+
+                glBindFramebuffer(GL_FRAMEBUFFER, 0);
+                glBindVertexArray(postProcessVertexArray);
+                postprocessMaterial->setup();
+                glDrawArrays(GL_TRIANGLES, 0, 3);
+
+            } else {
+                glBindFramebuffer(GL_FRAMEBUFFER, 0);
+                glBindVertexArray(postProcessVertexArray);
+                hdrMaterial->setup();
+                hdrMaterial->shader->set("bloomIntensity", bloomIntensity);
+                hdrMaterial->shader->set("exposure", exposure);       
+                glDrawArrays(GL_TRIANGLES, 0, 3);
+            }
+
+        }
+        // If there is a postprocess material, draw the scene to the framebuffer
+        else  if(postprocessMaterial){
+            //TODO: (Req 11) Return to the default framebuffer
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            //TODO: (Req 11) Setup the postprocess material and draw the fullscreen triangle
+            glBindVertexArray(postProcessVertexArray);
+            postprocessMaterial->setup();
+            glDrawArrays(GL_TRIANGLES, 0, 3);
+        }
+
     }
 
     void ForwardRenderer::drawPortalsNonRecursive(glm::mat4 const& modelMat, glm::mat4 const &viewMat, 

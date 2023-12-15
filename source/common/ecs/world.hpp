@@ -7,6 +7,8 @@
 namespace portal {
 
     class AnimationComponent;
+    class EventSystem;
+    class Portal;
     // This class holds a set of entities
     class World {
         std::unordered_map<std::string, Entity*> entities; // These are the entities held by this world
@@ -14,12 +16,11 @@ namespace portal {
                                                       // when deleteMarkedEntities is called
         r3d::PhysicsCommon physicsCommon; // Factory pattern for creating physics world objects , logging, and memory management
         r3d::PhysicsWorld* physicsWorld = nullptr; // This is the physics world that will be used for physics simulation
-
+        EventSystem* eventSystem = nullptr; // This is the event system that will be used for collision detection
         std::unordered_map<std::string, AnimationComponent*> animations;
         std::unordered_map<std::string, AnimationComponent *> playingAnimations;
         std::unordered_set<std::string> toStopPlaying;
     public:
-        bool isGrounded = false;
 
         World() = default;
 
@@ -51,9 +52,9 @@ namespace portal {
             return entities;
         }
 
-        Entity* getEntityByName(const std::string& name) const {
-            return entities.at(name);
-        }
+        Entity *getEntityByName(const std::string &name) const;
+
+        void initEventSystem() const;
 
         // This marks an entity for removal by adding it to the "markedForRemoval" set.
         // The elements in the "markedForRemoval" set will be removed and deleted when "deleteMarkedEntities" is called.

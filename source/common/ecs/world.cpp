@@ -2,6 +2,7 @@
 #include <json/json.hpp>
 #include "../deserialize-utils.hpp"
 #include "../components/animation.hpp"
+#include "portal.hpp"
 #include "../systems/event.hpp"
 namespace portal {
 
@@ -11,7 +12,16 @@ namespace portal {
     void World::deserialize(const nlohmann::json& data, Entity* parent){
         if(!data.is_array()) return;
         for(const auto& entityData : data){
-            Entity* entity = add();
+            bool isportal = entityData.value("isPortal", false);
+            Entity *entity;
+            // if entity is a portal, then we create a portal object
+            // instead of a normal entity (portal inherits from entity)
+            if(isportal) {
+                entity = new Portal();
+                entity->world = this;
+            } else {
+                entity = add();
+            }
             entity->parent = parent;
             entity->name = entityData.value("name", std::to_string(entities.size()));
             entities[entity->name] = entity;
@@ -20,6 +30,10 @@ namespace portal {
                 deserialize(entityData["children"], entity);
             }
         }
+    }
+
+    Entity *World::getEntityByName(const std::string &name) const {
+        return entities.at(name);
     }
 
     void World::deserialize_physics(const nlohmann::json& data, const nlohmann::json* OnCollisionData){
@@ -34,7 +48,8 @@ namespace portal {
         this->physicsWorld = this->physicsCommon.createPhysicsWorld(settings);
         // Create a new eventsystem that would be used to detect collisions
         // pass isGrounded by reference to allow the event system to change it
-        EventSystem *eventSystem = new EventSystem(this, this->isGrounded);
+        EventSystem *eventSystem = new EventSystem(this);
+        this->eventSystem = eventSystem;
         // Deserialize OnCollisionEvents if exists
         if(OnCollisionData)eventSystem->deserialize(*OnCollisionData);
         this->physicsWorld->setEventListener(eventSystem);
@@ -53,6 +68,10 @@ namespace portal {
     // Ensure resetting when changing states of the game
     void World::clearPlayingAnimations() {
         playingAnimations.clear();
+    }
+
+    void World::initEventSystem() const {
+        if(eventSystem)eventSystem->init();
     }
 
 }

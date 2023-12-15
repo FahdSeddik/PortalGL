@@ -2,63 +2,54 @@
 #include <reactphysics3d/reactphysics3d.h>
 #include "../../states/play-state.hpp"
 #include "../deserialize-utils.hpp"
+#include "../ecs/portal.hpp"
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/matrix_access.inl>
 namespace r3d = reactphysics3d;
 
 namespace portal {
     
-    // Class Handle player Grounded
-    class RayCastPlayerGrounded : public r3d::RaycastCallback {
-        bool& isGrounded;
-        public:
-        RayCastPlayerGrounded(bool& isGrounded) : isGrounded(isGrounded) {}
-        /// Called when a raycast hit a body
-        /**
-         * @param hit The raycast hit information
-         */
-        virtual r3d::decimal notifyRaycastHit(const r3d::RaycastInfo& raycastInfo) override {
-            // is grounded 
-            // std::cout << "Player Grounded: " << *((std::string*)raycastInfo.body->getUserData()) << std::endl;
-            if(raycastInfo.body->getCollider(0)->getIsTrigger()){
-                // if trigger, return 1.0 to continue raycast
-                return r3d::decimal(1.0);
-            }
-            isGrounded = true;
-            // return 0 to stop raycast
-            return r3d::decimal(0.0);
-        }
-    };
 
 
     class EventSystem : public r3d::EventListener {
         r3d::PhysicsWorld* physicsWorld;
         World* world;
-        bool& isGrounded;
+        Entity *player;
+        RigidBodyComponent* playerRigidBody;
+        // Handles and stores last tp time for each object to prevent teleportation spam
+        // and bugs with teleportation
+        std::unordered_map<std::string, double> lastTPtime;
+        // Cooldown for teleportation for each object
+        double teleportationCooldown = 0.2;
         typedef r3d::CollisionCallback::ContactPair::EventType EventType;
         typedef std::function<void()> EventCallback;
         std::unordered_map<std::string, std::unordered_map<std::string, std::vector<std::pair<int, std::pair<EventType, EventCallback>>>>> collisionEvents;
 
-        void checkForGround(const r3d::CollisionCallback::ContactPair& contactPair, const std::string& name_1) {
-            RayCastPlayerGrounded rayCastHandler(isGrounded);
-            // get player position and bounds
-            r3d::Vector3 pos, min, max;
-            if(name_1=="Player") {
-                pos = contactPair.getBody1()->getTransform().getPosition();
-                contactPair.getCollider1()->getCollisionShape()->getLocalBounds(min, max);
-            } else {
-                pos = contactPair.getBody2()->getTransform().getPosition();
-                contactPair.getCollider2()->getCollisionShape()->getLocalBounds(min, max);
-            }
-            // RayCast to check if player is grounded
-            r3d::decimal y = max.y - min.y;
-            // Ray Cast from center of player to bottom of player
-            r3d::Ray ray(pos, pos - r3d::Vector3(0, y/2, 0));
-            physicsWorld->raycast(ray, &rayCastHandler);
+
+        void handleTeleport(r3d::Collider* objectCollider, const std::string& objectName, const std::string& portalName) {
+            // Get portal entity and check if it is valid
+            Portal* portal = dynamic_cast<Portal*>(world->getEntityByName(portalName));
+            // Check if portal is valid
+            if (!portal) return;
+            if (!portal->destination || !portal->surface || !portal->surfaceCollider) return;
+            // if object is surface then do nothing
+            if(portal->surface->name == objectName) return;
+            // if object is in cooldown make sure other portal
+            // does not have it included to prevent issues with multithreading & thread safety
+            if(lastTPtime.count(objectName) && glfwGetTime() - lastTPtime[objectName] < teleportationCooldown) return;
+            // if object is not in cooldown then add to passing and update last tp time
+            if(portal->addToPassing(objectCollider, objectName)) lastTPtime[objectName] = glfwGetTime();
         }
 
         public:
-        EventSystem(World* world, bool& isGrounded) : isGrounded(isGrounded) {
+        EventSystem(World* world) {
             this->world = world;
             this->physicsWorld = world->getPhysicsWorld();
+        }
+
+        void init() {
+            player = world->getEntityByName("Player");
+            playerRigidBody = player->getComponent<RigidBodyComponent>();
         }
 
         void deserialize(const nlohmann::json& data) {
@@ -125,14 +116,6 @@ namespace portal {
                 // User data is stored as a void pointer so we need to cast it to the correct type
                 std::string name_1 = *((std::string*)contactPair.getBody1()->getUserData());
                 std::string name_2 = *((std::string*)contactPair.getBody2()->getUserData());
-                // We need to cast ray if collision with player to check if player is grounded
-                // We check on ContactStay to avoid isGrounded to be out of sync
-                if(contactPair.getEventType() == EventType::ContactStay){
-                    // Any collision with player we need to update isGrounded
-                    if(name_1 == "Player" || name_2 == "Player") {
-                        checkForGround(contactPair, name_1);
-                    }
-                }
                 // Call the callback if exists
                 // if the name of the body is not in the map, it means that it doesn't have any callback
                 if(collisionEvents.find(name_1) == collisionEvents.end()) continue;
@@ -164,12 +147,14 @@ namespace portal {
                 r3d::OverlapCallback::OverlapPair overlapPair = callbackData.getOverlappingPair(p);
                 // overlapPair.getBody1() and overlapPair.getBody2() are the two colliders that are overlapping
                 // overlapPair.getEventType() is the type of event (OverlapStart/OverlapStay/OverlapExit)
-                if(overlapPair.getEventType() == r3d::OverlapCallback::OverlapPair::EventType::OverlapStart) {
-                    std::cout << "\nOnTrigger: ";
-                    std::cout << *((std::string *)overlapPair.getBody1()->getUserData());
-                    std::cout << " and ";
-                    std::cout << *((std::string *)overlapPair.getBody2()->getUserData());
-                    std::cout << std::endl;
+                std::string name_1 = *((std::string*)overlapPair.getBody1()->getUserData());
+                std::string name_2 = *((std::string*)overlapPair.getBody2()->getUserData());
+                if (name_1=="Portal_1" || name_1=="Portal_2") {
+                    // if name_1 is a portal then name_2 is object
+                    handleTeleport(overlapPair.getBody2()->getCollider(0), name_2, name_1);
+                } else if(name_2=="Portal_1" || name_2=="Portal_2") {
+                    // same case but reversed
+                    handleTeleport(overlapPair.getBody1()->getCollider(0), name_1, name_2);
                 }
             }
         }
