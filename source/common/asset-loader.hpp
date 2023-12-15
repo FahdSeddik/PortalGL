@@ -5,7 +5,7 @@
 #include <json/json.hpp>
 
 namespace portal {
-
+    class LoadingScreen;
     // This static template class will hold the loaded assets
     // and can be called from anywhere to get an asset by its name.
     // Since we have different types of assets, this declared as a template class
@@ -15,7 +15,9 @@ namespace portal {
         // This map stores a pointer to each asset identified by its name
         // All assets in this map are owned by the asset loader so it should not be deleted outside of this class
         static inline std::unordered_map<std::string, T*> assets;
+        friend class LoadingScreen;
     public:
+        static inline std::atomic<bool> separateThread = false;
         // This function loads the assets defined by the given json object
         // The json object should be defined in the form: {asset_name: asset_description}
         // For example: {"white": "textures/white.png", "polka": "textures/polka.png"} defines 2 textures

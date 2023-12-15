@@ -175,6 +175,17 @@ int portal::Application::run(int run_for_frames) {
         glfwTerminate();
         return -1;
     }
+
+    // Create Shared window for Asset Loading
+    share = glfwCreateWindow(1, 1, "", nullptr, window);
+    if (!share) {
+        std::cerr << "Failed to Create Shared Window" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
+    // Hide the shared window
+    glfwHideWindow(share);
+
     glfwMakeContextCurrent(window);         // Tell GLFW to make the context of our window the main context on the current thread.
 
     gladLoadGL(glfwGetProcAddress);         // Load the OpenGL functions from the driver
@@ -241,6 +252,7 @@ int portal::Application::run(int run_for_frames) {
     // For frame rate calculation
     double last_fps_time = last_frame_time;
     int frame_count = 0;
+    float test = 0;
     //Game loop
     while(!glfwWindowShouldClose(window)){
         if(run_for_frames != 0 && current_frame >= run_for_frames) break;

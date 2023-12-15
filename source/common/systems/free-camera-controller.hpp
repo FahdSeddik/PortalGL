@@ -24,11 +24,29 @@ namespace portal
     class FreeCameraControllerSystem {
         Application* app; // The application in which the state runs
         bool mouse_locked = false; // Is the mouse locked
-
+        r3d::Quaternion qt;
     public:
         // When a state enters, it should call this function and give it the pointer to the application
         void enter(Application* app){
             this->app = app;
+            // we need to get only the rotation around the y-axis
+            glm::vec3 forced_up(0, 1, 0);
+            glm::vec3 forced_front = glm::vec3(0, 0, 1);
+            glm::vec3 right = glm::cross(forced_up, forced_front);
+            // Quaternion.LockRotation((0, 1, 0), right);
+            glm::mat4 newRotation = glm::mat4(1.0f);
+            // Move player to new axis and force up direction
+            newRotation[0][0] = right.x;
+            newRotation[1][0] = right.y;
+            newRotation[2][0] = right.z;
+            newRotation[0][1] = forced_up.x;
+            newRotation[1][1] = forced_up.y;
+            newRotation[2][1] = forced_up.z;
+            newRotation[0][2] = forced_front.x;
+            newRotation[1][2] = forced_front.y;
+            newRotation[2][2] = forced_front.z;
+            glm::fquat q = glm::quat_cast(newRotation);
+            qt = r3d::Quaternion(q.x, q.y, q.z, q.w);
         }
 
         // This should be called every frame to update all entities containing a FreeCameraControllerComponent 
@@ -122,31 +140,6 @@ namespace portal
             entity->localTransform.setRotation(rotation);
             RigidBodyComponent* rgb = entity->getComponent<RigidBodyComponent>();
             if (rgb){
-                // we need to get only the rotation around the y-axis
-                glm::quat q = rotation;
-
-                // Get the forward direction (z-axis) of the quaternion
-                glm::vec3 forward = glm::rotate(q, glm::vec3(0.0f, 0.0f, -1.0f));
-
-                // Remove the y-component of the forward direction
-                forward.y = 0.0f;
-
-                // Normalize the forward direction
-                forward = glm::normalize(forward);
-
-                // Compute the angle between the forward direction and the negative z-axis
-                float angle = glm::acos(glm::dot(forward, glm::vec3(0.0f, 0.0f, -1.0f)));
-
-                // Compute the cross product of the forward direction and the negative z-axis
-                glm::vec3 cross = glm::cross(forward, glm::vec3(0.0f, 0.0f, -1.0f));
-
-                // If the y-component of the cross product is negative, negate the angle
-                if (cross.y < 0.0f)
-                    angle = -angle;
-
-                // Create a new quaternion representing the rotation around the y-axis
-                glm::quat yRotation = glm::angleAxis(angle, glm::vec3(0.0f, 1.0f, 0.0f));
-                r3d::Quaternion qt(yRotation.x, yRotation.y, yRotation.z, yRotation.w);
                 r3d::Transform transform = rgb->getBody()->getTransform();
                 transform.setOrientation(qt);
                 transform.setPosition(entity->localTransform.getPosition() + rgb->relativePosition);

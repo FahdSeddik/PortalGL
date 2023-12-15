@@ -9,6 +9,7 @@
 #include <asset-loader.hpp>
 #include "../common/components/animation.hpp"
 #include "systems/event.hpp"
+#include "../common/loading-screen.hpp"
 
 // This state shows how to use the ECS framework and deserialization.
 class Playstate: public portal::State {
@@ -18,14 +19,7 @@ class Playstate: public portal::State {
     portal::FreeCameraControllerSystem cameraController;
     portal::MovementSystem* movementSystem;
 
-public:
-    // mark constructor to not delete
-    Playstate() = default;
-    private:
-
-    void onInitialize() override {
-        // First of all, we get the scene configuration from the app config
-        auto& config = getApp()->getConfig()["scene"];
+    void loadConfig(const nlohmann::json& config) {
         // If we have assets in the scene config, we deserialize them
         if(config.contains("assets")){
             portal::deserializeAllAssets(config["assets"]);
@@ -33,6 +27,9 @@ public:
         if(config.contains("physicsWorld")){
             world.deserialize_physics(config["physicsWorld"], config.contains("onCollisionEvents") ? &config["onCollisionEvents"] : nullptr);
         }
+    }
+
+    void createWorld(const nlohmann::json& config) {
         // If we have a world in the scene config, we use it to populate our world
         if(config.contains("world")){
             world.deserialize(config["world"]);
@@ -46,6 +43,33 @@ public:
         renderer.initialize(size, config["renderer"]);
 
         movementSystem = new portal::MovementSystem(&world, getApp());
+    }
+
+public:
+    // mark constructor to not delete
+    Playstate() = default;
+    private:
+
+    void onInitialize() override {
+        auto& config = getApp()->getConfig()["scene"];
+        // This is an example of how to use the loading screen
+        // if you want to simply load the scene
+        // Note: this usage makes loaded meshes to be stored in LoadingScreen::meshData
+        // and is transferred in main thread (due to argument callback = nullptr)
+        portal::LoadingScreen::init(getApp(),
+        [&config, this](){
+            // A function that updates LoadingScreen::progress
+            // Sets LoadingScreen::doneLoading to true when done
+            glfwMakeContextCurrent(getApp()->getSharedWindow());
+            loadConfig(config);
+        },
+        [&config](){
+            // This function should be responsible to compute
+            // LoadingScreen::total (total number to count in progress bar)
+            portal::LoadingScreen::countTotalAssets(config["assets"]);
+        }, nullptr);
+        portal::LoadingScreen::render();
+        createWorld(config);
     }
 
     void onDraw(double deltaTime) override {
