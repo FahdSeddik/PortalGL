@@ -75,7 +75,7 @@ namespace portal {
         // if no passedObjects and no markedForRemoval
         // then make sure that the surface collider is not a trigger
         // as there is no need for it to be a trigger (handles thread safety)
-        if(passedObjects.empty() && markedForRemoval.empty()) {
+        if(passedObjects.empty() && markedForRemoval.empty() && destination->surface != surface) {
             surfaceCollider->setIsTrigger(false);
             return;
         }
