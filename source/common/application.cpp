@@ -252,7 +252,6 @@ int portal::Application::run(int run_for_frames) {
     // For frame rate calculation
     double last_fps_time = last_frame_time;
     int frame_count = 0;
-    float test = 0;
     //Game loop
     while(!glfwWindowShouldClose(window)){
         if(run_for_frames != 0 && current_frame >= run_for_frames) break;
