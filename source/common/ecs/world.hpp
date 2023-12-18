@@ -111,12 +111,7 @@ namespace portal {
             toStopPlaying.insert(name);
         }
 
-        void stopAnimations() {
-            for(auto& name : toStopPlaying) {
-                playingAnimations.erase(name);
-            }
-            toStopPlaying.clear();
-        }
+        void stopAnimations();
 
         // Clears the playing animations map to ensure 
         // resetting when changing states of the game

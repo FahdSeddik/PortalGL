@@ -95,7 +95,6 @@ namespace portal {
             } else {
                 this->getOwner()->localTransform.setTransform(end.getTransform());
             }
-            reset();
             return true;
         }
         if (isReversed) {

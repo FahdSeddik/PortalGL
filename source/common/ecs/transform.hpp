@@ -57,6 +57,18 @@ namespace portal {
             transform.setOrientation(r3d::Quaternion(glm::mix(a.getRotation().x, b.getRotation().x, t), glm::mix(a.getRotation().y, b.getRotation().y, t), glm::mix(a.getRotation().z, b.getRotation().z, t), glm::mix(a.getRotation().w, b.getRotation().w, t)));
             return transform;
         }
+
+        static float distance(const Transform& a, const Transform& b) {
+            // distance could be on position or rotation
+            // if position are equal then distance is on rotation
+            // if position are not equal then distance is on position
+            if(a.getPosition() == b.getPosition()) {
+                // glm equiv
+                return 2.0f * glm::acos(glm::dot(glm::fquat(a.getRotation().w, a.getRotation().x, a.getRotation().y, a.getRotation().z), glm::fquat(b.getRotation().w, b.getRotation().x, b.getRotation().y, b.getRotation().z)));
+            } else {
+                return glm::distance(glm::vec3(a.getPosition().x, a.getPosition().y, a.getPosition().z), glm::vec3(b.getPosition().x, b.getPosition().y, b.getPosition().z));
+            }
+        }
     };
 
 }

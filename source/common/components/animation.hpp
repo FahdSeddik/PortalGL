@@ -30,7 +30,7 @@ namespace portal {
         bool play(float deltaTime);
 
         // Starts playing the animation
-        void startPlaying(bool reverse) { isPlaying = true, isReversed = reverse; }
+        void startPlaying(bool reverse) { reset(), isPlaying = true, isReversed = reverse; }
 
         // Resets the animation
         void reset();
@@ -41,7 +41,10 @@ namespace portal {
             } else {
                 if(callback) callback();
             }
+            reset();
         }
+
+        bool getIsReversed() const { return isReversed; }
 
         std::string getName() { return name; }
     };

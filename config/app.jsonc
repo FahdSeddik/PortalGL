@@ -57,7 +57,8 @@
                 "tex_wheatley": "assets/textures/Object Related/Wheatley/personality_sphere.jpeg",
                 "tex_wheatley_eye": "assets/textures/Object Related/Wheatley/personality_sphere_light_damaged.jpeg",
                 "tex_button_emission": "assets/textures/Object Related/Button/portal_button_blue emission.png",
-                "tex_button_albedo": "assets/textures/Object Related/Button/portal_button_blue.jpeg",
+                // "tex_button_albedo": "assets/textures/Object Related/Button/portal_button_blue.jpeg",
+                "tex_button_albedo": "assets/textures/Object Related/Button/button.png",
                 "tex_spotlight_standing_ao": "assets/textures/Object Related/Standing Spotlight/spotlight_ao.tga.png",
                 "tex_spotlight_standing_albedo": "assets/textures/Object Related/Standing Spotlight/spotlight_BaseColor.tga.png",
                 "tex_spotlight_standing_emission": "assets/textures/Object Related/Standing Spotlight/spotlight_EmissiveColor.tga.png",
@@ -94,6 +95,8 @@
                 "mesh_gun": "assets/models/Gun/Portal Gun.obj",
                 "mesh_wheatley": "assets/models/Wheatley/wheatley.obj",
                 "mesh_button": "assets/models/Button/Button.obj",
+                "mesh_button_pad": "assets/models/Button/button_pad.obj",
+                "mesh_button_press": "assets/models/Button/button_press.obj",
                 "mesh_spotlight_standing": "assets/models/Standing Spotlight/Spotlight.obj",
                 "mesh_monitor_screen": "assets/models/Decorations/Monitor/Screen.obj",
                 "mesh_monitor_stand": "assets/models/Decorations/Monitor/Stand.obj",
@@ -417,7 +420,7 @@
                     },
                     "tint": [1, 1, 1, 1],
                     "albedo": "tex_button_albedo",
-                    "emission": "tex_button_emission",
+                    // "emission": "tex_button_emission",
                     "sampler": "default",
                     "bloom": true
                 },
@@ -847,6 +850,70 @@
                             }
                         ]
                     }
+                ],
+                "button": [
+                    {
+                        "position": [0, 0, 0],
+                        "scale": [1, 1, 1],
+                        "rotation": [0, 0, 0],
+                        "components":[
+                            {
+                                "type": "Mesh Renderer",
+                                "mesh": "mesh_button_press",
+                                "material": "mat_button"
+                            },
+                            {
+                                "type": "Animation",
+                                "name": "press",
+                                "start": {
+                                    "position": [0, 0, 0],
+                                    "scale": [1, 1, 1],
+                                    "rotation": [0, 0, 0]
+                                },
+                                "end": {
+                                    "position": [0, -0.5, 0],
+                                    "scale": [1, 1, 1],
+                                    "rotation": [0, 0, 0]
+                                },
+                                "duration": 0.1,
+                                "callback": {
+                                    "type": "animation",
+                                    "names": ["door_1_left_spin", "door_1_right_spin"]
+                                }
+                            },
+                            {
+                                "type": "Animation",
+                                "name": "release",
+                                "start": {
+                                    "position": [0, -0.5, 0],
+                                    "scale": [1, 1, 1],
+                                    "rotation": [0, 0, 0]
+                                },
+                                "end": {
+                                    "position": [0, 0, 0],
+                                    "scale": [1, 1, 1],
+                                    "rotation": [0, 0, 0]
+                                },
+                                "duration": 0.1,
+                                "callback": {
+                                    "type": "animation",
+                                    "names": ["#door_1_left_open", "#door_1_right_open", "#door_1_left_spin_open", "#door_1_right_spin_open"]
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "position": [0, 0, 0],
+                        "scale": [1, 1, 1],
+                        "rotation": [0, 0, 0],
+                        "components":[
+                            {
+                                "type": "Mesh Renderer",
+                                "mesh": "mesh_button_pad",
+                                "material": "mat_button"
+                            }
+                        ]
+                    }
                 ]
             }
         },
@@ -1032,7 +1099,7 @@
                 "isAttachable": true
             },
             {
-                "position": [5, 1, 5],
+                "position": [-5, 1, 5],
                 "scale": [0.4, 0.4, 0.4],
                 "components":[
                     {
@@ -1082,8 +1149,8 @@
             },
             // Buttons
             {
+                "name": "button_1",
                 "position": [5, 0.1, 5],
-                "scale": [7, 7, 7],
                 "components":[
                     {
                         "type": "RigidBody",
@@ -1097,9 +1164,8 @@
                         }
                     },
                     {
-                        "type": "Mesh Renderer",
-                        "mesh": "mesh_button",
-                        "material": "mat_button"
+                        "type": "ModelLoader",
+                        "model": "button"
                     }
                 ]
             },
@@ -2007,7 +2073,23 @@
                 "type": "animation",
                 "names": ["door_1_left_spin", "door_1_right_spin"],
                 "once": true, // If false, callback can be called multiple times if event happened again
-                "OnContact": "Start" // This could be "Start", "Stay", "Exit"
+                "onContact": "Start" // This could be "Start", "Stay", "Exit"
+            },
+            {
+                "body1": "button_1",
+                "body2": "",
+                "type": "animation",
+                "names": ["button_1_press"],
+                "once": false,
+                "onContact": "Start"
+            },
+            {
+                "body1": "",
+                "body2": "button_1",
+                "type": "animation",
+                "names": ["button_1_release"],
+                "once": false,
+                "onContact": "Exit"
             }
         ]
     }

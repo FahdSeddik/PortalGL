@@ -58,7 +58,21 @@ namespace portal {
     void World::startAnimation(const std::string& name, bool reverse) {
         // Checks if the given animation isn't already playing and exists
         if(animations.find(name) != animations.end() && playingAnimations.find(name) == playingAnimations.end()) {
+            std::vector<std::string> names;
+            for(auto& [animName, anim]: playingAnimations) {
+                if(anim->getOwner() == animations[name]->getOwner()) {
+                    names.push_back(animName);
+                }
+            }
+            for(auto& animName : names) {
+                playingAnimations.erase(animName);
+            }
             // Start playing the animation
+            animations[name]->startPlaying(reverse);
+            // Add this animation to playingAnimations map
+            playingAnimations[name] = animations[name];
+        } else if (playingAnimations.find(name) != playingAnimations.end()) {
+            // play other animation
             animations[name]->startPlaying(reverse);
             // Add this animation to playingAnimations map
             playingAnimations[name] = animations[name];
@@ -72,7 +86,8 @@ namespace portal {
 
     void World::stopAnimations() {
         for(auto& name : toStopPlaying) {
-            AnimationComponent *animTemp = playingAnimations[name];
+            if(playingAnimations.find(name) == playingAnimations.end()) continue;
+            AnimationComponent *animTemp = playingAnimations.at(name);
             playingAnimations.erase(name);
             animTemp->envokeCallback();
         }

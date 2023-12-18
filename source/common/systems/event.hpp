@@ -62,7 +62,7 @@ namespace portal {
                 // get type of event (animation for example)
                 std::string type = event.value("type", "");
                 // if any of the names or type is empty then we skip this event (not valid)
-                if(name_1.empty() || name_2.empty() || type.empty()) continue;
+                if((name_1.empty() && name_2.empty()) || type.empty()) continue;
                 // get if event callback is called once or multiple times
                 bool once = event.value("once", true);
                 // get when event is called (start, stay, exit)
@@ -92,8 +92,15 @@ namespace portal {
                         }
                     };
                     // add callback to map with reverse for time optimization
-                    collisionEvents[name_1][name_2].emplace_back(std::make_pair(once ? 1:-1, std::make_pair(eventType, callback)));
-                    collisionEvents[name_2][name_1].emplace_back(std::make_pair(once ? 1:-1, std::make_pair(eventType, callback)));
+                    // Then this means that name_2 with any other body
+                    if (name_1.empty()) {
+                        collisionEvents[name_2][""].emplace_back(std::make_pair(once ? 1:-1, std::make_pair(eventType, callback)));
+                    } else if (name_2.empty()) {
+                        collisionEvents[name_1][""].emplace_back(std::make_pair(once ? 1:-1, std::make_pair(eventType, callback)));
+                    } else {
+                        collisionEvents[name_1][name_2].emplace_back(std::make_pair(once ? 1:-1, std::make_pair(eventType, callback)));
+                        collisionEvents[name_2][name_1].emplace_back(std::make_pair(once ? 1:-1, std::make_pair(eventType, callback)));
+                    }
                 }
             }
         }
@@ -118,9 +125,54 @@ namespace portal {
                 std::string name_2 = *((std::string*)contactPair.getBody2()->getUserData());
                 // Call the callback if exists
                 // if the name of the body is not in the map, it means that it doesn't have any callback
-                if(collisionEvents.find(name_1) == collisionEvents.end()) continue;
+                if(collisionEvents.find(name_1) == collisionEvents.end() && collisionEvents.find(name_2) == collisionEvents.end()) continue;
+                // apply event for each body if it exists
+                if(collisionEvents.find(name_1) != collisionEvents.end()) {
+                    if(collisionEvents[name_1].find("") != collisionEvents[name_1].end()) {
+                        auto& event = collisionEvents[name_1][""];
+                        for (int i = 0; i < event.size(); i++) {
+                            // if event (stay, start, exit) doesnt match then we dont call callback
+                            if(event[i].second.first != contactPair.getEventType() || event[i].first == 0) continue;
+                            // if event is once then we decrement uses to make it 0
+                            if(event[i].first > 0) event[i].first--;
+                            // call callback
+                            event[i].second.second();
+                            if(contactPair.getEventType() == EventType::ContactStart) {
+                                std::cout<<"start";
+                            } else if(contactPair.getEventType() == EventType::ContactStay) {
+                                std::cout<<"stay";
+                            } else if(contactPair.getEventType() == EventType::ContactExit) {
+                                std::cout<<"exit";
+                            }
+                            std::cout << "called" << name_2 << " " << name_1 << " ";
+                            std::cout<<std::endl;
+                        }
+                    }
+                }
+                if (collisionEvents.find(name_2) != collisionEvents.end()) {
+                    if(collisionEvents[name_2].find("") != collisionEvents[name_2].end()) {
+                        auto& event = collisionEvents[name_2][""];
+                        for (int i = 0; i < event.size(); i++) {
+                            // if event (stay, start, exit) doesnt match then we dont call callback
+                            if(event[i].second.first != contactPair.getEventType() || event[i].first == 0) continue;
+                            // if event is once then we decrement uses to make it 0
+                            if(event[i].first > 0) event[i].first--;
+                            // call callback
+                            event[i].second.second();
+                            if(contactPair.getEventType() == EventType::ContactStart) {
+                                std::cout<<"start";
+                            } else if(contactPair.getEventType() == EventType::ContactStay) {
+                                std::cout<<"stay";
+                            } else if(contactPair.getEventType() == EventType::ContactExit) {
+                                std::cout<<"exit";
+                            }
+                            std::cout << "called" << name_2 << " " << name_1 << " ";
+                            std::cout<<std::endl;
+                        }
+                    }
+                }
                 // if the name exists but second body doesnt then it doesnt have interaction with this body
-                if(collisionEvents[name_1].find(name_2) == collisionEvents[name_1].end()) continue;
+                if(collisionEvents[name_1].find(name_2) == collisionEvents[name_1].end() && collisionEvents[name_2].find(name_1) == collisionEvents[name_2].end()) continue;
                 // in map we store redundant reverse to not have to check for order of bodies
                 auto& event = collisionEvents[name_1][name_2];
                 auto& eventCopy = collisionEvents[name_2][name_1];
