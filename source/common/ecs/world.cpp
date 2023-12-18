@@ -70,6 +70,15 @@ namespace portal {
         playingAnimations.clear();
     }
 
+    void World::stopAnimations() {
+        for(auto& name : toStopPlaying) {
+            AnimationComponent *animTemp = playingAnimations[name];
+            playingAnimations.erase(name);
+            animTemp->envokeCallback();
+        }
+        toStopPlaying.clear();
+    }
+
     void World::initEventSystem() const {
         if(eventSystem)eventSystem->init();
     }

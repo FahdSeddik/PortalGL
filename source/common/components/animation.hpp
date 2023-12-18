@@ -35,6 +35,14 @@ namespace portal {
         // Resets the animation
         void reset();
 
+        void envokeCallback() {
+            if (isReversed) {
+                if(reverseCallback) reverseCallback();
+            } else {
+                if(callback) callback();
+            }
+        }
+
         std::string getName() { return name; }
     };
 }

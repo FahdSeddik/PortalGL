@@ -695,7 +695,7 @@
                             },
                             {
                                 "type": "Animation",
-                                "name": "door_1_left_open",
+                                "name": "left_open",
                                 "start": {
                                     "position": [0, 0, 0],
                                     "scale": [1, 1, 1],
@@ -725,7 +725,7 @@
                             },
                             {
                                 "type": "Animation",
-                                "name": "door_1_right_open",
+                                "name": "right_open",
                                 "start": {
                                     "position": [0, 0, 0],
                                     "scale": [1, 1, 1],
@@ -764,7 +764,7 @@
                             },
                             {
                                 "type": "Animation",
-                                "name": "door_1_right_spin",
+                                "name": "right_spin",
                                 "start": {
                                     "position": [0, 3.6, 0],
                                     "scale": [1, 1, 1],
@@ -782,7 +782,7 @@
                             },
                             {
                                 "type": "Animation",
-                                "name": "door_1_right_spin_open",
+                                "name": "right_spin_open",
                                 "start": {
                                     "position": [0, 3.6, 0],
                                     "scale": [1, 1, 1],
@@ -813,7 +813,7 @@
                             },
                             {
                                 "type": "Animation",
-                                "name": "door_1_left_spin",
+                                "name": "left_spin",
                                 "start": {
                                     "position": [0, 3.6, 0],
                                     "scale": [1, 1, 1],
@@ -832,7 +832,7 @@
                             },
                             {
                                 "type": "Animation",
-                                "name": "door_1_left_spin_open",
+                                "name": "left_spin_open",
                                 "start": {
                                     "position": [0, 3.6, 0],
                                     "scale": [1, 1, 1],
@@ -1059,6 +1059,7 @@
             //====================
             // Door
             {
+                "name": "door_1",
                 "position": [16, 0, 0],
                 "rotation": [0, -90, 0],
                 "components":[
