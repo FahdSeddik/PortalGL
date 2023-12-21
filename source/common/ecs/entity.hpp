@@ -6,18 +6,18 @@
 #include <iterator>
 #include <string>
 #include <glm/glm.hpp>
-
+#include "entity-factory.hpp"
 namespace portal {
 
     class World; // A forward declaration of the World Class
-    class Portal;
+
     class Entity{
         World *world; // This defines what world own this entity
         std::list<Component*> components; // A list of components that are owned by this entity
 
         friend World; // The world is a friend since it is the only class that is allowed to instantiate an entity
-        // Declare the portal as a friend
-        friend Portal;
+        friend class EntityFactory; // The entity factory is a friend since it is the only class that is allowed to instantiate an entity
+    protected:
         Entity() = default; // The entity constructor is private since only the world is allowed to instantiate an entity
     public:
         std::string name; // The name of the entity. It could be useful to refer to an entity by its name
@@ -29,10 +29,14 @@ namespace portal {
 
         bool canHoldPortal = true;
 
-        virtual World* getWorld() const { return world; } // Returns the world to which this entity belongs
+        World* getWorld() const { return world; } // Returns the world to which this entity belongs
+        // Virtual function that returns the type of the entity (Regular, Cube, Portal, etc.)
+        virtual EntityFactory::EntityType getType() const { return EntityFactory::EntityType::Regular; }
 
         glm::mat4 getLocalToWorldMatrix() const; // Computes and returns the transformation from the entities local space to the world space
-        void deserialize(const nlohmann::json&); // Deserializes the entity data and components from a json object
+        
+        // Virtual deserialize to allow for specific entity type deserialization
+        virtual void deserialize(const nlohmann::json&); // Deserializes the entity data and components from a json object
         
         // This template method create a component of type T,
         // adds it to the components map and returns a pointer to it 
@@ -136,4 +140,12 @@ namespace portal {
         Entity &operator=(Entity const &) = delete;
     };
 
+
+    // Generic Type Entities
+    class Attachable : public Entity {
+        protected:
+        Attachable() : Entity() {
+            isAttachable = true;
+        }
+    };
 }

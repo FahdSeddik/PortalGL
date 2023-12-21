@@ -1,48 +1,28 @@
 #pragma once
 
-#include "../ecs/world.hpp"
-#include "../components/movement.hpp"
-#include "../components/RigidBody.hpp"
-#include "../components/free-camera-controller.hpp"
-#include "../ecs/portal.hpp"
 #include "../application.hpp"
-#include <reactphysics3d/reactphysics3d.h>
-namespace r3d = reactphysics3d;
+#include "../components/free-camera-controller.hpp"
+#include "../components/movement.hpp"
+#include "../ecs/world.hpp"
+#include "../components/RigidBody.hpp"
+#include "../ecs/portal.hpp"
+#include "../ecs/player.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 #include <glm/trigonometric.hpp>
 #include <glm/gtx/fast_trigonometry.hpp>
-
+#include <reactphysics3d/reactphysics3d.h>
+namespace r3d = reactphysics3d;
 namespace portal
 {
-
-    // Class Handle player Grounded
-    class RayCastInteraction : public r3d::RaycastCallback {
-        std::string& attachedName;
-        public:
-        RayCastInteraction(std::string& attachedName) : attachedName(attachedName) {}
-        // Called when a raycast hits a body
-        virtual r3d::decimal notifyRaycastHit(const r3d::RaycastInfo& raycastInfo) override {
-            // Get the name of the body that has been hit
-            if(raycastInfo.body->getCollider(0)->getIsTrigger()){
-                // if trigger, return 1.0 to continue raycast
-                return r3d::decimal(1.0);
-            }
-            attachedName = *((std::string*)raycastInfo.body->getUserData());
-            std::cout << "RayCast Hit" << attachedName << std::endl;
-            // return 0 to stop raycast
-            return r3d::decimal(0.0);
-        }
-    };
-
 
     // The movement system is responsible for moving every entity which contains a MovementComponent.
     // This system is added as a simple example for how use the ECS framework to implement logic. 
     // For more information, see "common/components/movement.hpp"
     class MovementSystem {
     private:
-        Entity* player = nullptr;
-        Application *app;
+        Player* player = nullptr;
+        Application* app = nullptr;
         World *world;
         FreeCameraControllerComponent* controller;
         RigidBodyComponent* playerRigidBody;
@@ -50,37 +30,23 @@ namespace portal
         bool isGrounded = false;
         double lastJumpTime = 0;
         double JumpCoolDown = 0.2;
-        std::string attachedName = "";
-        Entity* attachement = nullptr;
         // Hold portals 
         // TODO: this needs to be dynamic 
         // for shooting portals
         Portal* Portal_1 = nullptr;
         Portal* Portal_2 = nullptr;
 
-        // Player Vectors
-        r3d::Vector3 absoluteFront;
-        glm::vec3 front;
-        glm::vec3 right;
-        // Player position reference
-        const r3d::Vector3 &playerPos;
-        
-        // Attach an "isAttachable" entity to the player
-        void attachToPlayer(Entity *entity) const;
         // Handles all physics updates
         void physicsUpdate(float deltaTime);
-
         // Returns velocity component of player
         glm::vec3 handlePlayerMovement();
-        // gets the front, right, and absoluteFront of player
-        void calculatePlayerVectors();
         // RayCasts and updates isGrounded
         void checkForGround();
-        // Handles disattaching and attaching of an entity
-        void checkAttachment();
 
     public:
-        MovementSystem(World* world, Application* app) : world(world), app(app), player(world->getEntityByName("Player")), playerPos(player->localTransform.getPosition()) {
+        MovementSystem(World* world, Application* app) : world(world), app(app) {
+            player = dynamic_cast<Player*>(world->getEntityByName("Player"));
+            player->setApp(app);
             controller = player->getComponent<FreeCameraControllerComponent>();
             playerRigidBody = player->getComponent<RigidBodyComponent>();
             physicsWorld = player->getWorld()->getPhysicsWorld();
@@ -99,13 +65,12 @@ namespace portal
             // TODO: this needs to be dynamic for shooting portals
             Portal_1->update();
             Portal_2->update();
-            calculatePlayerVectors();
-            checkAttachment();
+            player->update();
             physicsUpdate(deltaTime);
             // For each entity in the world
             for(const auto& [name, entity] : world->getEntities()){
-                if(attachement && entity == attachement) {
-                    attachToPlayer(entity);
+                if(player->getAttachement() && entity == player->getAttachement()) {
+                    player->attachToPlayer(entity);
                     continue;
                 }
                 // Get the movement component if it exists

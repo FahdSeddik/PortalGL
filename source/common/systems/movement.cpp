@@ -37,22 +37,6 @@ namespace portal {
         physicsWorld->raycast(ray, &rayCastHandler);
     }
 
-    void MovementSystem::attachToPlayer(Entity* entity) const {
-        r3d::Transform temp;
-        // Set the position of the entity to be in front of the player
-        temp.setPosition(playerPos + absoluteFront * 3);
-        // Set the orientation of the entity to be the same as it was picked up
-        temp.setOrientation(entity->localTransform.getRotation());
-        entity->localTransform.setTransform(temp);
-        RigidBodyComponent* rgb = entity->getComponent<RigidBodyComponent>();
-        // Make sure rigidbody is synced with the transform of the entity
-        rgb->getBody()->setTransform(temp);
-        rgb->getBody()->setLinearVelocity(r3d::Vector3(0,0,0));
-        rgb->getBody()->setAngularVelocity(r3d::Vector3(0,0,0));
-        // transfer collider to separate layer to disable it from colliding with other objects
-        rgb->getCollider()->setCollideWithMaskBits(0);
-        rgb->getCollider()->setCollisionCategoryBits(0);
-    }
 
     void MovementSystem::physicsUpdate(float deltaTime) {
         if(!playerRigidBody->getCollider()->getIsTrigger() && glfwGetTime() - lastJumpTime > JumpCoolDown && app->getKeyboard().isPressed(GLFW_KEY_SPACE)) {
@@ -85,6 +69,8 @@ namespace portal {
             isGrounded = false;
             lastJumpTime = glfwGetTime();
         }
+        const glm::vec3& right = player->getRight();
+        const glm::vec3& front = player->getFront();
         if(app->getKeyboard().isPressed(GLFW_KEY_W)){
             // move forward
             velf += front;
@@ -112,50 +98,4 @@ namespace portal {
         vel.y = 0;
         return vel;
     }
-
-
-    void MovementSystem::calculatePlayerVectors() {
-        // Get Matrix of player
-        glm::mat4 matrix = player->getLocalToWorldMatrix();
-        // front: the direction the camera is looking at projected on the xz plane
-        // up: global up vector (0,1,0)
-        // right: the vector to the right of the camera (x-axis)
-        front = glm::normalize(glm::vec3(matrix * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f)));
-        absoluteFront = r3d::Vector3(front.x, front.y, front.z);
-        absoluteFront.normalize();
-        // project on xz plane
-        front.y = 0;
-        front = glm::normalize(front);
-        //global up
-        glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-        right = glm::normalize(glm::vec3(matrix * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
-        // project on xz plane
-        right.y = 0;
-        right = glm::normalize(right);
-    }
-
-    void MovementSystem::checkAttachment() {
-        // Check if E is pressed
-        if(!attachement && app->getKeyboard().justPressed(GLFW_KEY_E)) {
-            // RayCast from player position to front direction with length 1.5
-            r3d::Ray ray(playerPos + absoluteFront,absoluteFront * 3 + playerPos);
-            physicsWorld->raycast(ray, new RayCastInteraction(attachedName));
-            if(attachedName.empty()) return;
-            // get entity with current attachedName and check if it is attachable
-            Entity *potentialAttachement = player->getWorld()->getEntityByName(attachedName);
-            if(potentialAttachement->isAttachable) {
-                attachement = potentialAttachement;
-            }
-        } else if (app->getKeyboard().justPressed(GLFW_KEY_E)) {
-            // If E is pressed and we have an attachement then we detach it
-            // attachment should return to not be a trigger to collide with other objects
-            r3d::Collider *collider = attachement->getComponent<RigidBodyComponent>()->getCollider();
-            // return collider to same layer as other objects to collide with them again
-            collider->setCollideWithMaskBits(1);
-            collider->setCollisionCategoryBits(1);
-            attachement = nullptr;
-            attachedName = "";
-        }
-    }
-
 }

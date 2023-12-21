@@ -4,6 +4,7 @@
 #include "../components/animation.hpp"
 #include "portal.hpp"
 #include "../systems/event.hpp"
+#include "entity-factory.hpp"
 namespace portal {
 
     // This will deserialize a json array of entities and add the new entities to the current world
@@ -12,18 +13,12 @@ namespace portal {
     void World::deserialize(const nlohmann::json& data, Entity* parent){
         if(!data.is_array()) return;
         for(const auto& entityData : data){
-            bool isportal = entityData.value("isPortal", false);
-            Entity *entity;
-            // if entity is a portal, then we create a portal object
-            // instead of a normal entity (portal inherits from entity)
-            if(isportal) {
-                entity = new Portal();
-                entity->world = this;
-            } else {
-                entity = add();
-            }
+            std::string name = entityData.value("name", std::to_string(entities.size()));
+            std::string type = entityData.value("type", "Regular");
+            Entity *entity = EntityFactory::createEntity(EntityFactory::stringToEntityType(type));
             entity->parent = parent;
-            entity->name = entityData.value("name", std::to_string(entities.size()));
+            entity->name = name;
+            entity->world = this;
             entities[entity->name] = entity;
             entity->deserialize(entityData);
             if(entityData.contains("children")){
@@ -60,11 +55,12 @@ namespace portal {
         if(animations.find(name) != animations.end() && playingAnimations.find(name) == playingAnimations.end()) {
             std::vector<std::string> names;
             for(auto& [animName, anim]: playingAnimations) {
-                if(anim->getOwner() == animations[name]->getOwner()) {
+                if(anim->getOwner() == animations.at(name)->getOwner()) {
                     names.push_back(animName);
                 }
             }
             for(auto& animName : names) {
+                AnimationComponent* animcomp = playingAnimations.at(animName);
                 playingAnimations.erase(animName);
             }
             // Start playing the animation
@@ -93,9 +89,4 @@ namespace portal {
         }
         toStopPlaying.clear();
     }
-
-    void World::initEventSystem() const {
-        if(eventSystem)eventSystem->init();
-    }
-
 }

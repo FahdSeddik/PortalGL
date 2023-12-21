@@ -1,6 +1,5 @@
 # Blender v3.0.0 OBJ File: ''
 # www.blender.org
-mtllib portal_mod.mtl
 o Portal
 v 1.333316 0.489751 0.006994
 v 1.353702 -0.002069 0.006994
@@ -917,7 +916,6 @@ vn 0.1692 -0.8961 0.4104
 vn 0.0792 -0.4150 0.9063
 vn -0.0047 0.0212 0.9998
 g Portal_Portal_Default_OBJ
-usemtl Default_OBJ
 s off
 f 265/1/1 266/2/1 267/3/1
 f 267/3/1 268/4/1 265/1/1

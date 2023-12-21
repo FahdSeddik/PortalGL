@@ -23,52 +23,23 @@ namespace portal {
             return transform;
         }
 
-        const r3d::Vector3& getPosition() const {
-            return transform.getPosition();
-        }
+        const r3d::Vector3 &getPosition() const;
 
-        const r3d::Quaternion& getRotation() const {
-            return transform.getOrientation();
-        }
+        const r3d::Quaternion &getRotation() const;
 
-        void setPosition(const glm::vec3 position) {
-            transform.setPosition(r3d::Vector3(position.x, position.y, position.z));
-        }
+        void setPosition(const glm::vec3 position);
 
-        void setPosition(const r3d::Vector3 position) {
-            transform.setPosition(position);
-        }
+        void setPosition(const r3d::Vector3 position);
 
-        void setRotation(const glm::quat rotation) {
-            transform.setOrientation(r3d::Quaternion(rotation.x, rotation.y, rotation.z, rotation.w));
-        }
+        void setRotation(const glm::quat rotation);
 
-        void setRotation(const r3d::Quaternion rotation) {
-            transform.setOrientation(rotation);
-        }
+        void setRotation(const r3d::Quaternion rotation);
 
         void setTransform(const r3d::Transform transform) {
             this->transform = transform;
         }
 
-        static r3d::Transform interpolate(const Transform& a, const Transform& b, float t) {
-            r3d::Transform transform;
-            transform.setPosition(r3d::Vector3(glm::mix(a.getPosition().x, b.getPosition().x, t), glm::mix(a.getPosition().y, b.getPosition().y, t), glm::mix(a.getPosition().z, b.getPosition().z, t)));
-            transform.setOrientation(r3d::Quaternion(glm::mix(a.getRotation().x, b.getRotation().x, t), glm::mix(a.getRotation().y, b.getRotation().y, t), glm::mix(a.getRotation().z, b.getRotation().z, t), glm::mix(a.getRotation().w, b.getRotation().w, t)));
-            return transform;
-        }
-
-        static float distance(const Transform& a, const Transform& b) {
-            // distance could be on position or rotation
-            // if position are equal then distance is on rotation
-            // if position are not equal then distance is on position
-            if(a.getPosition() == b.getPosition()) {
-                // glm equiv
-                return 2.0f * glm::acos(glm::dot(glm::fquat(a.getRotation().w, a.getRotation().x, a.getRotation().y, a.getRotation().z), glm::fquat(b.getRotation().w, b.getRotation().x, b.getRotation().y, b.getRotation().z)));
-            } else {
-                return glm::distance(glm::vec3(a.getPosition().x, a.getPosition().y, a.getPosition().z), glm::vec3(b.getPosition().x, b.getPosition().y, b.getPosition().z));
-            }
-        }
+        static r3d::Transform interpolate(const Transform &a, const Transform &b, float t);
     };
 
 }

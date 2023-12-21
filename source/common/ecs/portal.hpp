@@ -10,8 +10,8 @@ namespace r3d = reactphysics3d;
 
 
 namespace portal {
-    class World;
     class RigidBodyComponent;
+    class EntityFactory;
     class Portal : public Entity {
         // Class Handle player Grounded
         class RayCastGetSurface : public r3d::RaycastCallback {
@@ -31,7 +31,8 @@ namespace portal {
                 return r3d::decimal(0.0);
             }
         };
-        friend World;
+        // Make EntityFactory a friend so that it can call the private constructor
+        friend class EntityFactory;
 
         // half turn quaternion to be used in teleportation
         glm::fquat halfTurn = glm::angleAxis(glm::pi<float>(), glm::vec3(0, 1, 0));
@@ -49,7 +50,6 @@ namespace portal {
         void calculateFailSafeLocation(const std::string &objectName);
         // To check if we should use failsafeLocation on object or not given object position
         bool shouldUseFailSafeLocation(const r3d::Vector3 &objectPosition) const;
-
 
         // Calculate cached matrices and rotations to be used every teleportation operation
         void calculateCachedValues();
@@ -103,5 +103,7 @@ namespace portal {
         // Remove an object from the list of objects that need to be checked for passing
         // Adds it to markedForRemoval
         void assertRemoval(const std::string &objectName);
+
+        virtual EntityFactory::EntityType getType() const override { return EntityFactory::EntityType::Portal; }
     };
 }

@@ -4,23 +4,23 @@
 #include "../deserialize-utils.hpp"
 #include "../ecs/portal.hpp"
 #include <glm/gtc/matrix_transform.hpp>
+#include "../ecs/entity-factory.hpp"
+#include "../ecs/button.hpp"
 #include <glm/gtc/matrix_access.inl>
 namespace r3d = reactphysics3d;
 
 namespace portal {
     
-
-
     class EventSystem : public r3d::EventListener {
         r3d::PhysicsWorld* physicsWorld;
         World* world;
-        Entity *player;
-        RigidBodyComponent* playerRigidBody;
         // Handles and stores last tp time for each object to prevent teleportation spam
         // and bugs with teleportation
         std::unordered_map<std::string, double> lastTPtime;
         // Cooldown for teleportation for each object
         double teleportationCooldown = 0.2;
+        std::unordered_map<std::string, std::unordered_map<std::string, std::vector<double>>> lastCallTime;
+        double sameCallCooldown = 0.2;
         typedef r3d::CollisionCallback::ContactPair::EventType EventType;
         typedef std::function<void()> EventCallback;
         std::unordered_map<std::string, std::unordered_map<std::string, std::vector<std::pair<int, std::pair<EventType, EventCallback>>>>> collisionEvents;
@@ -41,15 +41,32 @@ namespace portal {
             if(portal->addToPassing(objectCollider, objectName)) lastTPtime[objectName] = glfwGetTime();
         }
 
+        void checkButtonCollision(Entity* entity_1, Entity* entity_2, EventType eventType) const {
+            // If one of the entities is a button
+            // Check if the other entity is a player or a cube
+            // If so then call the press/release function of the button
+            if(entity_1->getType() == EntityFactory::EntityType::Button && 
+                (entity_2->getType() == EntityFactory::EntityType::Player || entity_2->getType() == EntityFactory::EntityType::Cube)) {
+                if(eventType == EventType::ContactStart) {
+                    dynamic_cast<Button *>(entity_1)->press();
+                } else if(eventType == EventType::ContactExit) {
+                    dynamic_cast<Button *>(entity_1)->release();
+                }
+            }
+            if(entity_2->getType() == EntityFactory::EntityType::Button &&
+                (entity_1->getType() == EntityFactory::EntityType::Player || entity_1->getType() == EntityFactory::EntityType::Cube)) {
+                if(eventType == EventType::ContactStart) {
+                    dynamic_cast<Button *>(entity_2)->press();
+                } else if(eventType == EventType::ContactExit) {
+                    dynamic_cast<Button *>(entity_2)->release();
+                }
+            }
+        }
+
         public:
         EventSystem(World* world) {
             this->world = world;
             this->physicsWorld = world->getPhysicsWorld();
-        }
-
-        void init() {
-            player = world->getEntityByName("Player");
-            playerRigidBody = player->getComponent<RigidBodyComponent>();
         }
 
         void deserialize(const nlohmann::json& data) {
@@ -62,7 +79,7 @@ namespace portal {
                 // get type of event (animation for example)
                 std::string type = event.value("type", "");
                 // if any of the names or type is empty then we skip this event (not valid)
-                if((name_1.empty() && name_2.empty()) || type.empty()) continue;
+                if((name_1.empty() || name_2.empty()) || type.empty()) continue;
                 // get if event callback is called once or multiple times
                 bool once = event.value("once", true);
                 // get when event is called (start, stay, exit)
@@ -93,14 +110,15 @@ namespace portal {
                     };
                     // add callback to map with reverse for time optimization
                     // Then this means that name_2 with any other body
-                    if (name_1.empty()) {
-                        collisionEvents[name_2][""].emplace_back(std::make_pair(once ? 1:-1, std::make_pair(eventType, callback)));
-                    } else if (name_2.empty()) {
-                        collisionEvents[name_1][""].emplace_back(std::make_pair(once ? 1:-1, std::make_pair(eventType, callback)));
-                    } else {
-                        collisionEvents[name_1][name_2].emplace_back(std::make_pair(once ? 1:-1, std::make_pair(eventType, callback)));
-                        collisionEvents[name_2][name_1].emplace_back(std::make_pair(once ? 1:-1, std::make_pair(eventType, callback)));
-                    }
+                    collisionEvents[name_1][name_2].emplace_back(std::make_pair(once ? 1:-1, std::make_pair(eventType, callback)));
+                    collisionEvents[name_2][name_1].emplace_back(std::make_pair(once ? 1:-1, std::make_pair(eventType, callback)));
+                }
+            }
+            // resize lastCallTime
+            for(auto& [name_1, map] : collisionEvents) {
+                for(auto& [name_2, vector] : map) {
+                    lastCallTime[name_1][name_2].resize(vector.size());
+                    lastCallTime[name_2][name_1].resize(vector.size());
                 }
             }
         }
@@ -123,54 +141,16 @@ namespace portal {
                 // User data is stored as a void pointer so we need to cast it to the correct type
                 std::string name_1 = *((std::string*)contactPair.getBody1()->getUserData());
                 std::string name_2 = *((std::string*)contactPair.getBody2()->getUserData());
+                Entity* entity_1 = world->getEntityByName(name_1);
+                Entity* entity_2 = world->getEntityByName(name_2);
+
+                // Check if any of the entities is a button and handle it
+                checkButtonCollision(entity_1, entity_2, contactPair.getEventType());
+
                 // Call the callback if exists
                 // if the name of the body is not in the map, it means that it doesn't have any callback
                 if(collisionEvents.find(name_1) == collisionEvents.end() && collisionEvents.find(name_2) == collisionEvents.end()) continue;
                 // apply event for each body if it exists
-                if(collisionEvents.find(name_1) != collisionEvents.end()) {
-                    if(collisionEvents[name_1].find("") != collisionEvents[name_1].end()) {
-                        auto& event = collisionEvents[name_1][""];
-                        for (int i = 0; i < event.size(); i++) {
-                            // if event (stay, start, exit) doesnt match then we dont call callback
-                            if(event[i].second.first != contactPair.getEventType() || event[i].first == 0) continue;
-                            // if event is once then we decrement uses to make it 0
-                            if(event[i].first > 0) event[i].first--;
-                            // call callback
-                            event[i].second.second();
-                            if(contactPair.getEventType() == EventType::ContactStart) {
-                                std::cout<<"start";
-                            } else if(contactPair.getEventType() == EventType::ContactStay) {
-                                std::cout<<"stay";
-                            } else if(contactPair.getEventType() == EventType::ContactExit) {
-                                std::cout<<"exit";
-                            }
-                            std::cout << "called" << name_2 << " " << name_1 << " ";
-                            std::cout<<std::endl;
-                        }
-                    }
-                }
-                if (collisionEvents.find(name_2) != collisionEvents.end()) {
-                    if(collisionEvents[name_2].find("") != collisionEvents[name_2].end()) {
-                        auto& event = collisionEvents[name_2][""];
-                        for (int i = 0; i < event.size(); i++) {
-                            // if event (stay, start, exit) doesnt match then we dont call callback
-                            if(event[i].second.first != contactPair.getEventType() || event[i].first == 0) continue;
-                            // if event is once then we decrement uses to make it 0
-                            if(event[i].first > 0) event[i].first--;
-                            // call callback
-                            event[i].second.second();
-                            if(contactPair.getEventType() == EventType::ContactStart) {
-                                std::cout<<"start";
-                            } else if(contactPair.getEventType() == EventType::ContactStay) {
-                                std::cout<<"stay";
-                            } else if(contactPair.getEventType() == EventType::ContactExit) {
-                                std::cout<<"exit";
-                            }
-                            std::cout << "called" << name_2 << " " << name_1 << " ";
-                            std::cout<<std::endl;
-                        }
-                    }
-                }
                 // if the name exists but second body doesnt then it doesnt have interaction with this body
                 if(collisionEvents[name_1].find(name_2) == collisionEvents[name_1].end() && collisionEvents[name_2].find(name_1) == collisionEvents[name_2].end()) continue;
                 // in map we store redundant reverse to not have to check for order of bodies
@@ -179,6 +159,10 @@ namespace portal {
                 for (int i = 0; i < event.size(); i++) {
                     // if event (stay, start, exit) doesnt match then we dont call callback
                     if(event[i].second.first != contactPair.getEventType() || event[i].first == 0) continue;
+                    // Check cooldown on callback
+                    if(glfwGetTime() - lastCallTime[name_1][name_2][i] < sameCallCooldown) continue;
+                    lastCallTime[name_1][name_2][i] = glfwGetTime();
+                    lastCallTime[name_2][name_1][i] = glfwGetTime();
                     // if event is once then we decrement uses to make it 0
                     if(event[i].first > 0) event[i].first--, eventCopy[i].first--;
                     // call callback

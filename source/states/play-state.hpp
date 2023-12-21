@@ -33,8 +33,6 @@ class Playstate: public portal::State {
         // If we have a world in the scene config, we use it to populate our world
         if(config.contains("world")){
             world.deserialize(config["world"]);
-            // After making sure that the world is populated, we initialize the event system
-            world.initEventSystem();
         }
         // We initialize the camera controller system since it needs a pointer to the app
         cameraController.enter(getApp());
@@ -100,16 +98,6 @@ public:
             // If the escape  key is pressed in this frame, go to the play state
             getApp()->changeState("menu");
             world.clearPlayingAnimations();
-        }
-        if(keyboard.justPressed(GLFW_KEY_H)){
-            world.startAnimation("door_1_left_spin");
-            world.startAnimation("door_1_right_spin");
-        }
-        if(keyboard.justPressed(GLFW_KEY_J)){
-            world.startAnimation("door_1_left_open", true);
-            world.startAnimation("door_1_right_open", true);
-            world.startAnimation("door_1_left_spin_open", true);
-            world.startAnimation("door_1_right_spin_open", true);
         }
     }
 
