@@ -59,11 +59,6 @@ namespace portal {
         void checkForGround();
         // Handles disattaching and attaching of an entity
         void checkAttachment();
-        // Validates and casts portals
-        void checkPortalShot();
-        // Casts a portal
-        void castPortal(Entity* surface, Portal* portal, glm::vec3 hitPoint);
-
     public:
         MovementSystem(World* world, Application* app) : world(world), app(app), player(world->getEntityByName("Player")), playerPos(player->localTransform.getPosition()) {
             controller = player->getComponent<FreeCameraControllerComponent>();
@@ -85,7 +80,7 @@ namespace portal {
             Portal_2->update();
             calculatePlayerVectors();
             checkAttachment();
-            checkPortalShot();
+            // checkPortalShot();
             physicsUpdate(deltaTime);
             // For each entity in the world
             for(const auto& [name, entity] : world->getEntities()){

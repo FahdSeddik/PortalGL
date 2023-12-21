@@ -1,4 +1,5 @@
 #include "movement.hpp"
+#include <glm/gtc/type_ptr.hpp>
 
 namespace portal {
 
@@ -43,27 +44,7 @@ namespace portal {
         }
     };
 
-    // Class Handle portal shooting
-    class RayCastPortal : public r3d::RaycastCallback {
-        std::string& surfaceName;
-        glm::vec3& hitPoint;
-        public:
-        RayCastPortal(std::string& surfaceName, glm::vec3& hitPoint) : surfaceName(surfaceName) , hitPoint(hitPoint){}
-        // Called when a raycast hits a body
-        virtual r3d::decimal notifyRaycastHit(const r3d::RaycastInfo& raycastInfo) override {
-            // Get the name of the body that has been hit
-            if(raycastInfo.body->getCollider(0)->getIsTrigger()){
-                // if trigger, return 1.0 to continue raycast
-                return r3d::decimal(1.0);
-            }
-            surfaceName = *((std::string*)raycastInfo.body->getUserData());
-            hitPoint = glm::vec3(raycastInfo.worldPoint.x, raycastInfo.worldPoint.y, raycastInfo.worldPoint.z);
-            std::cout << "RayCast Hit" << surfaceName << " at " << hitPoint.x << " " << hitPoint.y << " " << hitPoint.z << std::endl;
-            // return 0 to stop raycast
-            return r3d::decimal(0.0);
-        }
-    };
-
+    
     void MovementSystem::checkForGround() {
         RayCastPlayerGrounded rayCastHandler(isGrounded);
         // get player position and bounds
@@ -198,106 +179,5 @@ namespace portal {
         }
     }
 
-    void MovementSystem::castPortal(Entity* surface, Portal* portal, glm::vec3 hitPoint) {
-        // place portal on the surface with correct orientation
-        
-        // step 1 set the position of the portal to the position of the surface
-        // get the surface location and normal
-        r3d::Vector3 surfaceLocation = surface->localTransform.getPosition();
-        r3d::Vector3 surfaceNormal = surface->localTransform.getRotation() * r3d::Vector3(0,0,1);
-        glm::vec3 surfaceLocationGlm = {surfaceLocation.x, surfaceLocation.y, surfaceLocation.z};
-        glm::vec3 surfaceNormalGlm = {surfaceNormal.x, surfaceNormal.y, surfaceNormal.z};
 
-        // step 2 set the orientation of the portal correctly
-        // to set the orientation we need to know the up vector of the portal and its normal
-        // the normal is the same as the surface normal
-        // to set the up vector we need to check if the surface is a floor, ceiling, wall
-        // if it is a floor or ceiling we need to project the player position on the surface 
-        // then calculate the vector from the raycast hit to the player projected on the surface
-        // that vector is the down vector of the portal and its negative is the up vector
-        // and the front vector is the normal of the surface
-        // if it is a wall then the up vector is the global up vector and the front vector is the normal of the surface
-        glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-        if(std::abs(glm::dot(surfaceNormalGlm, glm::vec3(0,1,0))) > 0.9) {
-            // if the surface is a floor or ceiling
-            // get the player position
-            glm::vec3 playerPosition = {playerPos.x, playerPos.y, playerPos.z};
-            // get the vector from the raycast hit to the player
-            glm::vec3 surfaceToPlayer = playerPosition - hitPoint;
-            // project the player position on the surface
-            glm::vec3 projectedPlayerPosition = playerPosition - glm::dot(surfaceToPlayer, surfaceNormalGlm) * surfaceNormalGlm;
-            // get the down vector of the portal
-            glm::vec3 down = projectedPlayerPosition - hitPoint;
-            // get the up vector of the portal
-            up =  glm::normalize(-down);
-                                
-        } 
-        glm::vec3 front = surfaceNormalGlm;
-        glm::vec3 right = glm::normalize(glm::cross(up, front));
-        // front = glm::normalize(glm::cross(right, up));
-        // right = glm::normalize(glm::cross(up, front));
-        glm::mat4 orientation = glm::mat4(glm::vec4(right, 0.0f), glm::vec4(up, 0.0f), glm::vec4(front, 0.0f), glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-        
-        glm::quat orientationQuat = glm::quat_cast(orientation);
-        orientationQuat = glm::normalize(orientationQuat);
-        r3d::Quaternion orientationR3d = r3d::Quaternion(orientationQuat.x, orientationQuat.y, orientationQuat.z, orientationQuat.w);
-        r3d::Vector3 pos = r3d::Vector3(hitPoint.x, hitPoint.y, hitPoint.z);
-        pos += surfaceNormal * 0.1f;
-        // set the orientation of the portal
-        portal->localTransform.setTransform(r3d::Transform(pos, orientationR3d));
-        portal->getComponent<RigidBodyComponent>()->getBody()->setTransform(r3d::Transform(pos + Portal_1->getComponent<RigidBodyComponent>()->relativePosition, orientationR3d));
-        
-        // calculate the cached values of the portal (e.g. the localToWorld matrix)
-        portal->calculateCachedValues();
-        // gets the surface behind the portal and sets the surface data memeber
-        portal->getSurface();
-    }
-
-    void MovementSystem::checkPortalShot(){
-         // Check if Mouse left is pressed
-        if(app->getMouse().justPressed(GLFW_MOUSE_BUTTON_1)) {
-            std::string name = "";
-            glm::vec3 hitPoint = glm::vec3(0.0f, 0.0f, 0.0f);
-            // RayCast from player position to front direction with length 50
-            r3d::Ray ray(playerPos + absoluteFront,absoluteFront * 50 + playerPos);
-            physicsWorld->raycast(ray, new RayCastPortal(name, hitPoint));
-            if(name.empty()) return;
-            // get entity with current name and check if it is can hold a portal
-            Entity *potentialPortalSurface = player->getWorld()->getEntityByName(name);
-            if(potentialPortalSurface->canHoldPortal) {
-                // if portal can be placed, place it
-                castPortal(potentialPortalSurface, Portal_1, hitPoint);
-                
-                isPortal1Shot = true;
-
-                if(isPortal2Shot){
-                    Portal_1->setDestination(Portal_2);
-                    Portal_2->setDestination(Portal_1);
-                }
-            }
-
-        } else if (app->getMouse().justPressed(GLFW_MOUSE_BUTTON_2)) {
-            std::string name = "";
-            glm::vec3 hitPoint = glm::vec3(0.0f, 0.0f, 0.0f);
-            // RayCast from player position to front direction with length 50
-            r3d::Ray ray(playerPos + absoluteFront, absoluteFront * 50 + playerPos);
-            physicsWorld->raycast(ray, new RayCastPortal(name, hitPoint));
-            if(name.empty()) return;
-            // get entity with current name and check if it can hold a portal
-            Entity *potentialPortalSurface = player->getWorld()->getEntityByName(name);
-            
-            // if portal can be placed, place it
-            if(potentialPortalSurface->canHoldPortal) {
-                castPortal(potentialPortalSurface, Portal_2, hitPoint);
-
-                isPortal2Shot = true;
-
-                // if both portals are shot, set the destination of each portal to the other
-                if(isPortal1Shot){
-                    Portal_1->setDestination(Portal_2);
-                    Portal_2->setDestination(Portal_1);
-                }
-            }
-        }
-    }
 }
