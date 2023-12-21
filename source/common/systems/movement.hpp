@@ -4,7 +4,6 @@
 #include "../components/movement.hpp"
 #include "../components/RigidBody.hpp"
 #include "../components/free-camera-controller.hpp"
-#include "../ecs/portal.hpp"
 #include "../application.hpp"
 #include <reactphysics3d/reactphysics3d.h>
 namespace r3d = reactphysics3d;
@@ -31,13 +30,6 @@ namespace portal {
         double JumpCoolDown = 0.2;
         std::string attachedName = "";
         Entity* attachement = nullptr;
-        // Hold portals 
-        // TODO: this needs to be dynamic 
-        // for shooting portals
-        Portal* Portal_1 = nullptr;
-        Portal* Portal_2 = nullptr;
-        bool isPortal1Shot = false;
-        bool isPortal2Shot = false;
 
         // Player Vectors
         r3d::Vector3 absoluteFront;
@@ -64,23 +56,14 @@ namespace portal {
             controller = player->getComponent<FreeCameraControllerComponent>();
             playerRigidBody = player->getComponent<RigidBodyComponent>();
             physicsWorld = player->getWorld()->getPhysicsWorld();
-            Portal_1 = dynamic_cast<Portal*>(world->getEntityByName("Portal_1"));
-            Portal_2 = dynamic_cast<Portal*>(world->getEntityByName("Portal_2"));
-            // Portal_1->setDestination(Portal_2);
-            // Portal_2->setDestination(Portal_1);
-            // Portal_1->getSurface();
-            // Portal_2->getSurface();
         }
 
         
         // This should be called every frame to update all entities containing a MovementComponent. 
         void update(World* world, float deltaTime) {
             if(!physicsWorld) return;
-            Portal_1->update();
-            Portal_2->update();
             calculatePlayerVectors();
             checkAttachment();
-            // checkPortalShot();
             physicsUpdate(deltaTime);
             // For each entity in the world
             for(const auto& [name, entity] : world->getEntities()){

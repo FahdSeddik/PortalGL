@@ -83,7 +83,7 @@
                 "default_metallic": "assets/textures/default_metallic.jpg",
 
                 // chell
-                "chell_albedo":  "assets/textures/chell_Color.png"
+                // "chell_albedo":  "assets/textures/chell_Color.png"
             },
             "meshes":{
                 "cube": "assets/models/cube.obj",
