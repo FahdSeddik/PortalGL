@@ -9,7 +9,8 @@ namespace portal {
         r3d::PhysicsWorld *pWorld = this->getOwner()->getWorld()->getPhysicsWorld();
         relativePosition = r3d::Vector3(0,0,0);
         glm::vec3 rel = data.value("relativePosition", glm::vec3(0.0f));
-        relativePosition = r3d::Vector3(rel.x, rel.y, rel.z);
+        // transform relative position to world space
+        relativePosition = this->getOwner()->localTransform.getRotation() * r3d::Vector3(rel.x, rel.y, rel.z);
         r3d::Transform transform = this->getOwner()->localTransform.getTransform();
         transform.setPosition(transform.getPosition() + relativePosition);
         // Create a rigid body in the physics world

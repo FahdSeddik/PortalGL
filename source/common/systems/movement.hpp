@@ -81,7 +81,7 @@ namespace portal {
                     if(rgb->getBody()->getType() == r3d::BodyType::STATIC) continue;
                     FreeCameraControllerComponent* fcc = entity->getComponent<FreeCameraControllerComponent>();
                     r3d::Transform transform = rgb->getBody()->getTransform();
-                    transform.setPosition(transform.getPosition() - rgb->relativePosition);
+                    transform.setPosition(transform.getPosition() - transform.getOrientation() * rgb->relativePosition);
                     if(fcc){
                         // orientation stays the same
                         transform.setOrientation(entity->localTransform.getRotation());

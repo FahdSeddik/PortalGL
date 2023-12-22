@@ -31,7 +31,7 @@ namespace portal {
         return entities.at(name);
     }
 
-    void World::deserialize_physics(const nlohmann::json& data, const nlohmann::json* OnCollisionData){
+    void World::deserialize_physics(const nlohmann::json& data, const nlohmann::json* onTriggerData){
         if(!data.is_object()) return;
         r3d::PhysicsWorld::WorldSettings settings;
         glm::vec3 gravity(settings.gravity.x, settings.gravity.y, settings.gravity.z);
@@ -45,8 +45,8 @@ namespace portal {
         // pass isGrounded by reference to allow the event system to change it
         EventSystem *eventSystem = new EventSystem(this);
         this->eventSystem = eventSystem;
-        // Deserialize OnCollisionEvents if exists
-        if(OnCollisionData)eventSystem->deserialize(*OnCollisionData);
+        // Deserialize onTriggerEvents if exists
+        if(onTriggerData)eventSystem->deserialize(*onTriggerData);
         this->physicsWorld->setEventListener(eventSystem);
     }
     

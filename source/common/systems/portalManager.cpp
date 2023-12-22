@@ -547,7 +547,7 @@ namespace portal {
         if(std::abs(glm::dot(surfaceNormalGlm, glm::vec3(0,1,0))) > 0.9) {
             // if the surface is a floor or ceiling
             // get the player position
-            glm::vec3 playerPosition = {playerPos.x, playerPos.y, playerPos.z};
+            glm::vec3 playerPosition = {player->localTransform.getPosition().x, player->localTransform.getPosition().y, player->localTransform.getPosition().z};
             // get the vector from the raycast hit to the player
             glm::vec3 surfaceToPlayer = playerPosition - hitPoint;
             // project the player position on the surface
@@ -599,7 +599,7 @@ namespace portal {
             std::string name = "";
             glm::vec3 hitPoint = glm::vec3(0.0f, 0.0f, 0.0f);
             // RayCast from player position to front direction with length 50
-            r3d::Ray ray(playerPos + absoluteFront,absoluteFront * 50 + playerPos);
+            r3d::Ray ray(player->localTransform.getPosition() + player->getAbsoluteFront() / 2.0f,player->getAbsoluteFront() * 50 + player->localTransform.getPosition());
             physicsWorld->raycast(ray, new RayCastPortal(name, hitPoint));
             if(name.empty()) return;
             // get entity with current name and check if it is can hold a portal
@@ -620,7 +620,7 @@ namespace portal {
             std::string name = "";
             glm::vec3 hitPoint = glm::vec3(0.0f, 0.0f, 0.0f);
             // RayCast from player position to front direction with length 50
-            r3d::Ray ray(playerPos + absoluteFront, absoluteFront * 50 + playerPos);
+            r3d::Ray ray(player->localTransform.getPosition() + player->getAbsoluteFront(), player->getAbsoluteFront() * 50 + player->localTransform.getPosition());
             physicsWorld->raycast(ray, new RayCastPortal(name, hitPoint));
             if(name.empty()) return;
             // get entity with current name and check if it can hold a portal

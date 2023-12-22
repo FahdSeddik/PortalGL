@@ -27,7 +27,7 @@ class Playstate: public portal::State {
             portal::deserializeAllAssets(config["assets"]);
         }
         if(config.contains("physicsWorld")){
-            world.deserialize_physics(config["physicsWorld"], config.contains("onCollisionEvents") ? &config["onCollisionEvents"] : nullptr);
+            world.deserialize_physics(config["physicsWorld"], config.contains("onTriggerEvents") ? &config["onTriggerEvents"] : nullptr);
         }
     }
 

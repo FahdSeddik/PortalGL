@@ -6,6 +6,7 @@
 #include "cube.hpp"
 #include "player.hpp"
 #include "decoration.hpp"
+#include "elevator.hpp"
 namespace portal {
     // Create entity based on type
     Entity *EntityFactory::createEntity(EntityType type) {
@@ -31,6 +32,9 @@ namespace portal {
                 break;
             case EntityType::Decoration:
                 entity = new Decoration();
+                break;
+            case EntityType::Elevator:
+                entity = new Elevator();
                 break;
             // Add other types as needed
 

@@ -4,6 +4,7 @@
 #include "../components/RigidBody.hpp"
 #include "../ecs/portal.hpp"
 #include "../application.hpp"
+#include "../ecs/player.hpp"
 #include <reactphysics3d/reactphysics3d.h>
 namespace r3d = reactphysics3d;
 
@@ -47,7 +48,7 @@ namespace portal {
             BOTTOM_RIGHT
         };
 
-        Entity* player = nullptr;
+        Player* player = nullptr;
         Application *app;
         World *world;
 
@@ -58,11 +59,6 @@ namespace portal {
         Portal* Portal_2 = nullptr;
         bool isPortal1Shot = false;
         bool isPortal2Shot = false;
-
-        // Player Vectors
-        r3d::Vector3 absoluteFront;
-        // Player position reference
-        const r3d::Vector3 &playerPos;
         
         // Validates and casts portals
         void checkPortalShot();
@@ -89,9 +85,9 @@ namespace portal {
         // the points are returned in an array of size 2
         std::vector<glm::vec2> getLineRectangleIntersectionPoints(Rectangle& rectanglePortal, Rectangle& rectangleOtherPortal, Point point);
     public:
-        PortalManager(World* world, Application* app) : world(world), app(app), player(world->getEntityByName("Player")), playerPos(player->localTransform.getPosition()){
+        PortalManager(World* world, Application* app) : world(world), app(app){
+            player = dynamic_cast<Player*>(world->getEntityByName("Player"));
             this->physicsWorld = world->getPhysicsWorld();
-            
             Portal_1 = dynamic_cast<Portal*>(world->getEntityByName("Portal_1"));
             Portal_2 = dynamic_cast<Portal*>(world->getEntityByName("Portal_2"));
         }
@@ -99,9 +95,6 @@ namespace portal {
 
         // Handles portal shooting
         void update(){
-            glm::vec3 tempFront = player->getLocalToWorldMatrix() * glm::vec4(0, 0, -1, 0);
-            this->absoluteFront = r3d::Vector3(tempFront.x, tempFront.y, tempFront.z);
-            this->absoluteFront.normalize();
             Portal_1->update();
             Portal_2->update();
             checkPortalShot();

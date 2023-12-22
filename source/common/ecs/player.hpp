@@ -25,6 +25,7 @@ namespace portal {
         // To Sync player vectors & check attachment
         void update();
 
+        const r3d::Vector3 &getAbsoluteFront() const { return absoluteFront; }
         const glm::vec3 &getFront() const { return front; }
         const glm::vec3 &getRight() const { return right; }
         Entity *getAttachement() const { return attachement; }

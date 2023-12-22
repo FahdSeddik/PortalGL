@@ -30,7 +30,7 @@ namespace portal {
 
         // This will deserialize a json object of physics world settings and create a physics world
         // The physics world will be used for physics simulation
-        void deserialize_physics(const nlohmann::json& data, const nlohmann::json* OnCollisionData = nullptr);
+        void deserialize_physics(const nlohmann::json& data, const nlohmann::json* onTriggerData = nullptr);
 
         // This returns and immutable reference to the set of all entites in the world.
         const std::unordered_map<std::string, Entity*>& getEntities() {

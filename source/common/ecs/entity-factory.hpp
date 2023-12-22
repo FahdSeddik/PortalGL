@@ -15,6 +15,7 @@ namespace portal {
                 Cube,
                 Player,
                 Decoration,
+                Elevator,
                 // Add other types as needed
 
                 // Switch,
@@ -31,7 +32,8 @@ namespace portal {
                     {EntityType::Button, "Button"},
                     {EntityType::Cube, "Cube"},
                     {EntityType::Player, "Player"},
-                    {EntityType::Decoration, "Decoration"}
+                    {EntityType::Decoration, "Decoration"},
+                    {EntityType::Elevator, "Elevator"}
                     // Add other types as needed
 
                     // {EntityType::Switch, "Switch"},
@@ -49,7 +51,8 @@ namespace portal {
                     {"Button", EntityType::Button},
                     {"Cube", EntityType::Cube},
                     {"Player", EntityType::Player},
-                    {"Decoration", EntityType::Decoration}
+                    {"Decoration", EntityType::Decoration},
+                    {"Elevator", EntityType::Elevator}
                     // Add other types as needed
 
                     // {"Switch", EntityType::Switch},
