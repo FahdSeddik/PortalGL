@@ -14,8 +14,9 @@ namespace portal {
         void setupAnimations();
         // Make sure EntityFactory can access Door constructor
         friend class EntityFactory;
-        Door() : Entity() {}
-        public:
+        Door() : Entity() { canHoldPortal = false;}
+
+    public:
         // Open the door if it is closed and calls appropriate animations
         void open();
         // Close the door if it is opened and calls appropriate animations

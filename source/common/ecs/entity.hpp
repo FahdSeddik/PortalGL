@@ -146,6 +146,7 @@ namespace portal {
         protected:
         Attachable() : Entity() {
             isAttachable = true;
+            canHoldPortal = false;
         }
     };
 }

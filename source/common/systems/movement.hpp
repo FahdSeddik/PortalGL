@@ -6,6 +6,7 @@
 #include "../ecs/world.hpp"
 #include "../components/RigidBody.hpp"
 #include <glm/glm.hpp>
+#include "../ecs/player.hpp"
 #include <glm/gtc/constants.hpp>
 #include <glm/trigonometric.hpp>
 #include <glm/gtx/fast_trigonometry.hpp>
@@ -29,11 +30,6 @@ namespace portal {
         double JumpCoolDown = 0.2;
         std::string attachedName = "";
         Entity* attachement = nullptr;
-        // Hold portals 
-        // TODO: this needs to be dynamic 
-        // for shooting portals
-        Portal* Portal_1 = nullptr;
-        Portal* Portal_2 = nullptr;
 
         // Handles all physics updates
         void physicsUpdate(float deltaTime);
@@ -57,11 +53,7 @@ namespace portal {
         // This should be called every frame to update all entities containing a MovementComponent. 
         void update(World* world, float deltaTime) {
             if(!physicsWorld) return;
-            // TODO: this needs to be dynamic for shooting portals
-            Portal_1->update();
-            Portal_2->update();
-            calculatePlayerVectors();
-            checkAttachment();
+            player->update();
             physicsUpdate(deltaTime);
             // For each entity in the world
             for(const auto& [name, entity] : world->getEntities()){

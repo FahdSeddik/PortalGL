@@ -13,7 +13,7 @@ namespace portal {
         void deserializeAction(const nlohmann::json &data);
         // Make sure EntityFactory can access Button constructor
         friend class EntityFactory;
-        Button() : Entity() {}
+        Button() : Entity() {canHoldPortal = false;}
         public:
         // onPress and onRelease button
         void press();
