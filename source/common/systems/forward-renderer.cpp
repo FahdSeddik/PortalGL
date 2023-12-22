@@ -526,7 +526,7 @@ namespace portal {
         drawNonPortalObjects(modelMat, viewMat, projMat);
     }
     
-    void ForwardRenderer::render(World* World){
+    void ForwardRenderer::render(World* world){
         // First of all, we search for a camera and for all the mesh renderers
         CameraComponent* camera = nullptr;
         opaqueCommands.clear();
