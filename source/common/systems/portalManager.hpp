@@ -16,6 +16,7 @@ namespace portal {
         class RayCastPortal : public r3d::RaycastCallback {
             std::string& surfaceName;
             glm::vec3& hitPoint;
+            float distance = FLT_MAX;
             public:
             RayCastPortal(std::string& surfaceName, glm::vec3& hitPoint) : surfaceName(surfaceName) , hitPoint(hitPoint){}
             // Called when a raycast hits a body
@@ -25,11 +26,15 @@ namespace portal {
                     // if trigger, return 1.0 to continue raycast
                     return r3d::decimal(1.0);
                 }
-                surfaceName = *((std::string*)raycastInfo.body->getUserData());
-                hitPoint = glm::vec3(raycastInfo.worldPoint.x, raycastInfo.worldPoint.y, raycastInfo.worldPoint.z);
-                std::cout << "RayCast Hit" << surfaceName << " at " << hitPoint.x << " " << hitPoint.y << " " << hitPoint.z << std::endl;
-                // return 0 to stop raycast
-                return r3d::decimal(0.0);
+                if(raycastInfo.hitFraction < distance){
+                    distance = raycastInfo.hitFraction;
+                    // update hit point and surface name
+                    surfaceName = *((std::string*)raycastInfo.body->getUserData());
+                    hitPoint = glm::vec3(raycastInfo.worldPoint.x, raycastInfo.worldPoint.y, raycastInfo.worldPoint.z);
+                    std::cout << "RayCast Hit" << surfaceName << " at " << hitPoint.x << " " << hitPoint.y << " " << hitPoint.z << std::endl;
+                }
+                return r3d::decimal(1.0);
+
             }
         };
 
