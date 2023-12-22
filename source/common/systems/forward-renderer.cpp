@@ -582,14 +582,14 @@ namespace portal {
         if(camera == nullptr) return;
         if(!portal1 || !portal2) {
             drawNonPortalObjects(camera->getOwner()->getLocalToWorldMatrix(), camera->getViewMatrix(), camera->getProjectionMatrix(windowSize));
-            return;
+            // return;
+        } else{
+            portals[0] = portal1, portals[1] = portal2;
+            portalModelMats[0] = portal1->getLocalToWorldMatrix(), portalModelMats[1] = portal2->getLocalToWorldMatrix();
+            size_t maxRecursionLevel = 1;
+            // drawRecursivePortals(camera->getOwner()->getLocalToWorldMatrix(),camera->getViewMatrix(), camera->getProjectionMatrix(windowSize), maxRecursionLevel);
+            drawPortalsNonRecursive(camera->getOwner()->getLocalToWorldMatrix(),camera->getViewMatrix(), camera->getProjectionMatrix(windowSize), portal1, portal2);
         }
-        portals[0] = portal1, portals[1] = portal2;
-        portalModelMats[0] = portal1->getLocalToWorldMatrix(), portalModelMats[1] = portal2->getLocalToWorldMatrix();
-        size_t maxRecursionLevel = 1;
-        // drawRecursivePortals(camera->getOwner()->getLocalToWorldMatrix(),camera->getViewMatrix(), camera->getProjectionMatrix(windowSize), maxRecursionLevel);
-        drawPortalsNonRecursive(camera->getOwner()->getLocalToWorldMatrix(),camera->getViewMatrix(), camera->getProjectionMatrix(windowSize), portal1, portal2);
-
 
         if(bloom){ 
             // apply the pingpong blur

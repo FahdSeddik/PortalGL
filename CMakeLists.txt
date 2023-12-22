@@ -101,6 +101,9 @@ set(COMMON_SOURCES
 
         source/common/components/animation.hpp
         source/common/components/animation.cpp
+
+        source/common/systems/portalManager.hpp
+        source/common/systems/portalManager.cpp
 )
 
 # Define the directories in which to search for the included headers

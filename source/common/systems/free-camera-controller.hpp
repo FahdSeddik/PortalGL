@@ -15,6 +15,9 @@
 #include <glm/gtc/quaternion.hpp>
 #include<glm/common.hpp>
 
+#include <string>
+#include <reactphysics3d/reactphysics3d.h>
+
 namespace portal
 {
 
@@ -66,14 +69,14 @@ namespace portal
             Entity* entity = camera->getOwner();
 
             // If the left mouse button is pressed, we lock and hide the mouse. This common in First Person Games.
-            if(app->getMouse().isPressed(GLFW_MOUSE_BUTTON_1) && !mouse_locked){
-                app->getMouse().lockMouse(app->getWindow());
-                mouse_locked = true;
-            // If the left mouse button is released, we unlock and unhide the mouse.
-            } else if(!app->getMouse().isPressed(GLFW_MOUSE_BUTTON_1) && mouse_locked) {
-                app->getMouse().unlockMouse(app->getWindow());
-                mouse_locked = false;
-            }
+            // if(app->getMouse().isPressed(GLFW_MOUSE_BUTTON_1) && !mouse_locked){
+            //     app->getMouse().lockMouse(app->getWindow());
+            //     mouse_locked = true;
+            // // If the left mouse button is released, we unlock and unhide the mouse.
+            // } else if(!app->getMouse().isPressed(GLFW_MOUSE_BUTTON_1) && mouse_locked) {
+            //     app->getMouse().unlockMouse(app->getWindow());
+            //     mouse_locked = false;
+            // }
 
             // We get a reference to the entity's position and rotation
             const r3d::Vector3& pos = entity->localTransform.getPosition();
@@ -82,7 +85,7 @@ namespace portal
             glm::quat rotation((float)rot.w, (float)rot.x, (float)rot.y, (float)rot.z);
             // If the left mouse button is pressed, we get the change in the mouse location
             // and use it to update the camera rotation
-            if(app->getMouse().isPressed(GLFW_MOUSE_BUTTON_1)){
+            // if(app->getMouse().isPressed(GLFW_MOUSE_BUTTON_1)){
                 glm::vec2 delta = app->getMouse().getMouseDelta();
                 float pitch = -delta.y * controller->rotationSensitivity; // The y-axis controls the pitch
                 float yaw = -delta.x * controller->rotationSensitivity; // The x-axis controls the yaw
@@ -98,7 +101,7 @@ namespace portal
                 // Combine the pitch and yaw rotations
                 rotation = yawQuat * rotation * pitchQuat;
                 rotation = glm::normalize(rotation);
-            }
+            // }
 
             // We update the camera fov based on the mouse wheel scrolling amount
             float fov = camera->fovY + app->getMouse().getScrollOffset().y * controller->fovSensitivity;
@@ -145,6 +148,7 @@ namespace portal
                 transform.setPosition(entity->localTransform.getPosition() + rgb->relativePosition);
                 rgb->getBody()->setTransform(transform);
             }
+
         }
 
         // When the state exits, it should call this function to ensure the mouse is unlocked
