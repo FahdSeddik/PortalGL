@@ -599,7 +599,7 @@ namespace portal {
             std::string name = "";
             glm::vec3 hitPoint = glm::vec3(0.0f, 0.0f, 0.0f);
             // RayCast from player position to front direction with length 50
-            r3d::Ray ray(player->localTransform.getPosition() + player->getAbsoluteFront() / 2.0f,player->getAbsoluteFront() * 50 + player->localTransform.getPosition());
+            r3d::Ray ray(player->localTransform.getPosition() + player->getAbsoluteFront() * 0.5f,player->getAbsoluteFront() * 50 + player->localTransform.getPosition());
             physicsWorld->raycast(ray, new RayCastPortal(name, hitPoint));
             if(name.empty()) return;
             // get entity with current name and check if it is can hold a portal
@@ -620,7 +620,7 @@ namespace portal {
             std::string name = "";
             glm::vec3 hitPoint = glm::vec3(0.0f, 0.0f, 0.0f);
             // RayCast from player position to front direction with length 50
-            r3d::Ray ray(player->localTransform.getPosition() + player->getAbsoluteFront(), player->getAbsoluteFront() * 50 + player->localTransform.getPosition());
+            r3d::Ray ray(player->localTransform.getPosition() + player->getAbsoluteFront() * 0.5f, player->getAbsoluteFront() * 50 + player->localTransform.getPosition());
             physicsWorld->raycast(ray, new RayCastPortal(name, hitPoint));
             if(name.empty()) return;
             // get entity with current name and check if it can hold a portal

@@ -1051,7 +1051,18 @@
                                 "material": "mat_gun"
                             }
                         ]
-                    }             
+                    },
+                    {
+                        "position": [0, 0, -0.5],
+                        "scale":[0.01, 0.01, 0.01],
+                        "components": [
+                            {
+                                "type": "Mesh Renderer",
+                                "mesh": "sphere",
+                                "material": "metal"
+                            }
+                        ]
+                    }
                 ]
             },
             //====================

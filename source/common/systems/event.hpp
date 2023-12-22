@@ -26,7 +26,7 @@ namespace portal {
 
         void checkButtonCollision(Entity *entity_1, Entity *entity_2, CollisionType eventType) const;
 
-        void checkElevatorTrigger(Entity *entity_1, Entity *entity_2, EventType eventType) const;
+        void checkElevatorTrigger(Entity *entity_1, Entity *entity_2) const;
 
     public:
         EventSystem(World* world) {
