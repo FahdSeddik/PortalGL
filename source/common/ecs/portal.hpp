@@ -26,7 +26,7 @@ namespace portal {
                     return r3d::decimal(1.0);
                 }
                 surfaceName = *((std::string*)raycastInfo.body->getUserData());
-                std::cout << "Surface Retrieved: " << surfaceName << std::endl;
+                // std::cout << "Surface Retrieved: " << surfaceName << std::endl;
                 // return 0 to stop raycast
                 return r3d::decimal(0.0);
             }

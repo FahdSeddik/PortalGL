@@ -25,6 +25,7 @@ namespace portal {
         glm::vec3 direction = { 0, -1, 0 };
         // attenuation
         glm::vec3 attenuation = { 1.0f, 0.09f, 0.032f };
+        glm::vec3 worldSpacePosition = { 0, 0, 0 };
 
         // The ID of this component type is "Light"
         static std::string getID() { return "Light"; }

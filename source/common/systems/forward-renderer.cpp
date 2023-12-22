@@ -228,7 +228,7 @@ namespace portal {
     }
 
     // Utility function to add a lights to the shader and set the "lightCount" uniform
-    void setupLights(const std::vector<LightComponent*>& lights, ShaderProgram* shader){
+    inline void setupLights(const std::vector<LightComponent*>& lights, ShaderProgram* shader){
         for(int i = 0; i < lights.size(); i++){
             if(lights[i]->type == LightComponent::Type::Directional){ // Directional
                 shader->set("lights[" + std::to_string(i) + "].type", 0);
@@ -237,12 +237,12 @@ namespace portal {
             } else if(lights[i]->type == LightComponent::Type::Point){ // Point
                 shader->set("lights[" + std::to_string(i) + "].type", 1);
                 shader->set("lights[" + std::to_string(i) + "].color", lights[i]->color);
-                shader->set("lights[" + std::to_string(i) + "].position", glm::vec3(lights[i]->getOwner()->getLocalToWorldMatrix()*glm::vec4(0, 0, 0, 1)));
+                shader->set("lights[" + std::to_string(i) + "].position", lights[i]->worldSpacePosition);
                 shader->set("lights[" + std::to_string(i) + "].attenuation", lights[i]->attenuation);
             } else if(lights[i]->type == LightComponent::Type::Spot){ // Spot
                 shader->set("lights[" + std::to_string(i) + "].type", 2);
                 shader->set("lights[" + std::to_string(i) + "].color", lights[i]->color);
-                shader->set("lights[" + std::to_string(i) + "].position", glm::vec3(lights[i]->getOwner()->getLocalToWorldMatrix()*glm::vec4(0, 0, 0, 1)));
+                shader->set("lights[" + std::to_string(i) + "].position", lights[i]->worldSpacePosition);
                 shader->set("lights[" + std::to_string(i) + "].direction",  lights[i]->direction);
                 shader->set("lights[" + std::to_string(i) + "].innerCutOff", lights[i]->innerCutOff);
                 shader->set("lights[" + std::to_string(i) + "].outerCutOff", lights[i]->outerCutOff);
@@ -289,7 +289,6 @@ namespace portal {
         // Don't forget to set the "transform" uniform to be equal the model-view-projection matrix for each render command
         for (auto &command : opaqueCommands){
             //Set the "transform" uniform to be equal the model-view-projection matrix for each render command
-            glm::mat4 MVP = VP * command.localToWorld;
             command.material->setup();
 
             // check if the material is of type LitMaterial
@@ -302,6 +301,7 @@ namespace portal {
                 litMaterial->shader->set("viewPos", eye);
             }
             else{
+                glm::mat4 MVP = VP * command.localToWorld;
                 command.material->shader->set("transform", MVP);
             }
             command.mesh->draw();
@@ -331,7 +331,6 @@ namespace portal {
         // Don't forget to set the "transform" uniform to be equal the model-view-projection matrix for each render command
         for (auto &command : transparentCommands){
             // Set the "transform" uniform to be equal the model-view-projection matrix for each render command
-            glm::mat4 MVP = VP * command.localToWorld;
             command.material->setup();
 
             // check if the material is of type LitMaterial
@@ -344,6 +343,7 @@ namespace portal {
                 litMaterial->shader->set("viewPos", eye);
             }
             else{
+                glm::mat4 MVP = VP * command.localToWorld;
                 command.material->shader->set("transform", MVP);
             }
             command.mesh->draw();
@@ -526,7 +526,7 @@ namespace portal {
         drawNonPortalObjects(modelMat, viewMat, projMat);
     }
     
-    void ForwardRenderer::render(World* world){
+    void ForwardRenderer::render(World* World){
         // First of all, we search for a camera and for all the mesh renderers
         CameraComponent* camera = nullptr;
         opaqueCommands.clear();

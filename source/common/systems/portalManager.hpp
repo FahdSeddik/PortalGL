@@ -31,7 +31,7 @@ namespace portal {
                     // update hit point and surface name
                     surfaceName = *((std::string*)raycastInfo.body->getUserData());
                     hitPoint = glm::vec3(raycastInfo.worldPoint.x, raycastInfo.worldPoint.y, raycastInfo.worldPoint.z);
-                    std::cout << "RayCast Hit" << surfaceName << " at " << hitPoint.x << " " << hitPoint.y << " " << hitPoint.z << std::endl;
+                    // std::cout << "RayCast Hit" << surfaceName << " at " << hitPoint.x << " " << hitPoint.y << " " << hitPoint.z << std::endl;
                 }
                 return r3d::decimal(1.0);
 

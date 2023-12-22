@@ -17,7 +17,7 @@ namespace portal {
                 return r3d::decimal(1.0);
             }
             attachedName = *((std::string*)raycastInfo.body->getUserData());
-            std::cout << "RayCast Hit" << attachedName << std::endl;
+            // std::cout << "RayCast Hit" << attachedName << std::endl;
             // return 0 to stop raycast
             return r3d::decimal(0.0);
         }
