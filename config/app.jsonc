@@ -80,10 +80,9 @@
                 "default_roughness": "assets/textures/default_roughness.jpg",
                 "default_ambient_occlusion": "assets/textures/default_ambient_occlusion.jpg",
                 "default_emission": "assets/textures/default_emissive.jpg",
-                "default_metallic": "assets/textures/default_metallic.jpg",
+                "default_metallic": "assets/textures/default_metallic.jpg"
 
-                // chell
-                // "chell_albedo":  "assets/textures/chell_Color.png"
+
             },
             "meshes":{
                 "cube": "assets/models/cube.obj",
@@ -108,7 +107,6 @@
                 "mesh_door_left_spinner": "assets/models/Door/left_spinner.obj",
                 "mesh_portal": "assets/models/portal_mod.obj",
                 "mesh_portal_frame": "assets/models/portal_frame.obj"
-                // "chell": "assets/models/test.obj"
             },
             "samplers":{
                 "default":{},
@@ -117,24 +115,6 @@
                 }
             },
             "materials":{
-                "midScreen":{
-                    "type": "tinted",
-                    "shader": "tinted",
-                    "pipelineState": {
-                        "faceCulling":{
-                            "enabled": false
-                        },
-                        "depthTesting":{
-                            "enabled": true
-                        },
-                        "blending":{
-                            "enabled": true,
-                            "sourceFactor": "GL_SRC_ALPHA",
-                            "destinationFactor": "GL_ONE_MINUS_SRC_ALPHA"
-                        }
-                    },
-                    "tint": [1, 0, 0, 1]
-                },
                 "mat_portal":{
                     "type": "tinted",
                     "shader": "tinted",
@@ -599,21 +579,6 @@
                     "texture": "moon",
                     "sampler": "default"
                 }
-                // "mat_chell":{
-                //     "type": "textured",
-                //     "shader": "textured",
-                //     "pipelineState": {
-                //         "faceCulling":{
-                //             "enabled": false
-                //         },
-                //         "depthTesting":{
-                //             "enabled": true
-                //         }
-                //     },
-                //     "tint": [1, 1, 1, 1],
-                //     "texture": "chell_albedo",
-                //     "sampler": "default"
-                // }
             },
             // Models specify material and corresponding mesh with multiple meshes and materials
             "models": {
@@ -1039,19 +1004,7 @@
                                 "material": "mat_gun"
                             }
                         ]
-                    },
-                    {
-                        "position": [0, 0, -2],
-                        "rotation": [0, 0, 0],
-                        "scale": [0.02, 0.02, 0.02],
-                        "components": [
-                            {
-                                "type": "Mesh Renderer",
-                                "mesh": "sphere",
-                                "material": "midScreen"
-                            }
-                        ]
-                    }                 
+                    }             
                 ]
             },
             //====================
@@ -2065,32 +2018,6 @@
                     }
                 ]
             }
-            // {
-            //     "name": "chell",
-            //     "position": [0, 0, 5],
-            //     "scale": [0.05, 0.05, 0.05],
-            //     "rotation": [0, 0, 0],
-            //     "isPortal": true,
-            //     "components":[
-            //         {
-            //             "type": "Mesh Renderer",
-            //             "mesh": "chell",
-            //             // "mesh": "plane",
-            //             "material": "mat_chell"
-            //         },
-            //         {
-            //             "type": "RigidBody",
-            //             "r3dType": "Static",
-            //             "collider":{
-            //                 "type":"Box Collider",
-            //                 "halfExtents": [1, 1, 0.5],
-            //                 "friction": 1.0,
-            //                 "bounciness":0.0,
-            //                 "isTrigger": true // default is false
-            //             }
-            //         }
-            //     ]
-            // }
         ],
         "onCollisionEvents": [
             {

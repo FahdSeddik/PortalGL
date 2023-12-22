@@ -77,7 +77,10 @@ namespace portal {
         // Calculates the overlap correction vector for two portals
         // the corrected position is returned in hitPoint (by reference)
         bool getCorrectedPortalPos(Entity* surface, Portal* otherPortal, glm::vec3& hitPoint, glm::vec3 up, glm::vec3 right, glm::vec3 front);
-
+        
+        // get the 2 intersection points of a line and a rectangle
+        // the points are returned in an array of size 2
+        std::array<glm::vec2, 2> getLineRectangleIntersectionPoints(Rectangle& rectanglePortal, Rectangle& rectangleOtherPortal, int point);
     public:
         PortalManager(World* world, Application* app) : world(world), app(app), player(world->getEntityByName("Player")), playerPos(player->localTransform.getPosition()){
             this->physicsWorld = world->getPhysicsWorld();

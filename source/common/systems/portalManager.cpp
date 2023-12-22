@@ -5,6 +5,11 @@
 #include <glm/gtx/fast_trigonometry.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#define TOPLEFT 0
+#define TOPRIGHT 1
+#define BOTTOMLEFT 2
+#define BOTTOMRIGHT 3
+
 namespace portal {
     glm::vec2 PortalManager::calculateSurfaceCorrectionVector(glm::vec2 surfaceMin, glm::vec2 surfaceMax, glm::vec2 portalMin, glm::vec2 portalMax) {
         // this function is used to get the correction vector for portals that are outside the surface
@@ -83,10 +88,71 @@ namespace portal {
         return (cross1 >= 0 && cross2 >= 0 && cross3 >= 0 && cross4 >= 0) || (cross1 <= 0 && cross2 <= 0 && cross3 <= 0 && cross4 <= 0);
     }
 
+    std::array<glm::vec2, 2> PortalManager::getLineRectangleIntersectionPoints(Rectangle& portal, Rectangle& otherPortal, int point){
+        // this function is used to get the intersection points of the line between the centers of the 2 portals
+        // with the sides of the bounding box of the portals depending on the point passed to the function (the point inside the other portal)
+        // portal is the one that is being shot/casted onto a surface
+        // otherPortal is the one that is already shot/casted onto a surface
+        glm::vec2 intersectionPoints[4];
+        std::vector<std::pair<glm::vec2, glm::vec2>> sides(4);
+        switch (point)
+        {
+        case TOPLEFT:
+            sides[0] = {otherPortal.bottomRight, otherPortal.topRight};
+            sides[1] = {otherPortal.bottomLeft, otherPortal.bottomRight};
+            sides[2] = {portal.bottomLeft, portal.topLeft};
+            sides[3] = {portal.topLeft, portal.topRight};
+            break;
+        case TOPRIGHT:
+            sides[0] = {otherPortal.bottomLeft, otherPortal.topLeft};
+            sides[1] = {otherPortal.bottomLeft, otherPortal.bottomRight};
+            sides[2] = {portal.bottomRight, portal.topRight};
+            sides[3] = {portal.topLeft, portal.topRight};
+            break;
+        case BOTTOMLEFT:
+            sides[0] = {otherPortal.bottomRight, otherPortal.topRight};
+            sides[1] = {otherPortal.topLeft, otherPortal.topRight};
+            sides[2] = {portal.bottomLeft, portal.topLeft};
+            sides[3] = {portal.bottomLeft, portal.bottomRight};
+            break;
+        case BOTTOMRIGHT:
+            sides[0] = {otherPortal.bottomLeft, otherPortal.topLeft};
+            sides[1] = {otherPortal.topLeft, otherPortal.topRight};
+            sides[2] = {portal.bottomRight, portal.topRight};
+            sides[3] = {portal.bottomLeft, portal.bottomRight};
+            break;
+        default:
+            break;
+        }
+
+        for(int i = 0; i < 4; i++){
+            intersectionPoints[i] = lineLineIntersection(otherPortal.center, portal.center, sides[i].first, sides[i].second);
+        }
+
+        float distance1 = glm::distance(intersectionPoints[0], otherPortal.center);
+        float distance2 = glm::distance(intersectionPoints[1], otherPortal.center);
+        float distance3 = glm::distance(intersectionPoints[2], portal.center);
+        float distance4 = glm::distance(intersectionPoints[3], portal.center);
+        
+        intersectionPoints[0] = distance1 < distance2 ? intersectionPoints[0] : intersectionPoints[1];
+        intersectionPoints[1] = distance3 < distance4 ? intersectionPoints[2] : intersectionPoints[3];
+
+        // return intersection points 0 and 1 only since they are the closest to the portals
+        std::array<glm::vec2, 2> result;
+        result[0] = intersectionPoints[0];
+        result[1] = intersectionPoints[1];
+        return result;
+
+
+    }
+
     glm::vec2 PortalManager::calculatePortalOverlapCorrectionVector(Rectangle& portal, Rectangle& otherPortal){
         // this function is used to get the correction vector for portals that are overlapping
         // if the portal is overlapping the other portal, it will move the portal out of the other portal
         // if the portal is not overlapping the other portal, just return the 0,0 vector
+        
+        // portal is the one that is being shot/casted onto a surface
+        // otherPortal is the one that is already shot/casted onto a surface
         
         // To move the portal out of the other portal, 
         // we get the point of intersection of the rectangle sides with the line between the centers of the 2 portals
@@ -118,102 +184,51 @@ namespace portal {
             // and the vector intersects either the left or top side of the portal
 
             // get intersection points of the vector with the suspected sides of the portals
-            glm::vec2 intersectionPoint1;
-            glm::vec2 intersectionPoint2;
-            glm::vec2 intersectionPoint3;
-            glm::vec2 intersectionPoint4;
-            intersectionPoint1 = lineLineIntersection(otherPortal.center, portal.center, otherPortal.bottomRight, otherPortal.topRight);
-            intersectionPoint2 = lineLineIntersection(otherPortal.center, portal.center, otherPortal.bottomLeft, otherPortal.bottomRight);
-            intersectionPoint3 = lineLineIntersection(otherPortal.center, portal.center, portal.bottomLeft, portal.topLeft);
-            intersectionPoint4 = lineLineIntersection(otherPortal.center, portal.center, portal.topLeft, portal.topRight);
+            std::array<glm::vec2, 2> intersectionPoints = getLineRectangleIntersectionPoints(portal, otherPortal, TOPLEFT);
 
-            // check which intersection point is closer to the portal
-            float distance1 = glm::distance(intersectionPoint1, otherPortal.center);
-            float distance2 = glm::distance(intersectionPoint2, otherPortal.center);
-            float distance3 = glm::distance(intersectionPoint3, portal.center);
-            float distance4 = glm::distance(intersectionPoint4, portal.center);
-
-            intersectionPoint1 = distance1 < distance2 ? intersectionPoint1 : intersectionPoint2;
-            intersectionPoint2 = distance3 < distance4 ? intersectionPoint3 : intersectionPoint4;
-
-            moveVector = intersectionPoint1 - intersectionPoint2;
-        } else if(isPointInsideRectangle(portal.topRight, otherPortal)){
+            moveVector = intersectionPoints[0] - intersectionPoints[1];
+            // if move vector is in the same direction as vector from other portal center to portal center
+            // then return move vector. 
+            // this condition is to fix a bug where at a specific angle, both top left and top right are inside the other portal
+            // but since the top left is checked first, the move vector is calculated from the top left and the portal is moved in the wrong direction
+            if(glm::dot(moveVector, portal.center - otherPortal.center) > 0.1){
+                return moveVector;
+            }
+        } 
+        if(isPointInsideRectangle(portal.topRight, otherPortal)){
             // since the top right of the portal is inside the other portal,
             // we know that the vector intersects either the left or bottom side of the other portal
             // and the vector intersects either the right or top side of the portal
 
             // get intersection points of the vector with the suspected sides of the portals
-            glm::vec2 intersectionPoint1;
-            glm::vec2 intersectionPoint2;
-            glm::vec2 intersectionPoint3;
-            glm::vec2 intersectionPoint4;
-            intersectionPoint1 = lineLineIntersection(otherPortal.center, portal.center, otherPortal.bottomLeft, otherPortal.topLeft);
-            intersectionPoint2 = lineLineIntersection(otherPortal.center, portal.center, otherPortal.bottomLeft, otherPortal.bottomRight);
-            intersectionPoint3 = lineLineIntersection(otherPortal.center, portal.center, portal.bottomRight, portal.topRight);
-            intersectionPoint4 = lineLineIntersection(otherPortal.center, portal.center, portal.topLeft, portal.topRight);
+            std::array<glm::vec2, 2> intersectionPoints = getLineRectangleIntersectionPoints(portal, otherPortal, TOPRIGHT);
 
-            // check which intersection point is closer to the portal
-            float distance1 = glm::distance(intersectionPoint1, otherPortal.center);
-            float distance2 = glm::distance(intersectionPoint2, otherPortal.center);
-            float distance3 = glm::distance(intersectionPoint3, portal.center);
-            float distance4 = glm::distance(intersectionPoint4, portal.center);
+            moveVector = intersectionPoints[0] - intersectionPoints[1];
+            return moveVector;
 
-            intersectionPoint1 = distance1 < distance2 ? intersectionPoint1 : intersectionPoint2;
-            intersectionPoint2 = distance3 < distance4 ? intersectionPoint3 : intersectionPoint4;
-
-            moveVector = intersectionPoint1 - intersectionPoint2;
-
-        } else if(isPointInsideRectangle(portal.bottomLeft, otherPortal)){
+        } 
+        if(isPointInsideRectangle(portal.bottomLeft, otherPortal)){
             // since the bottom left of the portal is inside the other portal,
             // we know that the vector intersects either the right or top side of the other portal
             // and the vector intersects either the left or bottom side of the portal
 
             // get intersection points of the vector with the suspected sides of the portals
-            glm::vec2 intersectionPoint1;
-            glm::vec2 intersectionPoint2;
-            glm::vec2 intersectionPoint3;
-            glm::vec2 intersectionPoint4;
-            intersectionPoint1 = lineLineIntersection(otherPortal.center, portal.center, otherPortal.bottomRight, otherPortal.topRight);
-            intersectionPoint2 = lineLineIntersection(otherPortal.center, portal.center, otherPortal.topLeft, otherPortal.topRight);
-            intersectionPoint3 = lineLineIntersection(otherPortal.center, portal.center, portal.bottomLeft, portal.topLeft);
-            intersectionPoint4 = lineLineIntersection(otherPortal.center, portal.center, portal.bottomLeft, portal.bottomRight);
+            std::array<glm::vec2, 2> intersectionPoints = getLineRectangleIntersectionPoints(portal, otherPortal, BOTTOMLEFT);
 
-            // check which intersection point is closer to the portal
-            float distance1 = glm::distance(intersectionPoint1, otherPortal.center);
-            float distance2 = glm::distance(intersectionPoint2, otherPortal.center);
-            float distance3 = glm::distance(intersectionPoint3, portal.center);
-            float distance4 = glm::distance(intersectionPoint4, portal.center);
-
-            intersectionPoint1 = distance1 < distance2 ? intersectionPoint1 : intersectionPoint2;
-            intersectionPoint2 = distance3 < distance4 ? intersectionPoint3 : intersectionPoint4;
-
-            moveVector = intersectionPoint1 - intersectionPoint2;
-        } else if(isPointInsideRectangle(portal.bottomRight, otherPortal)){
+            moveVector = intersectionPoints[0] - intersectionPoints[1];
+            if(glm::dot(moveVector, portal.center - otherPortal.center) > 0.1){
+                return moveVector;
+            }
+        }  
+        if(isPointInsideRectangle(portal.bottomRight, otherPortal)){
             // since the bottom right of the portal is inside the other portal,
             // we know that the vector intersects either the left or top side of the other portal
             // and the vector intersects either the right or bottom side of the portal
 
             // get intersection points of the vector with the suspected sides of the portals
-            glm::vec2 intersectionPoint1;
-            glm::vec2 intersectionPoint2;
-            glm::vec2 intersectionPoint3;
-            glm::vec2 intersectionPoint4;
+            std::array<glm::vec2, 2> intersectionPoints = getLineRectangleIntersectionPoints(portal, otherPortal, BOTTOMRIGHT);
 
-            intersectionPoint1 = lineLineIntersection(otherPortal.center, portal.center, otherPortal.bottomLeft, otherPortal.topLeft);
-            intersectionPoint2 = lineLineIntersection(otherPortal.center, portal.center, otherPortal.topLeft, otherPortal.topRight);
-            intersectionPoint3 = lineLineIntersection(otherPortal.center, portal.center, portal.bottomRight, portal.topRight);
-            intersectionPoint4 = lineLineIntersection(otherPortal.center, portal.center, portal.bottomLeft, portal.bottomRight);
-
-            // check which intersection point is closer to the portal
-            float distance1 = glm::distance(intersectionPoint1, otherPortal.center);
-            float distance2 = glm::distance(intersectionPoint2, otherPortal.center);
-            float distance3 = glm::distance(intersectionPoint3, portal.center);
-            float distance4 = glm::distance(intersectionPoint4, portal.center);
-
-            intersectionPoint1 = distance1 < distance2 ? intersectionPoint1 : intersectionPoint2;
-            intersectionPoint2 = distance3 < distance4 ? intersectionPoint3 : intersectionPoint4;
-
-            moveVector = intersectionPoint1 - intersectionPoint2;
+            moveVector = intersectionPoints[0] - intersectionPoints[1];
         }
         return moveVector;
 
@@ -221,6 +236,8 @@ namespace portal {
 
     bool PortalManager::getCorrectedPortalPos(Entity* surface, Portal* otherPortal, glm::vec3& hitPoint, glm::vec3 up, glm::vec3 right, glm::vec3 front) {
         // this function is used to get the corrected position of the portal
+        // portal is the one that is being shot/casted onto a surface
+        // otherPortal is the one that is already shot/casted onto a surface
         // if the portal is outside the surface, it will snap to within the surface
         // if the portal is overlapping the other portal, it will move the portal out of the other portal
         // if the portal can't be placed inside the surface and not overlap the other portal, it will return true
@@ -526,7 +543,7 @@ namespace portal {
         // the normal is the same as the surface normal
         // to set the up vector we need to check if the surface is a floor, ceiling, wall
         // if it is a floor or ceiling we need to project the player position on the surface 
-        // then calculate the vector from the raycast hit to the player projected on the surface
+        // then calculate the vector from the raycast hit to the player projection on the surface
         // that vector is the down vector of the portal and its negative is the up vector
         // and the front vector is the normal of the surface
         // if it is a wall then the up vector is the global up vector and the front vector is the normal of the surface
