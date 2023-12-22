@@ -38,6 +38,13 @@ namespace portal {
             glm::vec2 bottomLeft;
             glm::vec2 bottomRight;
             glm::vec2 center;
+        }; 
+
+        enum class Point {
+            TOP_LEFT,
+            TOP_RIGHT,
+            BOTTOM_LEFT,
+            BOTTOM_RIGHT
         };
 
         Entity* player = nullptr;
@@ -80,7 +87,7 @@ namespace portal {
         
         // get the 2 intersection points of a line and a rectangle
         // the points are returned in an array of size 2
-        std::array<glm::vec2, 2> getLineRectangleIntersectionPoints(Rectangle& rectanglePortal, Rectangle& rectangleOtherPortal, int point);
+        std::vector<glm::vec2> getLineRectangleIntersectionPoints(Rectangle& rectanglePortal, Rectangle& rectangleOtherPortal, Point point);
     public:
         PortalManager(World* world, Application* app) : world(world), app(app), player(world->getEntityByName("Player")), playerPos(player->localTransform.getPosition()){
             this->physicsWorld = world->getPhysicsWorld();

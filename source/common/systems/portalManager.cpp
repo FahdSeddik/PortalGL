@@ -5,10 +5,6 @@
 #include <glm/gtx/fast_trigonometry.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#define TOPLEFT 0
-#define TOPRIGHT 1
-#define BOTTOMLEFT 2
-#define BOTTOMRIGHT 3
 
 namespace portal {
     glm::vec2 PortalManager::calculateSurfaceCorrectionVector(glm::vec2 surfaceMin, glm::vec2 surfaceMax, glm::vec2 portalMin, glm::vec2 portalMax) {
@@ -88,7 +84,7 @@ namespace portal {
         return (cross1 >= 0 && cross2 >= 0 && cross3 >= 0 && cross4 >= 0) || (cross1 <= 0 && cross2 <= 0 && cross3 <= 0 && cross4 <= 0);
     }
 
-    std::array<glm::vec2, 2> PortalManager::getLineRectangleIntersectionPoints(Rectangle& portal, Rectangle& otherPortal, int point){
+    std::vector<glm::vec2> PortalManager::getLineRectangleIntersectionPoints(Rectangle& portal, Rectangle& otherPortal, Point point){
         // this function is used to get the intersection points of the line between the centers of the 2 portals
         // with the sides of the bounding box of the portals depending on the point passed to the function (the point inside the other portal)
         // portal is the one that is being shot/casted onto a surface
@@ -97,25 +93,25 @@ namespace portal {
         std::vector<std::pair<glm::vec2, glm::vec2>> sides(4);
         switch (point)
         {
-        case TOPLEFT:
+        case Point::TOP_LEFT:
             sides[0] = {otherPortal.bottomRight, otherPortal.topRight};
             sides[1] = {otherPortal.bottomLeft, otherPortal.bottomRight};
             sides[2] = {portal.bottomLeft, portal.topLeft};
             sides[3] = {portal.topLeft, portal.topRight};
             break;
-        case TOPRIGHT:
+        case Point::TOP_RIGHT:
             sides[0] = {otherPortal.bottomLeft, otherPortal.topLeft};
             sides[1] = {otherPortal.bottomLeft, otherPortal.bottomRight};
             sides[2] = {portal.bottomRight, portal.topRight};
             sides[3] = {portal.topLeft, portal.topRight};
             break;
-        case BOTTOMLEFT:
+        case Point::BOTTOM_LEFT:
             sides[0] = {otherPortal.bottomRight, otherPortal.topRight};
             sides[1] = {otherPortal.topLeft, otherPortal.topRight};
             sides[2] = {portal.bottomLeft, portal.topLeft};
             sides[3] = {portal.bottomLeft, portal.bottomRight};
             break;
-        case BOTTOMRIGHT:
+        case Point::BOTTOM_RIGHT:
             sides[0] = {otherPortal.bottomLeft, otherPortal.topLeft};
             sides[1] = {otherPortal.topLeft, otherPortal.topRight};
             sides[2] = {portal.bottomRight, portal.topRight};
@@ -138,7 +134,7 @@ namespace portal {
         intersectionPoints[1] = distance3 < distance4 ? intersectionPoints[2] : intersectionPoints[3];
 
         // return intersection points 0 and 1 only since they are the closest to the portals
-        std::array<glm::vec2, 2> result;
+        std::vector<glm::vec2> result(2);
         result[0] = intersectionPoints[0];
         result[1] = intersectionPoints[1];
         return result;
@@ -184,7 +180,7 @@ namespace portal {
             // and the vector intersects either the left or top side of the portal
 
             // get intersection points of the vector with the suspected sides of the portals
-            std::array<glm::vec2, 2> intersectionPoints = getLineRectangleIntersectionPoints(portal, otherPortal, TOPLEFT);
+            std::vector<glm::vec2> intersectionPoints = getLineRectangleIntersectionPoints(portal, otherPortal, Point::TOP_LEFT);
 
             moveVector = intersectionPoints[0] - intersectionPoints[1];
             // if move vector is in the same direction as vector from other portal center to portal center
@@ -201,7 +197,7 @@ namespace portal {
             // and the vector intersects either the right or top side of the portal
 
             // get intersection points of the vector with the suspected sides of the portals
-            std::array<glm::vec2, 2> intersectionPoints = getLineRectangleIntersectionPoints(portal, otherPortal, TOPRIGHT);
+            std::vector<glm::vec2> intersectionPoints = getLineRectangleIntersectionPoints(portal, otherPortal, Point::TOP_RIGHT);
 
             moveVector = intersectionPoints[0] - intersectionPoints[1];
             return moveVector;
@@ -213,7 +209,7 @@ namespace portal {
             // and the vector intersects either the left or bottom side of the portal
 
             // get intersection points of the vector with the suspected sides of the portals
-            std::array<glm::vec2, 2> intersectionPoints = getLineRectangleIntersectionPoints(portal, otherPortal, BOTTOMLEFT);
+            std::vector<glm::vec2> intersectionPoints = getLineRectangleIntersectionPoints(portal, otherPortal, Point::BOTTOM_LEFT);
 
             moveVector = intersectionPoints[0] - intersectionPoints[1];
             if(glm::dot(moveVector, portal.center - otherPortal.center) > 0.1){
@@ -226,7 +222,7 @@ namespace portal {
             // and the vector intersects either the right or bottom side of the portal
 
             // get intersection points of the vector with the suspected sides of the portals
-            std::array<glm::vec2, 2> intersectionPoints = getLineRectangleIntersectionPoints(portal, otherPortal, BOTTOMRIGHT);
+            std::vector<glm::vec2> intersectionPoints = getLineRectangleIntersectionPoints(portal, otherPortal, Point::BOTTOM_RIGHT);
 
             moveVector = intersectionPoints[0] - intersectionPoints[1];
         }
