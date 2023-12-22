@@ -5,16 +5,13 @@
 #include "../components/movement.hpp"
 #include "../ecs/world.hpp"
 #include "../components/RigidBody.hpp"
-#include "../ecs/portal.hpp"
-#include "../ecs/player.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 #include <glm/trigonometric.hpp>
 #include <glm/gtx/fast_trigonometry.hpp>
 #include <reactphysics3d/reactphysics3d.h>
 namespace r3d = reactphysics3d;
-namespace portal
-{
+namespace portal {
 
     // The movement system is responsible for moving every entity which contains a MovementComponent.
     // This system is added as a simple example for how use the ECS framework to implement logic. 
@@ -30,6 +27,8 @@ namespace portal
         bool isGrounded = false;
         double lastJumpTime = 0;
         double JumpCoolDown = 0.2;
+        std::string attachedName = "";
+        Entity* attachement = nullptr;
         // Hold portals 
         // TODO: this needs to be dynamic 
         // for shooting portals
@@ -42,6 +41,8 @@ namespace portal
         glm::vec3 handlePlayerMovement();
         // RayCasts and updates isGrounded
         void checkForGround();
+        // Handles disattaching and attaching of an entity
+        void checkAttachment();
 
     public:
         MovementSystem(World* world, Application* app) : world(world), app(app) {
@@ -50,12 +51,6 @@ namespace portal
             controller = player->getComponent<FreeCameraControllerComponent>();
             playerRigidBody = player->getComponent<RigidBodyComponent>();
             physicsWorld = player->getWorld()->getPhysicsWorld();
-            Portal_1 = dynamic_cast<Portal*>(world->getEntityByName("Portal_1"));
-            Portal_2 = dynamic_cast<Portal*>(world->getEntityByName("Portal_2"));
-            Portal_1->setDestination(Portal_2);
-            Portal_2->setDestination(Portal_1);
-            Portal_1->getSurface();
-            Portal_2->getSurface();
         }
 
         
@@ -65,7 +60,8 @@ namespace portal
             // TODO: this needs to be dynamic for shooting portals
             Portal_1->update();
             Portal_2->update();
-            player->update();
+            calculatePlayerVectors();
+            checkAttachment();
             physicsUpdate(deltaTime);
             // For each entity in the world
             for(const auto& [name, entity] : world->getEntities()){

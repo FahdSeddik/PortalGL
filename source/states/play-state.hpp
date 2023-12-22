@@ -6,6 +6,7 @@
 #include <systems/forward-renderer.hpp>
 #include <systems/free-camera-controller.hpp>
 #include <systems/movement.hpp>
+#include <systems/portalManager.hpp>
 #include <asset-loader.hpp>
 #include "../common/components/animation.hpp"
 #include "systems/event.hpp"
@@ -18,6 +19,7 @@ class Playstate: public portal::State {
     portal::ForwardRenderer renderer;
     portal::FreeCameraControllerSystem cameraController;
     portal::MovementSystem* movementSystem;
+    portal::PortalManager* portalManager;
 
     void loadConfig(const nlohmann::json& config) {
         // If we have assets in the scene config, we deserialize them
@@ -41,6 +43,11 @@ class Playstate: public portal::State {
         renderer.initialize(size, config["renderer"]);
 
         movementSystem = new portal::MovementSystem(&world, getApp());
+        portalManager = new portal::PortalManager(&world, getApp());
+
+        getApp()->getMouse().lockMouse(getApp()->getWindow());
+        getApp()->getMouse().enable(getApp()->getWindow());
+
     }
 
 public:
@@ -76,6 +83,7 @@ public:
     void onDraw(double deltaTime) override {
         // Here, we just run a bunch of systems to control the world logic
         movementSystem->update(&world, (float)deltaTime);
+        portalManager->update();
         cameraController.update(&world, (float)deltaTime);
         
         // Loop on playing animations and play them given delta time
@@ -102,6 +110,8 @@ public:
     }
 
     void onDestroy() override {
+        // Unlock the mouse 
+        getApp()->getMouse().unlockMouse(getApp()->getWindow());
         // Don't forget to destroy the renderer
         renderer.destroy();
         // On exit, we call exit for the camera controller system to make sure that the mouse is unlocked

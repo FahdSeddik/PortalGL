@@ -75,7 +75,7 @@ namespace portal {
         // if no passedObjects and no markedForRemoval
         // then make sure that the surface collider is not a trigger
         // as there is no need for it to be a trigger (handles thread safety)
-        if(passedObjects.empty() && markedForRemoval.empty()) {
+        if(passedObjects.empty() && markedForRemoval.empty() && destination->surface != surface) {
             surfaceCollider->setIsTrigger(false);
             return;
         }
@@ -257,6 +257,20 @@ namespace portal {
         togObj = std::abs(portalNormal.y) > 0.7f;
     }
     void Portal::getSurface() {
+        // if there was a surface then make sure it is not a trigger
+        // and reset the trigger of any passed objects to false
+        // and clear passedObjects, markedForRemoval, and failSafeTeleportLocation
+        if(surface){
+            surfaceCollider->setIsTrigger(false);
+            for(auto& [objectName, collider] : passedObjects) {
+                r3d::Collider *coll = dynamic_cast<r3d::Collider *>(*collider.get());
+                if(coll->getIsTrigger())coll->setIsTrigger(false);
+            }
+            passedObjects.clear();
+            markedForRemoval.clear();
+            failSafeTeleportLocation.clear();
+        }
+
         // RayCast behind the portal to get the surface
         // the portal is currently on (if any)
         std::string surfaceName = "";
