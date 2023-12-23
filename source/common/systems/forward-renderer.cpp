@@ -8,6 +8,7 @@
 namespace portal {
 
     void ForwardRenderer::initialize(glm::ivec2 windowSize, const nlohmann::json& config){
+        firstFrame = true;
         // First, we store the window size for later use
         this->windowSize = windowSize;
         portals.resize(2);
