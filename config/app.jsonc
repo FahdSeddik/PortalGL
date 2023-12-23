@@ -982,6 +982,18 @@
                     }
                 ]
             },
+            {
+                "position": [0, 10, 0],
+                "components": [
+                    {
+                        "type": "Light",
+                        "lightType": "point",
+                        "color": [15, 15, 15],
+                        "attenuation": [1.0, 0.22, 0.20],
+                        "direction": [0.0, -1.0, 0.0]
+                    }
+                ]
+            },
             //====================
             // Player
             //====================
@@ -2098,6 +2110,18 @@
                     }
                 ]
             },
+            {
+                "position": [40, 10, 0],
+                "components": [
+                    {
+                        "type": "Light",
+                        "lightType": "point",
+                        "color": [15, 15, 15],
+                        "attenuation": [1.0, 0.22, 0.20],
+                        "direction": [0.0, -1.0, 0.0]
+                    }
+                ]
+            },
             // Elevator
             {
                 "name": "Elevator_1",
@@ -2163,6 +2187,18 @@
                             "isTrigger": true,
                             "bounciness":0.0
                         }
+                    }
+                ]
+            },
+            { // Light inside elevator
+                "position": [40, 3, 30],
+                "components": [
+                    {
+                        "type": "Light",
+                        "lightType": "point",
+                        "color": [10, 10, 10],
+                        "attenuation": [1.0, 0.22, 0.20],
+                        "direction": [0.0, -1.0, 0.0]
                     }
                 ]
             },

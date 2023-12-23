@@ -228,7 +228,7 @@ namespace portal {
     }
 
     // Utility function to add a lights to the shader and set the "lightCount" uniform
-    inline void setupLights(const std::vector<LightComponent*>& lights, ShaderProgram* shader){
+    void ForwardRenderer::setupLights(const std::vector<LightComponent*>& lights, ShaderProgram* shader){
         for(int i = 0; i < lights.size(); i++){
             if(lights[i]->type == LightComponent::Type::Directional){ // Directional
                 shader->set("lights[" + std::to_string(i) + "].type", 0);
@@ -294,7 +294,9 @@ namespace portal {
             // check if the material is of type LitMaterial
             if (auto litMaterial = dynamic_cast<LitMaterial*>(command.material); litMaterial){
                 // set the lights in the shader
-                setupLights(lights, litMaterial->shader);
+                if(firstFrame){
+                    setupLights(lights, litMaterial->shader);
+                }
                 // set the model, view, projection matrices in the shader
                 litMaterial->shader->set("model", command.localToWorld);
                 litMaterial->shader->set("VP", VP);
@@ -336,7 +338,9 @@ namespace portal {
             // check if the material is of type LitMaterial
             if (auto litMaterial = dynamic_cast<LitMaterial*>(command.material); litMaterial){
                 // set the lights in the shader
-                setupLights(lights, litMaterial->shader);
+                if(firstFrame){
+                    setupLights(lights, litMaterial->shader);
+                }
                 // set the model, view, projection matrices in the shader
                 litMaterial->shader->set("model", command.localToWorld);
                 litMaterial->shader->set("VP", VP);
@@ -348,6 +352,7 @@ namespace portal {
             }
             command.mesh->draw();
         }
+        firstFrame = false;
     }
 
     void ForwardRenderer::drawPortal(glm::mat4 const& modelMat, glm::mat4 const &viewMat, glm::mat4 const &projMat, Entity* curportal) {
