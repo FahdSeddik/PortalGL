@@ -189,6 +189,8 @@ namespace portal {
             // but since the top left is checked first, the move vector is calculated from the top left and the portal is moved in the wrong direction
             if(glm::dot(moveVector, portal.center - otherPortal.center) > 0.1){
                 return moveVector;
+            } else{
+                moveVector = glm::vec2(0.0f, 0.0f);
             }
         } 
         if(isPointInsideRectangle(portal.topRight, otherPortal)){
@@ -200,7 +202,12 @@ namespace portal {
             std::vector<glm::vec2> intersectionPoints = getLineRectangleIntersectionPoints(portal, otherPortal, Point::TOP_RIGHT);
 
             moveVector = intersectionPoints[0] - intersectionPoints[1];
-            return moveVector;
+            // return moveVector;
+            if(glm::dot(moveVector, portal.center - otherPortal.center) > 0.1){
+                return moveVector;
+            } else{
+                moveVector = glm::vec2(0.0f, 0.0f);
+            }
 
         } 
         if(isPointInsideRectangle(portal.bottomLeft, otherPortal)){
@@ -214,6 +221,8 @@ namespace portal {
             moveVector = intersectionPoints[0] - intersectionPoints[1];
             if(glm::dot(moveVector, portal.center - otherPortal.center) > 0.1){
                 return moveVector;
+            } else{
+                moveVector = glm::vec2(0.0f, 0.0f);
             }
         }  
         if(isPointInsideRectangle(portal.bottomRight, otherPortal)){
@@ -225,6 +234,11 @@ namespace portal {
             std::vector<glm::vec2> intersectionPoints = getLineRectangleIntersectionPoints(portal, otherPortal, Point::BOTTOM_RIGHT);
 
             moveVector = intersectionPoints[0] - intersectionPoints[1];
+            if(glm::dot(moveVector, portal.center - otherPortal.center) > 0.1){
+                return moveVector;
+            } else{
+                moveVector = glm::vec2(0.0f, 0.0f);
+            }
         }
         return moveVector;
 

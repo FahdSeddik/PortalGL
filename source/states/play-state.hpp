@@ -11,6 +11,8 @@
 #include "../common/components/animation.hpp"
 #include "systems/event.hpp"
 #include "../common/loading-screen.hpp"
+#include "../common/pause-menu.hpp"
+
 
 // This state shows how to use the ECS framework and deserialization.
 class Playstate: public portal::State {
@@ -20,7 +22,9 @@ class Playstate: public portal::State {
     portal::FreeCameraControllerSystem cameraController;
     portal::MovementSystem* movementSystem;
     portal::PortalManager* portalManager;
-
+    bool paused = false;
+    
+    
     void loadConfig(const nlohmann::json& config) {
         // If we have assets in the scene config, we deserialize them
         if(config.contains("assets")){
@@ -80,44 +84,55 @@ public:
         }, nullptr);
         portal::LoadingScreen::render();
         createWorld(config);
+        portal::PauseMenu::init(getApp(), &renderer, this, &world);
     }
 
     void onDraw(double deltaTime) override {
-        // Here, we just run a bunch of systems to control the world logic
-        movementSystem->update(&world, (float)deltaTime);
-        portalManager->update();
-        cameraController.update(&world, (float)deltaTime);
-        
-        // Loop on playing animations and play them given delta time
-        for(auto& animation : world.getPlayingAnimations()){
-            if(animation.second->play((float)deltaTime)){
-                // If return true then animation finished then we need to mark for stop
-                world.markAnimationForStop(animation.first);
-            }
-        }
-        // Stop animations marked for stop
-        world.stopAnimations();
-
-        // And finally we use the renderer system to draw the scene
-        renderer.render(&world);
 
         // Get a reference to the keyboard object
         auto& keyboard = getApp()->getKeyboard();
-
         if(keyboard.justPressed(GLFW_KEY_ESCAPE)){
-            // If the escape  key is pressed in this frame, go to the play state
-            getApp()->changeState("menu");
-            world.clearPlayingAnimations();
+            // If the escape  key is pressed pause the game
+            paused = !paused;
+            if(!paused){
+                portal::PauseMenu::unPause();
+            } else {
+                portal::PauseMenu::pauseGame();
+            }
         }
-        if(keyboard.justPressed(GLFW_KEY_H)){
-            world.startAnimation("door_1_left_spin");
-            world.startAnimation("door_1_right_spin");
+
+        if(!paused){
+            
+            // Here, we just run a bunch of systems to control the world logic
+            movementSystem->update(&world, (float)deltaTime);
+            portalManager->update();
+            cameraController.update(&world, (float)deltaTime);
+            
+            // Loop on playing animations and play them given delta time
+            for(auto& animation : world.getPlayingAnimations()){
+                if(animation.second->play((float)deltaTime)){
+                    // If return true then animation finished then we need to mark for stop
+                    world.markAnimationForStop(animation.first);
+                }
+            }
+            // Stop animations marked for stop
+            world.stopAnimations();
+            if(keyboard.justPressed(GLFW_KEY_H)){
+                world.startAnimation("door_1_left_spin");
+                world.startAnimation("door_1_right_spin");
+            }
+            if(keyboard.justPressed(GLFW_KEY_J)){
+                world.startAnimation("door_1_left_open", true);
+                world.startAnimation("door_1_right_open", true);
+                world.startAnimation("door_1_left_spin_open", true);
+                world.startAnimation("door_1_right_spin_open", true);
+            }
+            renderer.render(&world);
         }
-        if(keyboard.justPressed(GLFW_KEY_J)){
-            world.startAnimation("door_1_left_open", true);
-            world.startAnimation("door_1_right_open", true);
-            world.startAnimation("door_1_left_spin_open", true);
-            world.startAnimation("door_1_right_spin_open", true);
+        else{
+            renderer.render(&world);
+            if(!portal::PauseMenu::render())
+                paused = false;
         }
     }
 
@@ -132,5 +147,7 @@ public:
         world.clear();
         // and we delete all the loaded assets to free memory on the RAM and the VRAM
         portal::clearAllAssets();
+        // clean up the pause menu
+        portal::PauseMenu::cleanUp();
     }
 };

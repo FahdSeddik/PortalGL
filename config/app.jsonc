@@ -80,7 +80,10 @@
                 "default_roughness": "assets/textures/default_roughness.jpg",
                 "default_ambient_occlusion": "assets/textures/default_ambient_occlusion.jpg",
                 "default_emission": "assets/textures/default_emissive.jpg",
-                "default_metallic": "assets/textures/default_metallic.jpg"
+                "default_metallic": "assets/textures/default_metallic.jpg",
+
+                // pause menu texture
+                "pause_menu": "assets/textures/pause_menu.png"
 
 
             },
@@ -578,6 +581,28 @@
                     "tint": [1, 1, 1, 1],
                     "texture": "moon",
                     "sampler": "default"
+                },
+                "mat_pause":{
+                    "type": "lit",
+                    "shader": "lit",
+                    "pipelineState": {
+                        "faceCulling":{
+                            "enabled": false
+                        },
+                        "depthTesting":{
+                            "enabled": true
+                        },
+                        "blending":{
+                            "enabled": true,
+                            "sourceFactor": "GL_SRC_ALPHA",
+                            "destinationFactor": "GL_ONE_MINUS_SRC_ALPHA"
+                        },
+                        "depthMask": false
+                    },
+                    "transparent": true,
+                    "tint": [1, 1, 1, 1],
+                    "albedo": "pause_menu",
+                    "sampler": "default"
                 }
             },
             // Models specify material and corresponding mesh with multiple meshes and materials
@@ -1004,7 +1029,18 @@
                                 "material": "mat_gun"
                             }
                         ]
-                    }             
+                    },
+                    {
+                        "position": [0, 0, -0.5],
+                        "scale":[0.01, 0.01, 0.01],
+                        "components": [
+                            {
+                                "type": "Mesh Renderer",
+                                "mesh": "sphere",
+                                "material": "metal"
+                            }
+                        ]
+                    }            
                 ]
             },
             //====================
