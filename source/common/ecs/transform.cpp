@@ -7,7 +7,6 @@
 #include <glm/gtc/quaternion.hpp>
 #include<glm/common.hpp>
 #include <glm/gtc/type_ptr.inl>
-
 namespace portal {
 
     // This function computes and returns a matrix that represents this transform
@@ -38,4 +37,34 @@ namespace portal {
         transform.setOrientation(r3d::Quaternion(rotationQuat.x, rotationQuat.y, rotationQuat.z, rotationQuat.w));
     }
 
+    r3d::Transform Transform::interpolate(const Transform& a, const Transform& b, float t) {
+        r3d::Transform transform;
+        transform.setPosition(r3d::Vector3(glm::mix(a.getPosition().x, b.getPosition().x, t), glm::mix(a.getPosition().y, b.getPosition().y, t), glm::mix(a.getPosition().z, b.getPosition().z, t)));
+        transform.setOrientation(r3d::Quaternion(glm::mix(a.getRotation().x, b.getRotation().x, t), glm::mix(a.getRotation().y, b.getRotation().y, t), glm::mix(a.getRotation().z, b.getRotation().z, t), glm::mix(a.getRotation().w, b.getRotation().w, t)));
+        return transform;
+    }
+
+    void Transform::setRotation(const r3d::Quaternion rotation) {
+        transform.setOrientation(rotation);
+    }
+
+    void Transform::setRotation(const glm::quat rotation) {
+        transform.setOrientation(r3d::Quaternion(rotation.x, rotation.y, rotation.z, rotation.w));
+    }
+
+    void Transform::setPosition(const r3d::Vector3 position) {
+        transform.setPosition(position);
+    }
+
+    void Transform::setPosition(const glm::vec3 position) {
+        transform.setPosition(r3d::Vector3(position.x, position.y, position.z));
+    }
+
+    const r3d::Quaternion& Transform::getRotation() const {
+        return transform.getOrientation();
+    }
+
+    const r3d::Vector3& Transform::getPosition() const {
+        return transform.getPosition();
+    }
 }

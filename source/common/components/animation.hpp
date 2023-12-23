@@ -18,22 +18,33 @@ namespace portal {
         std::function<void()> callback;
         std::function<void()> reverseCallback;
 
-        void deserializeCallback(const nlohmann::json& data, bool reverse = false);
     public:
         // The ID of this component type is "Animation"
         static std::string getID() { return "Animation"; }
 
         // Reads animation data from the given json object
         void deserialize(const nlohmann::json& data) override;
+        void deserializeCallback(const nlohmann::json& data, bool reverse = false);
 
         // Plays animation given delta time
         bool play(float deltaTime);
 
         // Starts playing the animation
-        void startPlaying(bool reverse) { isPlaying = true, isReversed = reverse; }
+        void startPlaying(bool reverse) { reset(), isPlaying = true, isReversed = reverse; }
 
         // Resets the animation
         void reset();
+
+        void envokeCallback() {
+            if (isReversed) {
+                if(reverseCallback) reverseCallback();
+            } else {
+                if(callback) callback();
+            }
+            reset();
+        }
+
+        bool getIsReversed() const { return isReversed; }
 
         std::string getName() { return name; }
     };

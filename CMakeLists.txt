@@ -71,8 +71,20 @@ set(COMMON_SOURCES
         source/common/ecs/transform.cpp
         source/common/ecs/entity.hpp
         source/common/ecs/entity.cpp
-        source/common/ecs/portal.cpp
         source/common/ecs/portal.hpp
+        source/common/ecs/portal.cpp
+        source/common/ecs/door.hpp
+        source/common/ecs/door.cpp
+        source/common/ecs/button.hpp
+        source/common/ecs/button.cpp
+        source/common/ecs/cube.hpp
+        source/common/ecs/decoration.hpp
+        source/common/ecs/player.hpp
+        source/common/ecs/player.cpp
+        source/common/ecs/elevator.hpp
+        source/common/ecs/elevator.cpp
+        source/common/ecs/entity-factory.hpp
+        source/common/ecs/entity-factory.cpp
         source/common/ecs/world.hpp
         source/common/ecs/world.cpp
 
@@ -92,6 +104,7 @@ set(COMMON_SOURCES
         source/common/systems/movement.hpp
         source/common/systems/movement.cpp
         source/common/systems/event.hpp
+        source/common/systems/event.cpp
 
         source/common/components/RigidBody.hpp
         source/common/components/RigidBody.cpp

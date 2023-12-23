@@ -28,7 +28,7 @@ in Varyings {
     vec2 TexCoord;
 } fs_in;
 
-uniform Light lights[50];
+uniform Light lights[8];
 uniform int numLights;
 uniform float alphaThreshold;
 uniform vec3 viewPos;

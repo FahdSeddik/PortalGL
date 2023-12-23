@@ -1,7 +1,7 @@
 #include "entity.hpp"
 #include "../deserialize-utils.hpp"
 #include "../components/component-deserializer.hpp"
-
+#include "entity-factory.hpp"
 #include <glm/gtx/euler_angles.hpp>
 
 namespace portal {
@@ -25,8 +25,6 @@ namespace portal {
     // Deserializes the entity data and components from a json object
     void Entity::deserialize(const nlohmann::json& data){
         if(!data.is_object()) return;
-        isAttachable = data.value("isAttachable", isAttachable);
-        canHoldPortal = data.value("canHoldPortal", canHoldPortal);
         localTransform.deserialize(data);
         if(data.contains("components")){
             if(const auto& components = data["components"]; components.is_array()){
