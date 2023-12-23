@@ -54,6 +54,7 @@ namespace portal {
         // Checks if the given animation isn't already playing and exists
         if(animations.find(name) != animations.end() && playingAnimations.find(name) == playingAnimations.end()) {
             std::vector<std::string> names;
+            // Check if there are animations playing on the same entity and stop them
             for(auto& [animName, anim]: playingAnimations) {
                 if(anim->getOwner() == animations.at(name)->getOwner()) {
                     names.push_back(animName);

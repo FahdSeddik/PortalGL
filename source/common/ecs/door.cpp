@@ -5,7 +5,7 @@
 #include "../components/RigidBody.hpp"
 #include <reactphysics3d/reactphysics3d.h>
 namespace portal {
-    void Door::setupAnimations() {
+    void Door::setup() {
         // Need to get right_spin_open
         // and setup callback_reversed
         // Need to get left_spin
@@ -31,34 +31,32 @@ namespace portal {
         collider = this->getComponent<RigidBodyComponent>()->getCollider();
     }
     void Door::open() {
-        if(!isOpened) {
-            if(!animationSetup) {
-                // If animation is not setup, setup animations
-                setupAnimations();
-                animationSetup = true;
-            }
-            // Call opening sequence
-            isOpened = true;
-            collider->setIsTrigger(true);
-            getWorld()->startAnimation(name + "_" + "left_spin");
-            getWorld()->startAnimation(name + "_" + "right_spin");
+        if(isOpened) return;
+        if(!setupDone) {
+            // If animation is not setup, setup animations
+            setup();
+            setupDone = true;
         }
+        // Call opening sequence
+        isOpened = true;
+        collider->setIsTrigger(true);
+        getWorld()->startAnimation(name + "_" + "left_spin");
+        getWorld()->startAnimation(name + "_" + "right_spin");
     }
 
     void Door::close() {
-        if(isOpened) {
-            if(!animationSetup) {
-                // If animation is not setup, setup animations
-                setupAnimations();
-                animationSetup = true;
-            }
-            // Call closing sequence
-            isOpened = false;
-            collider->setIsTrigger(false);
-            getWorld()->startAnimation(name + "_" + "left_open", true);
-            getWorld()->startAnimation(name + "_" + "right_open", true);
-            getWorld()->startAnimation(name + "_" + "left_spin_open", true);
-            getWorld()->startAnimation(name + "_" + "right_spin_open", true);
+        if(!isOpened) return;
+        if(!setupDone) {
+            // If animation is not setup, setup animations
+            setup();
+            setupDone = true;
         }
+        // Call closing sequence
+        isOpened = false;
+        collider->setIsTrigger(false);
+        getWorld()->startAnimation(name + "_" + "left_open", true);
+        getWorld()->startAnimation(name + "_" + "right_open", true);
+        getWorld()->startAnimation(name + "_" + "left_spin_open", true);
+        getWorld()->startAnimation(name + "_" + "right_spin_open", true);
     }
 }

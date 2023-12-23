@@ -7,11 +7,11 @@ namespace portal {
         // To store current status of the door
         bool isOpened = false;
         // Indicates whether setting up animation callbacks is done or not
-        bool animationSetup = false;
+        bool setupDone = false;
         // Store direct access to door collider
         r3d::Collider *collider = nullptr;
         // To be called once in case of animation is called
-        void setupAnimations();
+        void setup();
         // Make sure EntityFactory can access Door constructor
         friend class EntityFactory;
         Door() : Entity() { canHoldPortal = false;}
