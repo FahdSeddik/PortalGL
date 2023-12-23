@@ -43,6 +43,7 @@ namespace portal
         TexturedMaterial* postprocessMaterial;
         // List of all the lights in the scene
         std::vector<LightComponent*> lights;
+        bool firstFrame = true;
 
         // **********************//
         // **** Bloom & HDR **//
@@ -81,6 +82,7 @@ namespace portal
         glm::mat4 const getClippedProjMat(const r3d::Quaternion& quat, const r3d::Vector3& pos, glm::mat4 const& viewMat, glm::mat4 const& projMat);
         void ForwardRenderer::drawPortalsNonRecursive(glm::mat4 const& modelMat, glm::mat4 const &viewMat, 
                                 glm::mat4 const &projMat, Entity* portal1, Entity* portal2);
+        void setupLights(const std::vector<LightComponent*>& lights, ShaderProgram* shader);
     public:
         // Initialize the renderer including the sky and the Postprocessing objects.
         // windowSize is the width & height of the window (in pixels).

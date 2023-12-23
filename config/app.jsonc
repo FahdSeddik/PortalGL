@@ -44,35 +44,38 @@
                 "monkey": "assets/textures/monkey.png",
                 
                 // Portal Specific Textures
-                "tex_floor_metal_1x1": "assets/textures/Floor/metal_modular_floor001.png",
-                "tex_floor_metal_3x3": "assets/textures/Floor/metal_floor_3x3.png",
-                "tex_wall_concrete_1": "assets/textures/Walls/concrete_modular_wall001f.png",
-                "tex_wall_concrete_2": "assets/textures/Walls/concrete_modular_wall003a.png",
-                "tex_wall_concrete_3": "assets/textures/Walls/concrete_modular_ceiling001a.png",
-                "tex_wall_concrete_3_3x3": "assets/textures/Walls/concrete_ceiling_3x3.png",
+                "tex_flat_0": "assets/textures/Floor/Floor_0.png",
+                "tex_flat_0_0_3": "assets/textures/Floor/Floor_0_0_3.png",
+                "tex_flat_0_1_3": "assets/textures/Floor/Floor_0_1_3.png",
+                "tex_wall_7": "assets/textures/Walls/Wall_7.png",
+                "tex_wall_7_3": "assets/textures/Walls/Wall_7_3.png",
+                "tex_wall_7_door" : "assets/textures/Walls/Wall_7_door.png",
+                "tex_wall_7_3_window" : "assets/textures/Walls/Wall_7_3_window.png",
                 "tex_cube_corners": "assets/textures/Object Related/Cube/corners.jpg",
                 "tex_cube_internal": "assets/textures/Object Related/Cube/internal.jpg",
                 "tex_cube_circles": "assets/textures/Object Related/Cube/circles.jpg",
-                "tex_gun": "assets/textures/Object Related/Gun/portalgun_col.jpg",
-                "tex_wheatley": "assets/textures/Object Related/Wheatley/personality_sphere.jpeg",
-                "tex_wheatley_eye": "assets/textures/Object Related/Wheatley/personality_sphere_light_damaged.jpeg",
-                "tex_button_emission": "assets/textures/Object Related/Button/portal_button_blue emission.png",
-                "tex_button_albedo": "assets/textures/Object Related/Button/portal_button_blue.jpeg",
+                "tex_gun_albedo": "assets/textures/Object Related/Gun/portalgun_col.jpg",
+                "tex_gun_roughness": "assets/textures/Object Related/Gun/PORTAL_GUN_Roughness.png",
+                "tex_gun_ao": "assets/textures/Object Related/Gun/internal_ground_ao_texture.jpeg",
+                "tex_button_albedo": "assets/textures/Object Related/Button/button.png",
                 "tex_spotlight_standing_ao": "assets/textures/Object Related/Standing Spotlight/spotlight_ao.tga.png",
                 "tex_spotlight_standing_albedo": "assets/textures/Object Related/Standing Spotlight/spotlight_BaseColor.tga.png",
                 "tex_spotlight_standing_emission": "assets/textures/Object Related/Standing Spotlight/spotlight_EmissiveColor.tga.png",
                 "tex_spotlight_standing_metallic": "assets/textures/Object Related/Standing Spotlight/spotlight_Metalness.tga.png",
                 "tex_spotlight_standing_roughness": "assets/textures/Object Related/Standing Spotlight/spotlight_Roughness.tga.png",
-                "tex_monitor_screen": "assets/textures/Object Related/Decorations/Monitor/Black03.png",
-                "tex_monitor_stand": "assets/textures/Object Related/Decorations/Monitor/Monitor_Albedo.jpeg",
-                "tex_hallway_albedo": "assets/textures/Other/Hallway/lambert1_albedo.jpg",
-                "tex_hallway_metallic": "assets/textures/Other/Hallway/lambert1_metallic.jpg",
-                "tex_hallway_roughness": "assets/textures/Other/Hallway/lambert1_roughness.jpg",
                 "tex_door_albedo": "assets/textures/Object Related/Door/portal_door_02.jpeg",
                 "tex_door_emission": "assets/textures/Object Related/Door/portal_door_02_E.png",
                 "tex_door_ambient_occlusion": "assets/textures/Object Related/Door/internal_ground_ao_texture.jpeg",
-                "tex_door_wall": "assets/textures/Walls/concrete_modular_hollow.png",
-                "tex_door_cover": "assets/textures/Walls/metalwall048e.png",
+                "tex_bed_albedo": "assets/textures/Object Related/Decorations/Bed/bed.png",
+                "tex_toilet_albedo": "assets/textures/Object Related/Decorations/Toilet.png",
+                "tex_switch_albedo": "assets/textures/Object Related/Button/switch001.png",
+                "tex_radio_albedo": "assets/textures/Object Related/Decorations/Radio/Prop_Radio.png",
+                "tex_radio_emission": "assets/textures/Object Related/Decorations/Radio/Prop_Radio_Emissive.png",
+                "tex_radio_metallic": "assets/textures/Object Related/Decorations/Radio/Prop_Radio_Metal.png",
+                "tex_radio_roughness": "assets/textures/Object Related/Decorations/Radio/Prop_Radio_Rough.png",
+                "tex_turret_albedo": "assets/textures/Object Related/turret_01.png",
+                "tex_elevator_body_albedo": "assets/textures/Object Related/Elevator/elevator_body.png",
+                "tex_elevator_door_albedo": "assets/textures/Object Related/Elevator/elevator_doors.png",
 
                 // default textures
                 "default_albedo": "assets/textures/default_albedo.jpg",
@@ -97,19 +100,24 @@
                 "mesh_cube_circles": "assets/models/Cube/circles.obj",
                 "mesh_cube_edges": "assets/models/Cube/edges.obj",
                 "mesh_gun": "assets/models/Gun/Portal Gun.obj",
-                "mesh_wheatley": "assets/models/Wheatley/wheatley.obj",
-                "mesh_button": "assets/models/Button/Button.obj",
+                "mesh_button_pad": "assets/models/Button/button_pad.obj",
+                "mesh_button_press": "assets/models/Button/button_press.obj",
                 "mesh_spotlight_standing": "assets/models/Standing Spotlight/Spotlight.obj",
-                "mesh_monitor_screen": "assets/models/Decorations/Monitor/Screen.obj",
-                "mesh_monitor_stand": "assets/models/Decorations/Monitor/Stand.obj",
-                "mesh_hallway": "assets/models/Hallway/Hallway.obj",
                 "mesh_door_left": "assets/models/Door/left.obj",
                 "mesh_door_right": "assets/models/Door/right.obj",
                 "mesh_door_frame": "assets/models/Door/frame.obj",
                 "mesh_door_right_spinner": "assets/models/Door/right_spinner.obj",
                 "mesh_door_left_spinner": "assets/models/Door/left_spinner.obj",
                 "mesh_portal": "assets/models/portal_mod.obj",
-                "mesh_portal_frame": "assets/models/portal_frame.obj"
+                "mesh_portal_frame": "assets/models/portal_frame.obj",
+                "mesh_bed": "assets/models/Decorations/bed.obj",
+                "mesh_toilet": "assets/models/Decorations/toilet.obj",
+                "mesh_switch": "assets/models/Button/pedestal_button.obj",
+                "mesh_radio": "assets/models/Decorations/radio.obj",
+                "mesh_turret": "assets/models/turret.obj",
+                "mesh_elevator_body": "assets/models/Elevator/elevator.obj",
+                "mesh_elevator_door_l": "assets/models/Elevator/elevator_door_l.obj",
+                "mesh_elevator_door_r": "assets/models/Elevator/elevator_door_r.obj"
             },
             "samplers":{
                 "default":{},
@@ -118,6 +126,115 @@
                 }
             },
             "materials":{
+                "mat_elevator_body": {
+                    "type": "lit",
+                    "shader": "lit",
+                    "pipelineState": {
+                        "faceCulling":{
+                            "enabled": false
+                        },
+                        "depthTesting":{
+                            "enabled": true
+                        }
+                    },
+                    "tint": [1, 1, 1, 1],
+                    "albedo": "tex_elevator_body_albedo",
+                    "sampler": "default"
+                },
+                "mat_elevator_door": {
+                    "type": "lit",
+                    "shader": "lit",
+                    "pipelineState": {
+                        "faceCulling":{
+                            "enabled": false
+                        },
+                        "depthTesting":{
+                            "enabled": true
+                        }
+                    },
+                    "tint": [1, 1, 1, 1],
+                    "albedo": "tex_elevator_door_albedo",
+                    "sampler": "default"
+                },
+                "mat_bed": {
+                    "type": "lit",
+                    "shader": "lit",
+                    "pipelineState": {
+                        "faceCulling":{
+                            "enabled": false
+                        },
+                        "depthTesting":{
+                            "enabled": true
+                        }
+                    },
+                    "tint": [1, 1, 1, 1],
+                    "albedo": "tex_bed_albedo",
+                    "sampler": "default"
+                    // "bloom": true
+                },
+                "mat_toilet": {
+                    "type": "lit",
+                    "shader": "lit",
+                    "pipelineState": {
+                        "faceCulling":{
+                            "enabled": false
+                        },
+                        "depthTesting":{
+                            "enabled": true
+                        }
+                    },
+                    "tint": [1, 1, 1, 1],
+                    "albedo": "tex_toilet_albedo",
+                    "sampler": "default"
+                },
+                "mat_switch": {
+                    "type": "lit",
+                    "shader": "lit",
+                    "pipelineState": {
+                        "faceCulling":{
+                            "enabled": false
+                        },
+                        "depthTesting":{
+                            "enabled": true
+                        }
+                    },
+                    "tint": [1, 1, 1, 1],
+                    "albedo": "tex_switch_albedo",
+                    "sampler": "default"
+                },
+                "mat_radio": {
+                    "type": "lit",
+                    "shader": "lit",
+                    "pipelineState": {
+                        "faceCulling":{
+                            "enabled": false
+                        },
+                        "depthTesting":{
+                            "enabled": true
+                        }
+                    },
+                    "tint": [1, 1, 1, 1],
+                    "albedo": "tex_radio_albedo",
+                    "emission": "tex_radio_emission",
+                    "metallic": "tex_radio_metallic",
+                    "roughness": "tex_radio_roughness",
+                    "sampler": "default"
+                },
+                "mat_turret": {
+                    "type": "lit",
+                    "shader": "lit",
+                    "pipelineState": {
+                        "faceCulling":{
+                            "enabled": false
+                        },
+                        "depthTesting":{
+                            "enabled": true
+                        }
+                    },
+                    "tint": [1, 1, 1, 1],
+                    "albedo": "tex_turret_albedo",
+                    "sampler": "default"
+                },
                 "mat_portal":{
                     "type": "tinted",
                     "shader": "tinted",
@@ -205,7 +322,7 @@
                         "depthMask": false
                     },
                     "transparent": true,
-                    "tint": [1, 1, 1, 1],
+                    "tint": [0.4667, 0.6549, 0.7451, 1],
                     "albedo": "glass",
                     "sampler": "pixelated"
                 },
@@ -228,7 +345,7 @@
                     "albedo": "grass"
 
                 },
-                "mat_floor_metal_1x1":{
+                "mat_wall_7":{
                     "type": "lit",
                     "shader": "lit",
                     "pipelineState": {
@@ -240,10 +357,10 @@
                         }
                     },
                     "tint": [1, 1, 1, 1],
-                    "albedo": "tex_floor_metal_1x1",
+                    "albedo": "tex_wall_7",
                     "sampler": "pixelated"
                 },
-                "mat_floor_metal_3x3":{
+                "mat_flat_0_1_3":{
                     "type": "lit",
                     "shader": "lit",
                     "pipelineState": {
@@ -255,10 +372,11 @@
                         }
                     },
                     "tint": [1, 1, 1, 1],
-                    "albedo": "tex_floor_metal_3x3",
+                    "albedo": "tex_flat_0_1_3",
+                    "specular": "tex_flat_0_1_3",
                     "sampler": "pixelated"
                 },
-                "mat_wall_concrete_1":{
+                "mat_wall_7_3":{
                     "type": "lit",
                     "shader": "lit",
                     "pipelineState": {
@@ -270,10 +388,10 @@
                         }
                     },
                     "tint": [1, 1, 1, 1],
-                    "albedo": "tex_wall_concrete_1",
+                    "albedo": "tex_wall_7_3",
                     "sampler": "pixelated"
                 },
-                "mat_wall_concrete_2":{
+                "mat_flat_0_0_3":{
                     "type": "lit",
                     "shader": "lit",
                     "pipelineState": {
@@ -285,10 +403,10 @@
                         }
                     },
                     "tint": [1, 1, 1, 1],
-                    "albedo": "tex_wall_concrete_2",
+                    "albedo": "tex_flat_0_0_3",
                     "sampler": "default"
                 },
-                "mat_wall_concrete_3":{
+                "mat_flat_0":{
                     "type": "lit",
                     "shader": "lit",
                     "pipelineState": {
@@ -300,10 +418,10 @@
                         }
                     },
                     "tint": [1, 1, 1, 1],
-                    "albedo": "tex_wall_concrete_3",
+                    "albedo": "tex_flat_0",
                     "sampler": "default"
                 },
-                "mat_wall_concrete_3_3x3":{
+                "mat_wall_7_3_window":{
                     "type": "lit",
                     "shader": "lit",
                     "pipelineState": {
@@ -312,10 +430,17 @@
                         },
                         "depthTesting":{
                             "enabled": true
-                        }
+                        },
+                        "blending":{
+                            "enabled": true,
+                            "sourceFactor": "GL_SRC_ALPHA",
+                            "destinationFactor": "GL_ONE_MINUS_SRC_ALPHA"
+                        },
+                        "depthMask": false
                     },
+                    "transparent": true,
                     "tint": [1, 1, 1, 1],
-                    "albedo": "tex_wall_concrete_3_3x3",
+                    "albedo": "tex_wall_7_3_window",
                     "sampler": "default"
                 },
                 "mat_cube_corners":{
@@ -375,38 +500,9 @@
                         }
                     },
                     "tint": [1, 1, 1, 1],
-                    "albedo": "tex_gun",
-                    "sampler": "default"
-                },
-                "mat_wheatley":{
-                    "type": "lit",
-                    "shader": "lit",
-                    "pipelineState": {
-                        "faceCulling":{
-                            "enabled": false
-                        },
-                        "depthTesting":{
-                            "enabled": true
-                        }
-                    },
-                    "tint": [1, 1, 1, 1],
-                    "albedo": "tex_wheatley",
-                    "sampler": "default"
-                },
-                "mat_wheatley_eye":{
-                    "type": "lit",
-                    "shader": "lit",
-                    "pipelineState": {
-                        "faceCulling":{
-                            "enabled": false
-                        },
-                        "depthTesting":{
-                            "enabled": true
-                        }
-                    },
-                    "tint": [1, 1, 1, 1],
-                    "albedo": "tex_wheatley_eye",
-                    "emission": "tex_wheatley_eye",
+                    "albedo": "tex_gun_albedo",
+                    "roughness": "tex_gun_roughness",
+                    "ambient_occlusion": "tex_gun_ao",
                     "sampler": "default"
                 },
                 "mat_button":{
@@ -422,7 +518,7 @@
                     },
                     "tint": [1, 1, 1, 1],
                     "albedo": "tex_button_albedo",
-                    "emission": "tex_button_emission",
+                    // "emission": "tex_button_emission",
                     "sampler": "default",
                     "bloom": true
                 },
@@ -446,54 +542,6 @@
                     "sampler": "default",
                     "bloom": true
                 },
-                "mat_monitor_screen":{
-                    "type": "lit",
-                    "shader": "lit",
-                    "pipelineState": {
-                        "faceCulling":{
-                            "enabled": false
-                        },
-                        "depthTesting":{
-                            "enabled": true
-                        }
-                    },
-                    "tint": [1, 1, 1, 1],
-                    "albedo": "tex_monitor_screen",
-                    "emission": "tex_monitor_screen",
-                    "sampler": "default"
-                },
-                "mat_monitor_stand":{
-                    "type": "lit",
-                    "shader": "lit",
-                    "pipelineState": {
-                        "faceCulling":{
-                            "enabled": false
-                        },
-                        "depthTesting":{
-                            "enabled": true
-                        }
-                    },
-                    "tint": [1, 1, 1, 1],
-                    "albedo": "tex_monitor_stand",
-                    "sampler": "default"
-                },
-                "mat_hallway":{
-                    "type": "lit",
-                    "shader": "lit",
-                    "pipelineState": {
-                        "faceCulling":{
-                            "enabled": false
-                        },
-                        "depthTesting":{
-                            "enabled": true
-                        }
-                    },
-                    "tint": [1, 1, 1, 1],
-                    "albedo":"tex_hallway_albedo",
-                    "metallic":"tex_hallway_metallic",
-                    "roughness":"tex_hallway_roughness",
-                    "sampler": "default"
-                },
                 "mat_door":{
                     "type": "lit",
                     "shader": "lit",
@@ -512,7 +560,7 @@
                     "sampler": "default",
                     "bloom": true
                 },
-                "mat_door_wall":{
+                "mat_wall_7_door":{
                     "type": "lit",
                     "shader": "lit",
                     "pipelineState": {
@@ -531,22 +579,7 @@
                     },
                     "transparent": true,
                     "tint": [1, 1, 1, 1],
-                    "albedo": "tex_door_wall",
-                    "sampler": "default"
-                },
-                "mat_door_cover":{
-                    "type": "lit",
-                    "shader": "lit",
-                    "pipelineState": {
-                        "faceCulling":{
-                            "enabled": false
-                        },
-                        "depthTesting":{
-                            "enabled": true
-                        }
-                    },
-                    "tint": [1, 1, 1, 1],
-                    "albedo": "tex_door_cover",
+                    "albedo": "tex_wall_7_door",
                     "sampler": "default"
                 },
                 "monkey":{
@@ -657,58 +690,6 @@
                         ]
                     }
                 ],
-                "wheatley":[
-                    {
-                        "position": [0, 0, 0],
-                        "scale": [1, 1, 1],
-                        "rotation": [0, 0, 0],
-                        "components":[
-                            {
-                                "type": "Mesh Renderer",
-                                "mesh": "mesh_wheatley",
-                                "material": "mat_wheatley"
-                            }
-                        ]
-                    },
-                    {
-                        "position": [10, 0, 0],
-                        "scale": [1, 5, 5],
-                        "rotation": [0, 0, 0],
-                        "components":[
-                            {
-                                "type": "Mesh Renderer",
-                                "mesh": "sphere",
-                                "material": "mat_wheatley_eye"
-                            }
-                        ]
-                    }
-                ],
-                "monitor": [
-                    {
-                        "position": [0, 0, 0],
-                        "scale": [1, 1, 1],
-                        "rotation": [0, 0, 0],
-                        "components":[
-                            {
-                                "type": "Mesh Renderer",
-                                "mesh": "mesh_monitor_screen",
-                                "material": "mat_monitor_screen"
-                            }
-                        ]
-                    },
-                    {
-                        "position": [0, 0, 0],
-                        "scale": [1, 1, 1],
-                        "rotation": [0, 0, 0],
-                        "components":[
-                            {
-                                "type": "Mesh Renderer",
-                                "mesh": "mesh_monitor_stand",
-                                "material": "mat_monitor_stand"
-                            }
-                        ]
-                    }
-                ],
                 "door": [
                     {
                         "position": [0, 0, 0],
@@ -722,7 +703,7 @@
                             },
                             {
                                 "type": "Animation",
-                                "name": "door_1_left_open",
+                                "name": "left_open",
                                 "start": {
                                     "position": [0, 0, 0],
                                     "scale": [1, 1, 1],
@@ -733,10 +714,7 @@
                                     "scale": [1, 1, 1],
                                     "rotation": [0, 0, 0]
                                 },
-                                "duration": 1.0,
-                                "callback_reversed": {
-                                    "type": "disable" // this actually is enable because it is in reverse
-                                }
+                                "duration": 1.0
                             }
                         ]
                     },
@@ -752,7 +730,7 @@
                             },
                             {
                                 "type": "Animation",
-                                "name": "door_1_right_open",
+                                "name": "right_open",
                                 "start": {
                                     "position": [0, 0, 0],
                                     "scale": [1, 1, 1],
@@ -791,7 +769,7 @@
                             },
                             {
                                 "type": "Animation",
-                                "name": "door_1_right_spin",
+                                "name": "right_spin",
                                 "start": {
                                     "position": [0, 3.6, 0],
                                     "scale": [1, 1, 1],
@@ -802,14 +780,11 @@
                                     "scale": [1, 1, 1],
                                     "rotation": [0, 0, 180]
                                 },
-                                "duration": 1.0,
-                                "callback": {
-                                    "type": "disable"
-                                }
+                                "duration": 0.5
                             },
                             {
                                 "type": "Animation",
-                                "name": "door_1_right_spin_open",
+                                "name": "right_spin_open",
                                 "start": {
                                     "position": [0, 3.6, 0],
                                     "scale": [1, 1, 1],
@@ -820,11 +795,7 @@
                                     "scale": [1, 1, 1],
                                     "rotation": [0, 0, 180]
                                 },
-                                "duration": 1.0,
-                                "callback_reversed": {
-                                    "type": "animation",
-                                    "names": ["#door_1_left_spin","#door_1_right_spin"]
-                                }
+                                "duration": 1.0
                             }
                         ]
                     },
@@ -840,7 +811,7 @@
                             },
                             {
                                 "type": "Animation",
-                                "name": "door_1_left_spin",
+                                "name": "left_spin",
                                 "start": {
                                     "position": [0, 3.6, 0],
                                     "scale": [1, 1, 1],
@@ -851,15 +822,11 @@
                                     "scale": [1, 1, 1],
                                     "rotation": [0, 0, 180]
                                 },
-                                "duration": 1.0,
-                                "callback": {
-                                    "type": "animation",
-                                    "names": ["door_1_left_open","door_1_left_spin_open", "door_1_right_open","door_1_right_spin_open"]
-                                }
+                                "duration": 0.5
                             },
                             {
                                 "type": "Animation",
-                                "name": "door_1_left_spin_open",
+                                "name": "left_spin_open",
                                 "start": {
                                     "position": [0, 3.6, 0],
                                     "scale": [1, 1, 1],
@@ -869,6 +836,108 @@
                                     "position": [4.2, 3.6, 0],
                                     "scale": [1, 1, 1],
                                     "rotation": [0, 0, 180]
+                                },
+                                "duration": 1.0
+                            }
+                        ]
+                    }
+                ],
+                "button": [
+                    {
+                        "position": [0, 0, 0],
+                        "scale": [1, 1, 1],
+                        "rotation": [0, 0, 0],
+                        "components":[
+                            {
+                                "type": "Mesh Renderer",
+                                "mesh": "mesh_button_press",
+                                "material": "mat_button"
+                            },
+                            {
+                                "type": "Animation",
+                                "name": "press",
+                                "start": {
+                                    "position": [0, 0, 0],
+                                    "scale": [1, 1, 1],
+                                    "rotation": [0, 0, 0]
+                                },
+                                "end": {
+                                    "position": [0, -0.5, 0],
+                                    "scale": [1, 1, 1],
+                                    "rotation": [0, 0, 0]
+                                },
+                                "duration": 0.3
+                            }
+                        ]
+                    },
+                    {
+                        "position": [0, 0, 0],
+                        "scale": [1, 1, 1],
+                        "rotation": [0, 0, 0],
+                        "components":[
+                            {
+                                "type": "Mesh Renderer",
+                                "mesh": "mesh_button_pad",
+                                "material": "mat_button"
+                            }
+                        ]
+                    }
+                ],
+                "elevator": [
+                    {
+                        "components": [
+                            {
+                                "type": "Mesh Renderer",
+                                "mesh": "mesh_elevator_body",
+                                "material": "mat_elevator_body"
+                            }
+                        ]
+                    },
+                    {
+                        "rotation": [0, 45, 0],
+                        "components": [
+                            {
+                                "type": "Mesh Renderer",
+                                "mesh": "mesh_elevator_door_l",
+                                "material": "mat_elevator_door"
+                            },
+                            {
+                                "type": "Animation",
+                                "name": "left_close",
+                                "start": {
+                                    "position": [0, 0, 0],
+                                    "scale": [1, 1, 1],
+                                    "rotation": [0, 45, 0]
+                                },
+                                "end": {
+                                    "position": [0, 0, 0],
+                                    "scale": [1, 1, 1],
+                                    "rotation": [0, 0, 0]
+                                },
+                                "duration": 1.0
+                            }
+                        ]
+                    },
+                    {
+                        "rotation": [0, -45, 0],
+                        "components": [
+                            {
+                                "type": "Mesh Renderer",
+                                "mesh": "mesh_elevator_door_r",
+                                "material": "mat_elevator_door"
+                            },
+                            {
+                                "type": "Animation",
+                                "name": "right_close",
+                                "start": {
+                                    "position": [0, 0, 0],
+                                    "scale": [1, 1, 1],
+                                    "rotation": [0, -45, 0]
+                                },
+                                "end": {
+                                    "position": [0, 0, 0],
+                                    "scale": [1, 1, 1],
+                                    "rotation": [0, 0, 0]
                                 },
                                 "duration": 1.0
                             }
@@ -892,39 +961,28 @@
             //====================
             {
                 "position": [-10, 0, -10],
-                "rotation": [-90, 45, 0],
-                "scale": [0.05, 0.05, 0.05],
+                "rotation": [0, 45, 0],
                 "components":[
                     {
                         "type": "Mesh Renderer",
                         "mesh": "mesh_spotlight_standing",
                         "material": "mat_spotlight_standing"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "collider": {
+                            "type": "Capsule Collider",
+                            "radius": 0.2,
+                            "height": 12.0,
+                            "friction": 0.0,
+                            "bounciness":0.0
+                        }
                     }
                 ],
                 "children":[
                     {
-                        // dont rotate the collider
-                        "position":[0,0,105],
-                        "rotation":[0,0,0],
-                        "scale":[20,20,20],
-                        "components":[
-                            {
-                                "type": "RigidBody",
-                                "r3dType": "Static",
-                                "relativePosition": [-10, 5, -115],
-                                "collider": {
-                                    "type": "Capsule Collider",
-                                    "radius": 0.2,
-                                    "height": 12.0,
-                                    "friction": 0.0,
-                                    "bounciness":0.0
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "position": [0, -30, 210],
-                        "scale": [20, 20, 20],
+                        "position": [0, 12, 1],
                         "components":[
                             {
                                 "type": "Light",
@@ -952,23 +1010,13 @@
                 ]
             },
             {
-                "position": [-10, 5, 0],
+                "position": [0, 10, 0],
                 "components": [
                     {
                         "type": "Light",
                         "lightType": "point",
-                        "color": [10, 6, 6],
+                        "color": [15, 15, 15],
                         "attenuation": [1.0, 0.22, 0.20],
-                        "direction": [0.0, -1.0, 0.0]
-                    }
-                ]
-            },
-            {
-                "components": [
-                    {
-                        "type": "Light",
-                        "lightType": "directional",
-                        "color": [1, 1, 1],
                         "direction": [0.0, -1.0, 0.0]
                     }
                 ]
@@ -978,6 +1026,7 @@
             //====================
             {
                 "name": "Player",
+                "type": "Player", // Could be "Player", "Cube", "Button", "Portal", "Door", default is Regular
                 "position": [0, 3, 3],
                 "components": [
                     {
@@ -1029,31 +1078,21 @@
                                 "material": "mat_gun"
                             }
                         ]
-                    },
-                    {
-                        "position": [0, 0, -0.5],
-                        "scale":[0.01, 0.01, 0.01],
-                        "components": [
-                            {
-                                "type": "Mesh Renderer",
-                                "mesh": "sphere",
-                                "material": "metal"
-                            }
-                        ]
-                    }            
+                    }
                 ]
             },
             //====================
             // Moving Objects
             //====================
             {
+                "name": "Cube_1",
+                "type": "Cube",
                 "position": [0, 1, 0],
-                "scale": [0.4, 0.4, 0.4],
                 "components":[
                     {
                         "type": "RigidBody",
                         "r3dType": "Dynamic",
-                        "enableGravity": false,
+                        "enableGravity": true,
                         "collider":{
                             "type": "Box Collider",
                             "halfExtents": [0.9, 0.9, 0.9],
@@ -1066,39 +1105,15 @@
                         "type": "ModelLoader",
                         "model": "companion_cube"
                     }
-                ],
-                "isAttachable": true,
-                "canHoldPortal": false
-            },
-            {
-                "position": [5, 1, 5],
-                "scale": [0.4, 0.4, 0.4],
-                "components":[
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Dynamic",
-                        "enableGravity": false,
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [0.9, 0.9, 0.9],
-                            "friction": 1.0,
-                            "bounciness":0.0,
-                            "massDensity": 1000
-                        }
-                    },
-                    {
-                        "type": "ModelLoader",
-                        "model": "companion_cube"
-                    }
-                ],
-                "isAttachable": true,
-                "canHoldPortal": false
+                ]
             },
             //====================
             // Static Objects (floor, walls, etc)
             //====================
             // Door
             {
+                "name": "Door_1",
+                "type": "Door",
                 "position": [16, 0, 0],
                 "rotation": [0, -90, 0],
                 "components":[
@@ -1117,81 +1132,159 @@
                         "type": "ModelLoader",
                         "model": "door"
                     }
-                ],
-                "canHoldPortal": false
+                ]
             },
-            // Buttons
+            { // For door (door cover)
+                "position": [15, 5, 0],
+                "rotation": [0, -90, 0],
+                "scale": [5, 5, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_wall_7_door"
+                    }
+                ]
+            },
+            // Buttons & Switches
             {
+                "name": "Button_1",
+                "type": "Button",
                 "position": [5, 0.1, 5],
-                "scale": [7, 7, 7],
                 "components":[
                     {
                         "type": "RigidBody",
                         "r3dType": "Static",
-                        "relativePosition": [0, 0, 0],
+                        "relativePosition": [0, 0.25, 0],
                         "collider":{
                             "type": "Box Collider",
-                            "halfExtents": [2, 0.5, 2],
+                            "halfExtents": [2, 0.25, 2],
                             "friction": 1.0,
                             "bounciness":0.0
                         }
                     },
+                    {
+                        "type": "ModelLoader",
+                        "model": "button"
+                    }
+                ],
+                "action": {
+                    "Door": "Door_1"
+                }
+            },
+            // {
+            //     "name": "switch_1",
+            //     "position": [-5, 1.17, 5],
+            //     "components": [
+            //         {
+            //             "type": "Mesh Renderer",
+            //             "mesh": "mesh_switch",
+            //             "material": "mat_switch"
+            //         },
+            //         {
+            //             "type": "RigidBody",
+            //             "r3dType": "Static",
+            //             "collider":{
+            //                 "type":"Box Collider",
+            //                 "halfExtents": [0.25, 1.17, 0.25],
+            //                 "friction": 0.0,
+            //                 "bounciness":0.0
+            //             }
+            //         }
+            //     ]
+            // },
+            // Static and Attachable Decorations
+            {
+                "name": "bed_1",
+                "position": [-10, 0, 0],
+                "components": [
                     {
                         "type": "Mesh Renderer",
-                        "mesh": "mesh_button",
-                        "material": "mat_button"
-                    }
-                ],
-                "canHoldPortal": false
-            },
-            // Decorations
-            {
-                "position": [0, 5, 0],
-                "rotation": [0, 0, 0],
-                "scale": [0.1, 0.1, 0.1],
-                "components": [
-                    {
-                        "type":"ModelLoader",
-                        "model":"wheatley"
+                        "mesh": "mesh_bed",
+                        "material": "mat_bed"
                     },
                     {
                         "type": "RigidBody",
                         "r3dType": "Static",
-                        "relativePosition": [0, 0, 0],
-                        "collider":{
-                            "type": "Sphere Collider",
-                            "radius": 2,
-                            "friction": 1.0,
-                            "bounciness":0.0
-                        }
-                    }
-                ],
-                "canHoldPortal": false
-            },
-            {
-                "name": "Monitor 1",
-                "position": [15.5, -0.25, -6],
-                "rotation": [0, -90, 0],
-                "scale": [1.5, 1.5, 1.5],
-                "components": [
-                    {
-                        "type":"ModelLoader",
-                        "model":"monitor"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "relativePosition": [-2, 3, 0],
+                        "relativePosition": [0, 1, 0],
                         "collider":{
                             "type":"Box Collider",
-                            "halfExtents": [1, 0.5, 0.2],
+                            "halfExtents": [1, 1, 2],
                             "friction": 0.0,
                             "bounciness":0.0
                         }
                     }
-                ],
-                "canHoldPortal": false
+                ]
             },
+            {
+                "name": "toilet_1",
+                "position": [-10, 0, 5],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "mesh_toilet",
+                        "material": "mat_toilet"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0.5, 0],
+                        "collider":{
+                            "type":"Box Collider",
+                            "halfExtents": [0.5, 0.5, 1],
+                            "friction": 0.0,
+                            "bounciness":0.0
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "radio_1",
+                "type": "Decoration",
+                "position": [-5, 0, 0],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "mesh_radio",
+                        "material": "mat_radio"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Dynamic",
+                        "enableGravity": true,
+                        "relativePosition": [0, 0.5, 0],
+                        "collider":{
+                            "type":"Box Collider",
+                            "halfExtents": [0.25, 0.5, 0.25],
+                            "friction": 1.0,
+                            "bounciness":0.0
+                        }
+                    }
+                ]
+            },
+            // {
+            //     "name": "turret_1",
+            //     "position": [0, 1.5, -5],
+            //     "components": [
+            //         {
+            //             "type": "Mesh Renderer",
+            //             "mesh": "mesh_turret",
+            //             "material": "mat_turret"
+            //         },
+            //         {
+            //             "type": "RigidBody",
+            //             "r3dType": "Dynamic",
+            //             "enableGravity": true,
+            //             "collider":{
+            //                 "type":"Box Collider",
+            //                 "halfExtents": [0.5, 1.5, 0.5],
+            //                 "friction": 1.0,
+            //                 "bounciness":0.0
+            //             }
+            //         }
+            //     ],
+            //     "isAttachable": true
+            // },
             // FLOOR
             {
                 "position": [0, 0, 0],
@@ -1201,12 +1294,12 @@
                     {
                         "type": "Mesh Renderer",
                         "mesh": "plane",
-                        "material": "mat_floor_metal_3x3"
+                        "material": "mat_flat_0_1_3"
                     },
                     {
                         "type": "RigidBody",
                         "r3dType": "Static",
-                        "relativePosition": [0, -1, 0],
+                        "relativePosition": [0, 0, -1],
                         "collider":{
                             "type": "Box Collider",
                             "halfExtents": [15, 15, 1],
@@ -1218,22 +1311,22 @@
             },
             //WALLS
             {
-                "position": [-10, 5, -15],
+                "position": [0, 10, -15],
                 "rotation": [0, 0, 0],
-                "scale": [5, 5, 1],
+                "scale": [15, 10, 1],
                 "components": [
                     {
                         "type": "Mesh Renderer",
                         "mesh": "plane",
-                        "material": "mat_wall_concrete_1"
+                        "material": "mat_wall_7_3"
                     },
                     {
                         "type": "RigidBody",
                         "r3dType": "Static",
-                        "relativePosition": [0, 0, 0],
+                        "relativePosition": [0, 0, -1],
                         "collider":{
                             "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
+                            "halfExtents": [15, 10, 1],
                             "bounciness":0.0,
                             "friction": 0
                         }
@@ -1241,278 +1334,52 @@
                 ]
             },
             {
-                "position": [-10, 15, -15],
-                "rotation": [0, 0, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_2"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "relativePosition": [0, 0, 0],
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness":0.0,
-                            "friction": 0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [-15, 5, -10],
-                "rotation": [0, 90, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_1"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "relativePosition": [0, 0, 0],
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness":0.0,
-                            "friction": 0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [-15, 15, -10],
-                "rotation": [0, 90, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_2"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "relativePosition": [0, 0, 0],
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness":0.0,
-                            "friction": 0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [0, 5, -15],
-                "rotation": [0, 0, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_1"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "relativePosition": [0, 0, 0],
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness":0.0,
-                            "friction": 0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [0, 15, -15],
-                "rotation": [0, 0, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_2"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "relativePosition": [0, 0, 0],
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness":0.0,
-                            "friction": 0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [-15, 5, 10],
-                "rotation": [0, 90, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_1"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "relativePosition": [0, 0, 0],
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness":0.0,
-                            "friction": 0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [-15, 15, 10],
-                "rotation": [0, 90, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_2"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness":0.0,
-                            "friction": 0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [-10, 5, 15],
+                "position": [0, 10, 15],
                 "rotation": [0, 180, 0],
-                "scale": [5, 5, 1],
+                "scale": [15, 10, 1],
                 "components": [
                     {
                         "type": "Mesh Renderer",
                         "mesh": "plane",
-                        "material": "mat_wall_concrete_1"
+                        "material": "mat_wall_7_3"
                     },
                     {
                         "type": "RigidBody",
                         "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
                         "collider":{
                             "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
+                            "halfExtents": [15, 10, 1],
                             "bounciness":0.0,
                             "friction": 0
                         }
                     }
                 ]
             },
-            {
-                "position": [-10, 15, 15],
-                "rotation": [0, 180, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_2"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness":0.0,
-                            "friction": 0
-                        }
-                    }
-                ]
-            },
-            {//This completes a window
-                "position": [-15, 15, 0],
+            { // For window
+                "position": [-15, 10, 0],
                 "rotation": [0, 90, 0],
-                "scale": [5, 5, 1],
+                "scale": [15, 10, 1],
                 "components": [
                     {
                         "type": "Mesh Renderer",
                         "mesh": "plane",
-                        "material": "mat_wall_concrete_2"
+                        "material": "mat_wall_7_3_window"
                     },
                     {
                         "type": "RigidBody",
                         "r3dType": "Static",
-                        "relativePosition": [0, 0, 0],
+                        "relativePosition": [0, 0, -1],
                         "collider":{
                             "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
+                            "halfExtents": [15, 10, 1],
                             "bounciness":0.0,
                             "friction": 0
                         }
                     }
                 ]
             },
-            {
-                "position": [10, 5, -15],
-                "rotation": [0, 0, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_1"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness":0.0,
-                            "friction": 0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [10, 15, -15],
-                "rotation": [0, 0, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_2"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "relativePosition": [0, 0, 0],
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness":0.0,
-                            "friction": 0
-                        }
-                    }
-                ]
-            },
-            {
+            { // For door
                 "position": [15, 5, -10],
                 "rotation": [0, -90, 0],
                 "scale": [5, 5, 1],
@@ -1520,43 +1387,22 @@
                     {
                         "type": "Mesh Renderer",
                         "mesh": "plane",
-                        "material": "mat_wall_concrete_1"
+                        "material": "mat_wall_7"
                     },
                     {
                         "type": "RigidBody",
                         "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
                         "collider":{
                             "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
+                            "halfExtents": [5, 5, 1],
                             "bounciness":0.0,
                             "friction": 0
                         }
                     }
                 ]
             },
-            {
-                "position": [15, 15, -10],
-                "rotation": [0, -90, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_2"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness":0.0,
-                            "friction": 0
-                        }
-                    }
-                ]
-            },
-            {
+            { // For door
                 "position": [15, 5, 10],
                 "rotation": [0, -90, 0],
                 "scale": [5, 5, 1],
@@ -1564,21 +1410,45 @@
                     {
                         "type": "Mesh Renderer",
                         "mesh": "plane",
-                        "material": "mat_wall_concrete_1"
+                        "material": "mat_wall_7"
                     },
                     {
                         "type": "RigidBody",
                         "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
                         "collider":{
                             "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
+                            "halfExtents": [5, 5, 1],
                             "bounciness":0.0,
                             "friction": 0
                         }
                     }
                 ]
             },
-            {
+            { // For door
+                "position": [15, 15, -10],
+                "rotation": [0, -90, 0],
+                "scale": [5, 5, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_wall_7"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            { // For door
                 "position": [15, 15, 10],
                 "rotation": [0, -90, 0],
                 "scale": [5, 5, 1],
@@ -1586,121 +1456,22 @@
                     {
                         "type": "Mesh Renderer",
                         "mesh": "plane",
-                        "material": "mat_wall_concrete_2"
+                        "material": "mat_wall_7"
                     },
                     {
                         "type": "RigidBody",
                         "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
                         "collider":{
                             "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
+                            "halfExtents": [5, 5, 1],
                             "bounciness":0.0,
                             "friction": 0
                         }
                     }
                 ]
             },
-            {
-                "position": [0, 5, 15],
-                "rotation": [0, 180, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_1"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness":0.0,
-                            "friction": 0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [0, 15, 15],
-                "rotation": [0, 180, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_2"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness":0.0,
-                            "friction": 0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [10, 5, 15],
-                "rotation": [0, 180, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_1"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness":0.0,
-                            "friction": 0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [10, 15, 15],
-                "rotation": [0, 180, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_2"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness":0.0,
-                            "friction": 0
-                        }
-                    }
-                ]
-            },
-            {
-                "position": [15, 5, 0],
-                "rotation": [0, -90, 0],
-                "scale": [5, 5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_door_wall"
-                    }
-                ]
-            },
-            {
+            { // For door
                 "position": [15, 15, 0],
                 "rotation": [0, -90, 0],
                 "scale": [5, 5, 1],
@@ -1708,15 +1479,16 @@
                     {
                         "type": "Mesh Renderer",
                         "mesh": "plane",
-                        "material": "mat_wall_concrete_2"
+                        "material": "mat_wall_7"
                     },
                     {
                         "type": "RigidBody",
                         "r3dType": "Static",
-                         "collider":{
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
                             "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "bounciness": 0.0,
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
                             "friction": 0
                         }
                     }
@@ -1731,260 +1503,852 @@
                     {
                         "type": "Mesh Renderer",
                         "mesh": "plane",
-                        "material": "mat_wall_concrete_3_3x3"
+                        "material": "mat_flat_0_0_3"
                     },
                     {
                         "type": "RigidBody",
                         "r3dType": "Static",
-                        "relativePosition": [0, 0, 0],
+                        "relativePosition": [0, 0, -1],
                         "collider":{
                             "type": "Box Collider",
-                            "halfExtents": [15, 15, 0.1],
+                            "halfExtents": [15, 15, 1],
                             "bounciness":0.0
                         }
                     }
                 ]
             },
-            //Window
-            {
-                "position": [-15, 3, 0],
-                "rotation": [0, 90, 0],
-                "scale": [5, 2, 1],
+            // Next Part After Door
+            {// Door Hallway
+                "position": [20, 5, -5],
+                "scale": [5, 5, 1],
                 "components": [
                     {
                         "type": "Mesh Renderer",
                         "mesh": "plane",
-                        "material": "glass"
+                        "material": "mat_wall_7"
                     },
                     {
                         "type": "RigidBody",
                         "r3dType": "Static",
-                        "relativePosition": [0, 0, 0],
+                        "relativePosition": [0, 0, -1],
                         "collider":{
                             "type": "Box Collider",
-                            "halfExtents": [5, 2, 0.1],
+                            "halfExtents": [5, 5, 1],
                             "bounciness":0.0,
                             "friction": 0
                         }
                     }
-                ],
-                "canHoldPortal": false
+                ]
             },
-            {
-                "position": [-15, 0.5, 0],
-                "rotation": [0, 90, 0],
-                "scale": [5, 0.5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_1"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "relativePosition": [0, 0, 0],
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 0.5, 0.1],
-                            "bounciness":0.0
-                        }
-                    }
-                ],
-                "canHoldPortal": false
-            },
-            {
-                "position": [-15, 7.5, 0],
-                "rotation": [0, 90, 0],
-                "scale": [5, 2.5, 1],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_wall_concrete_1"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "relativePosition": [0, 0, 0],
-                        "collider":{
-                            "type": "Box Collider",
-                            "halfExtents": [5, 2.5, 0.1],
-                            "bounciness":0.0
-                        }
-                    }
-                ],
-                "canHoldPortal": false
-            },
-            //Corridors
-            {
-                "position":[16, 11.5, 0],
-                "rotation":[0, -90, 0],
-                "scale":[5, 5, 5],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "plane",
-                        "material": "mat_door_cover"
-                    }
-                ],
-                "canHoldPortal": false
-            },
-            {
-                "position": [20, 0, 0],
-                "rotation": [0, 0, 0],
-                "scale": [2, 2, 2],
-                "components": [
-                    {
-                        "type": "Mesh Renderer",
-                        "mesh": "mesh_hallway",
-                        "material": "mat_hallway"
-                    },
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "relativePosition": [0, -1, 0],
-                        "collider":{
-                            "type":"Box Collider",
-                            "halfExtents": [5, 1, 5],
-                            "friction": 1.0,
-                            "bounciness":0.0
-                        }
-                    }
-                ],
-                "canHoldPortal": false
-            },
-            {
+            {// Door Hallway
                 "position": [20, 5, 5],
-                "rotation": [0, 0, 0],
-                "components": [
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "collider": {
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "friction": 0.0,
-                            "bounciness":0.0
-                        }
-                    }
-                ],
-                "canHoldPortal": false
-            },
-            {
-                "position": [20, 5, -5],
-                "rotation": [0, 0, 0],
-                "components": [
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "collider": {
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "friction": 0.0,
-                            "bounciness":0.0
-                        }
-                    }
-                ],
-                "canHoldPortal": false
-            },
-            {
-                "position": [20, 6, 0],
-                "rotation": [90, 0, 0],
-                "components": [
-                    {
-                        "type": "RigidBody",
-                        "r3dType": "Static",
-                        "collider": {
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
-                            "friction": 0.0,
-                            "bounciness":0.0
-                        }
-                    }
-                ],
-                "canHoldPortal": false
-            },
-            {
-                "position": [28, 0, 0],
-                "rotation": [0, 0, 0],
-                "scale": [2, 2, 2],
+                "rotation": [0, 180, 0],
+                "scale": [5, 5, 1],
                 "components": [
                     {
                         "type": "Mesh Renderer",
-                        "mesh": "mesh_hallway",
-                        "material": "mat_hallway"
+                        "mesh": "plane",
+                        "material": "mat_wall_7"
                     },
                     {
                         "type": "RigidBody",
                         "r3dType": "Static",
-                        "relativePosition": [0, -1, 0],
+                        "relativePosition": [0, 0, -1],
                         "collider":{
-                            "type":"Box Collider",
-                            "halfExtents": [5, 1, 5],
+                            "type": "Box Collider",
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            {// Door Hallway
+                "position": [20, 10, 0],
+                "rotation": [90, 0, 0],
+                "scale": [5, 5, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_flat_0"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            {// Door Hallway
+                "position": [20, 0, 0],
+                "rotation": [-90, 0, 0],
+                "scale": [5, 5, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_flat_0"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            { // Floor
+                "position": [40, 0, 0],
+                "rotation": [-90, 0, 0],
+                "scale": [15, 15, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_flat_0_1_3"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [15, 15, 1],
+                            "bounciness":0.0,
+                            "friction": 2.0
+                        }
+                    }
+                ]
+            },
+            { // Ceiling
+                "position": [40, 20, 0],
+                "rotation": [90, 0, 0],
+                "scale": [15, 15, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_flat_0_0_3"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [15, 15, 1],
+                            "bounciness":0.0,
+                            "friction": 2.0
+                        }
+                    }
+                ]
+            },
+            // Walls
+            { // For door
+                "position": [25, 5, -10],
+                "rotation": [0, 90, 0],
+                "scale": [5, 5, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_wall_7"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            { // For door
+                "position": [25, 5, 10],
+                "rotation": [0, 90, 0],
+                "scale": [5, 5, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_wall_7"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            { // For door
+                "position": [25, 15, -10],
+                "rotation": [0, 90, 0],
+                "scale": [5, 5, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_wall_7"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            { // For door
+                "position": [25, 15, 10],
+                "rotation": [0, 90, 0],
+                "scale": [5, 5, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_wall_7"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            { // For door
+                "position": [25, 15, 0],
+                "rotation": [0, 90, 0],
+                "scale": [5, 5, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_wall_7"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            { // Left wall new area
+                "position": [40, 10, -15],
+                "rotation": [0, 0, 0],
+                "scale": [15, 10, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_wall_7_3"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [15, 10, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            { // Front wall new area
+                "position": [55, 10, 0],
+                "rotation": [0, -90, 0],
+                "scale": [15, 10, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_wall_7_3"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [15, 10, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            { // For door
+                "position": [50, 5, 15],
+                "rotation": [0, 180, 0],
+                "scale": [5, 5, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_wall_7"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            { // For door
+                "position": [30, 5, 15],
+                "rotation": [0, 180, 0],
+                "scale": [5, 5, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_wall_7"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            { // For door
+                "position": [50, 15, 15],
+                "rotation": [0, 180, 0],
+                "scale": [5, 5, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_wall_7"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            { // For door
+                "position": [30, 15, 15],
+                "rotation": [0, 180, 0],
+                "scale": [5, 5, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_wall_7"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            { // For door
+                "position": [40, 15, 15],
+                "rotation": [0, 180, 0],
+                "scale": [5, 5, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_wall_7"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            // Door second area
+            {
+                "name": "Door_2",
+                "type": "Door",
+                "position": [40, 0, 16],
+                "rotation": [0, 180, 0],
+                "components":[
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 5, 0],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [5, 5, 1],
+                            "friction": 0.0,
+                            "bounciness":0.0
+                        }
+                    },
+                    {
+                        "type": "ModelLoader",
+                        "model": "door"
+                    }
+                ]
+            },
+            { // For door (door cover)
+                "position": [40, 5, 15],
+                "rotation": [0, 180, 0],
+                "scale": [5, 5, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_wall_7_door"
+                    }
+                ]
+            },
+            {// Door Hallway
+                "position": [45, 5, 20],
+                "rotation": [0, -90, 0],
+                "scale": [5, 5, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_wall_7"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            {// Door Hallway
+                "position": [35, 5, 20],
+                "rotation": [0, 90, 0],
+                "scale": [5, 5, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_wall_7"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            {// Door Hallway
+                "position": [40, 10, 20],
+                "rotation": [90, 0, 0],
+                "scale": [5, 5, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_flat_0"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            {// Door Hallway
+                "position": [40, 0, 20],
+                "rotation": [-90, 0, 0],
+                "scale": [5, 5, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_flat_0"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            // Button
+            {
+                "name": "Button_2",
+                "type": "Button",
+                "position": [45, 0.1, 5],
+                "components":[
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0.25, 0],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [2, 0.25, 2],
                             "friction": 1.0,
                             "bounciness":0.0
                         }
+                    },
+                    {
+                        "type": "ModelLoader",
+                        "model": "button"
                     }
                 ],
-                "canHoldPortal": false
+                "action": {
+                    "Door": "Door_2"
+                }
             },
+            // Light for second area
             {
-                "position": [28, 5, 5],
-                "rotation": [0, 0, 0],
-                "components": [
+                "position": [50, 0, -10],
+                "rotation": [0, -45, 0],
+                "components":[
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "mesh_spotlight_standing",
+                        "material": "mat_spotlight_standing"
+                    },
                     {
                         "type": "RigidBody",
                         "r3dType": "Static",
                         "collider": {
-                            "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
+                            "type": "Capsule Collider",
+                            "radius": 0.2,
+                            "height": 12.0,
                             "friction": 0.0,
                             "bounciness":0.0
                         }
                     }
                 ],
-                "canHoldPortal": false
+                "children":[
+                    {
+                        "position": [0, 12, 1],
+                        "components":[
+                            {
+                                "type": "Light",
+                                // example directional light
+                                // "lightType": "directional",
+                                // "color": [0, 0.5, 0],
+                                // "direction": [0.0, -1.0, 0.0]
+        
+                                // example point light 
+                                // "lightType": "point",
+                                // "color": [60, 60, 80],
+                                // "attenuation": [1.0, 0.22, 0.20],
+                                // "direction": [0.0, -1.0, 0.0]
+                                
+                                // example spot light
+                                "lightType": "spot",
+                                "color": [100, 100, 100],
+                                "attenuation": [1.0, 0.14, 0.07],
+                                "innerCutOff": 40,
+                                "outerCutOff": 65,
+                                "direction": [-1.0, -1.5, 1.0]
+                            }
+                        ]
+                    }
+                ]
             },
             {
-                "position": [28, 5, -5],
-                "rotation": [0, 0, 0],
+                "position": [40, 10, 0],
                 "components": [
                     {
+                        "type": "Light",
+                        "lightType": "point",
+                        "color": [15, 15, 15],
+                        "attenuation": [1.0, 0.22, 0.20],
+                        "direction": [0.0, -1.0, 0.0]
+                    }
+                ]
+            },
+            // Elevator
+            {
+                "name": "Elevator_1",
+                "type": "Elevator",
+                "position": [40, 0, 30],
+                "components": [
+                    {
+                        "type": "ModelLoader",
+                        "model": "elevator"
+                    },
+                    { // Collider of door first so it would be retrieved with getComponent
                         "type": "RigidBody",
                         "r3dType": "Static",
-                        "collider": {
+                        "relativePosition": [0, 5, 3.5],
+                        "collider":{
                             "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.1],
+                            "halfExtents": [3, 5, 1],
                             "friction": 0.0,
                             "bounciness":0.0
                         }
+                    },
+                    { // Right
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [-3.5, 5, 0],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [1, 5, 3],
+                            "friction": 0.0,
+                            "bounciness":0.0
+                        }
+                    },
+                    { // Left
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [3.5, 5, 0],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [1, 5, 3],
+                            "friction": 0.0,
+                            "bounciness":0.0
+                        }
+                    },
+                    { // Back
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 5, 3.5],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [3, 5, 1],
+                            "friction": 0.0,
+                            "bounciness":0.0
+                        }
+                    },
+                    { // Trigger for closing the elevator
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 5, 0],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [3, 5, 3],
+                            "friction": 0.0,
+                            "isTrigger": true,
+                            "bounciness":0.0
+                        }
                     }
-                ],
-                "canHoldPortal": false
+                ]
             },
-            {
-                "position": [28, 6, 0],
+            { // Light inside elevator
+                "position": [40, 3, 30],
+                "components": [
+                    {
+                        "type": "Light",
+                        "lightType": "point",
+                        "color": [10, 10, 10],
+                        "attenuation": [1.0, 0.22, 0.20],
+                        "direction": [0.0, -1.0, 0.0]
+                    }
+                ]
+            },
+            {// Elevator Hallway
+                "position": [45, 5, 30],
+                "rotation": [0, -90, 0],
+                "scale": [5, 5, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_wall_7"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            {// Elevator Hallway
+                "position": [35, 5, 30],
+                "rotation": [0, 90, 0],
+                "scale": [5, 5, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_wall_7"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            {// Elevator Hallway
+                "position": [40, 10, 30],
                 "rotation": [90, 0, 0],
+                "scale": [5, 5, 1],
                 "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_flat_0"
+                    },
                     {
                         "type": "RigidBody",
                         "r3dType": "Static",
-                        "collider": {
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
                             "type": "Box Collider",
-                            "halfExtents": [5, 5, 0.5],
-                            "friction": 0.0,
-                            "bounciness":0.0
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
+                            "friction": 0
                         }
                     }
-                ],
-                "canHoldPortal": false
+                ]
             },
+            {// Elevator Hallway
+                "position": [40, 0, 30],
+                "rotation": [-90, 0, 0],
+                "scale": [5, 5, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_flat_0"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            {// Elevator Hallway
+                "position": [40, 5, 35],
+                "rotation": [0, 180, 0],
+                "scale": [5, 5, 1],
+                "components": [
+                    {
+                        "type": "Mesh Renderer",
+                        "mesh": "plane",
+                        "material": "mat_wall_7"
+                    },
+                    {
+                        "type": "RigidBody",
+                        "r3dType": "Static",
+                        "relativePosition": [0, 0, -1],
+                        "collider":{
+                            "type": "Box Collider",
+                            "halfExtents": [5, 5, 1],
+                            "bounciness":0.0,
+                            "friction": 0
+                        }
+                    }
+                ]
+            },
+            // Portals
             {
                 "name": "Portal_1",
-                "position": [3, 2.7, 1000],
-                // "scale": [1.79,2.62,1.01],
-                "isPortal": true,
+                "type": "Portal",
+                "position": [10, 2.7, 1000],
                 "components":[
                     {
                         "type": "Mesh Renderer",
@@ -1997,7 +2361,7 @@
                         "r3dType": "Static",
                         "collider":{
                             "type":"Box Collider",
-                            "halfExtents": [1, 1, 0.5],
+                            "halfExtents": [1, 1, 0.1],
                             "friction": 1.0,
                             "bounciness":0.0,
                             "isTrigger": true // default is false
@@ -2019,9 +2383,8 @@
             },
             {
                 "name": "Portal_2",
-                "position": [-7, 2.7, 1000],
-                // "scale": [1.79,2.62,1.01],
-                "isPortal": true,
+                "type": "Portal",
+                "position": [14.9, 2.7, 1000],
                 "components":[
                     {
                         "type": "Mesh Renderer",
@@ -2034,7 +2397,7 @@
                         "r3dType": "Static",
                         "collider":{
                             "type":"Box Collider",
-                            "halfExtents": [1, 1, 0.5],
+                            "halfExtents": [1, 1, 0.1],
                             "friction": 1.0,
                             "bounciness":0.0,
                             "isTrigger": true // default is false
@@ -2055,15 +2418,7 @@
                 ]
             }
         ],
-        "onCollisionEvents": [
-            {
-                "body1": "Player", // Name of object 1
-                "body2": "Monitor 1", // Name of object 2
-                "type": "animation",
-                "names": ["door_1_left_spin", "door_1_right_spin"],
-                "once": true, // If false, callback can be called multiple times if event happened again
-                "OnContact": "Start" // This could be "Start", "Stay", "Exit"
-            }
+        "onTriggerEvents": [
         ]
     }
 }

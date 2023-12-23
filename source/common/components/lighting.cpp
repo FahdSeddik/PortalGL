@@ -22,7 +22,7 @@ namespace portal{
         attenuation = data.value("attenuation", attenuation);
         // Directional light properties (for spot lights and directional lights)
         direction = data.value("direction", direction);
-
+        worldSpacePosition = this->getOwner()->getLocalToWorldMatrix() * glm::vec4(0, 0, 0, 1);
     }
 
 

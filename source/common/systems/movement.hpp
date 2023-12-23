@@ -1,17 +1,17 @@
 #pragma once
 
-#include "../ecs/world.hpp"
-#include "../components/movement.hpp"
-#include "../components/RigidBody.hpp"
-#include "../components/free-camera-controller.hpp"
 #include "../application.hpp"
-#include <reactphysics3d/reactphysics3d.h>
-namespace r3d = reactphysics3d;
+#include "../components/free-camera-controller.hpp"
+#include "../components/movement.hpp"
+#include "../ecs/world.hpp"
+#include "../components/RigidBody.hpp"
 #include <glm/glm.hpp>
+#include "../ecs/player.hpp"
 #include <glm/gtc/constants.hpp>
 #include <glm/trigonometric.hpp>
 #include <glm/gtx/fast_trigonometry.hpp>
-
+#include <reactphysics3d/reactphysics3d.h>
+namespace r3d = reactphysics3d;
 namespace portal {
 
     // The movement system is responsible for moving every entity which contains a MovementComponent.
@@ -19,8 +19,8 @@ namespace portal {
     // For more information, see "common/components/movement.hpp"
     class MovementSystem {
     private:
-        Entity* player = nullptr;
-        Application *app;
+        Player* player = nullptr;
+        Application* app = nullptr;
         World *world;
         FreeCameraControllerComponent* controller;
         RigidBodyComponent* playerRigidBody;
@@ -31,28 +31,19 @@ namespace portal {
         std::string attachedName = "";
         Entity* attachement = nullptr;
 
-        // Player Vectors
-        r3d::Vector3 absoluteFront;
-        glm::vec3 front;
-        glm::vec3 right;
-        // Player position reference
-        const r3d::Vector3 &playerPos;
-        
-        // Attach an "isAttachable" entity to the player
-        void attachToPlayer(Entity *entity) const;
         // Handles all physics updates
         void physicsUpdate(float deltaTime);
-
         // Returns velocity component of player
         glm::vec3 handlePlayerMovement();
-        // gets the front, right, and absoluteFront of player
-        void calculatePlayerVectors();
         // RayCasts and updates isGrounded
         void checkForGround();
         // Handles disattaching and attaching of an entity
         void checkAttachment();
+
     public:
-        MovementSystem(World* world, Application* app) : world(world), app(app), player(world->getEntityByName("Player")), playerPos(player->localTransform.getPosition()) {
+        MovementSystem(World* world, Application* app) : world(world), app(app) {
+            player = dynamic_cast<Player*>(world->getEntityByName("Player"));
+            player->setApp(app);
             controller = player->getComponent<FreeCameraControllerComponent>();
             playerRigidBody = player->getComponent<RigidBodyComponent>();
             physicsWorld = player->getWorld()->getPhysicsWorld();
@@ -62,13 +53,12 @@ namespace portal {
         // This should be called every frame to update all entities containing a MovementComponent. 
         void update(World* world, float deltaTime) {
             if(!physicsWorld) return;
-            calculatePlayerVectors();
-            checkAttachment();
+            player->update();
             physicsUpdate(deltaTime);
             // For each entity in the world
             for(const auto& [name, entity] : world->getEntities()){
-                if(attachement && entity == attachement) {
-                    attachToPlayer(entity);
+                if(player->getAttachement() && entity == player->getAttachement()) {
+                    player->attachToPlayer(entity);
                     continue;
                 }
                 // Get the movement component if it exists
@@ -91,7 +81,7 @@ namespace portal {
                     if(rgb->getBody()->getType() == r3d::BodyType::STATIC) continue;
                     FreeCameraControllerComponent* fcc = entity->getComponent<FreeCameraControllerComponent>();
                     r3d::Transform transform = rgb->getBody()->getTransform();
-                    transform.setPosition(transform.getPosition() - rgb->relativePosition);
+                    transform.setPosition(transform.getPosition() - transform.getOrientation() * rgb->relativePosition);
                     if(fcc){
                         // orientation stays the same
                         transform.setOrientation(entity->localTransform.getRotation());

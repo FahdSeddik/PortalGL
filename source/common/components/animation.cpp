@@ -52,6 +52,10 @@ namespace portal {
         end.deserialize(data.value("end", nlohmann::json::object()));
         duration = data.value("duration", duration);
         name = data.value("name", name);
+        // Append the name of the parent entity to the animation name
+        // Since animation can only be applied to child entities
+        // Make them unique that way if parent exists
+        if(this->getOwner()->parent) name = this->getOwner()->parent->name + "_" + name;
         // For callback it would either call another animation or
         // it would call disable collider of parent of owner
         if(data.contains("callback")) {
@@ -88,12 +92,9 @@ namespace portal {
             t = 1.0f;
             if (isReversed) {
                 this->getOwner()->localTransform.setTransform(start.getTransform());
-                if(reverseCallback) reverseCallback();
             } else {
                 this->getOwner()->localTransform.setTransform(end.getTransform());
-                if(callback) callback();
             }
-            reset();
             return true;
         }
         if (isReversed) {

@@ -8,7 +8,6 @@ namespace portal {
 
     class AnimationComponent;
     class EventSystem;
-    class Portal;
     // This class holds a set of entities
     class World {
         std::unordered_map<std::string, Entity*> entities; // These are the entities held by this world
@@ -31,21 +30,7 @@ namespace portal {
 
         // This will deserialize a json object of physics world settings and create a physics world
         // The physics world will be used for physics simulation
-        void deserialize_physics(const nlohmann::json& data, const nlohmann::json* OnCollisionData = nullptr);
-
-        // This adds an entity to the entities set and returns a pointer to that entity
-        // WARNING The entity is owned by this world so don't use "delete" to delete it, instead, call "markForRemoval"
-        // to put it in the "markedForRemoval" set. The elements in the "markedForRemoval" set will be removed and
-        // deleted when "deleteMarkedEntities" is called.
-        Entity* add() {
-            //TODO: (Req 8) Create a new entity, set its world member variable to this,
-            // and don't forget to insert it in the suitable container.
-            // Create a new entity
-            Entity* entity = new Entity();
-            // set its world member variable to this
-            entity->world = this;
-            return entity;
-        }
+        void deserialize_physics(const nlohmann::json& data, const nlohmann::json* onTriggerData = nullptr);
 
         // This returns and immutable reference to the set of all entites in the world.
         const std::unordered_map<std::string, Entity*>& getEntities() {
@@ -53,8 +38,6 @@ namespace portal {
         }
 
         Entity *getEntityByName(const std::string &name) const;
-
-        void initEventSystem() const;
 
         // This marks an entity for removal by adding it to the "markedForRemoval" set.
         // The elements in the "markedForRemoval" set will be removed and deleted when "deleteMarkedEntities" is called.
@@ -103,6 +86,10 @@ namespace portal {
             animations[name] = animation;
         }
 
+        AnimationComponent* getAnimationByName(const std::string& name) const {
+            return animations.count(name) ? animations.at(name) : nullptr;
+        }
+
         std::unordered_map<std::string, AnimationComponent*>& getPlayingAnimations() {
             return playingAnimations;
         }
@@ -111,12 +98,7 @@ namespace portal {
             toStopPlaying.insert(name);
         }
 
-        void stopAnimations() {
-            for(auto& name : toStopPlaying) {
-                playingAnimations.erase(name);
-            }
-            toStopPlaying.clear();
-        }
+        void stopAnimations();
 
         // Clears the playing animations map to ensure 
         // resetting when changing states of the game

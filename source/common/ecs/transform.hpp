@@ -23,40 +23,23 @@ namespace portal {
             return transform;
         }
 
-        const r3d::Vector3& getPosition() const {
-            return transform.getPosition();
-        }
+        const r3d::Vector3 &getPosition() const;
 
-        const r3d::Quaternion& getRotation() const {
-            return transform.getOrientation();
-        }
+        const r3d::Quaternion &getRotation() const;
 
-        void setPosition(const glm::vec3 position) {
-            transform.setPosition(r3d::Vector3(position.x, position.y, position.z));
-        }
+        void setPosition(const glm::vec3 position);
 
-        void setPosition(const r3d::Vector3 position) {
-            transform.setPosition(position);
-        }
+        void setPosition(const r3d::Vector3 position);
 
-        void setRotation(const glm::quat rotation) {
-            transform.setOrientation(r3d::Quaternion(rotation.x, rotation.y, rotation.z, rotation.w));
-        }
+        void setRotation(const glm::quat rotation);
 
-        void setRotation(const r3d::Quaternion rotation) {
-            transform.setOrientation(rotation);
-        }
+        void setRotation(const r3d::Quaternion rotation);
 
         void setTransform(const r3d::Transform transform) {
             this->transform = transform;
         }
 
-        static r3d::Transform interpolate(const Transform& a, const Transform& b, float t) {
-            r3d::Transform transform;
-            transform.setPosition(r3d::Vector3(glm::mix(a.getPosition().x, b.getPosition().x, t), glm::mix(a.getPosition().y, b.getPosition().y, t), glm::mix(a.getPosition().z, b.getPosition().z, t)));
-            transform.setOrientation(r3d::Quaternion(glm::mix(a.getRotation().x, b.getRotation().x, t), glm::mix(a.getRotation().y, b.getRotation().y, t), glm::mix(a.getRotation().z, b.getRotation().z, t), glm::mix(a.getRotation().w, b.getRotation().w, t)));
-            return transform;
-        }
+        static r3d::Transform interpolate(const Transform &a, const Transform &b, float t);
     };
 
 }

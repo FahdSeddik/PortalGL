@@ -4,6 +4,7 @@
 #include "../components/animation.hpp"
 #include "portal.hpp"
 #include "../systems/event.hpp"
+#include "entity-factory.hpp"
 namespace portal {
 
     // This will deserialize a json array of entities and add the new entities to the current world
@@ -12,18 +13,12 @@ namespace portal {
     void World::deserialize(const nlohmann::json& data, Entity* parent){
         if(!data.is_array()) return;
         for(const auto& entityData : data){
-            bool isportal = entityData.value("isPortal", false);
-            Entity *entity;
-            // if entity is a portal, then we create a portal object
-            // instead of a normal entity (portal inherits from entity)
-            if(isportal) {
-                entity = new Portal();
-                entity->world = this;
-            } else {
-                entity = add();
-            }
+            std::string name = entityData.value("name", std::to_string(entities.size()));
+            std::string type = entityData.value("type", "Regular");
+            Entity *entity = EntityFactory::createEntity(EntityFactory::stringToEntityType(type));
             entity->parent = parent;
-            entity->name = entityData.value("name", std::to_string(entities.size()));
+            entity->name = name;
+            entity->world = this;
             entities[entity->name] = entity;
             entity->deserialize(entityData);
             if(entityData.contains("children")){
@@ -36,7 +31,7 @@ namespace portal {
         return entities.at(name);
     }
 
-    void World::deserialize_physics(const nlohmann::json& data, const nlohmann::json* OnCollisionData){
+    void World::deserialize_physics(const nlohmann::json& data, const nlohmann::json* onTriggerData){
         if(!data.is_object()) return;
         r3d::PhysicsWorld::WorldSettings settings;
         glm::vec3 gravity(settings.gravity.x, settings.gravity.y, settings.gravity.z);
@@ -50,15 +45,31 @@ namespace portal {
         // pass isGrounded by reference to allow the event system to change it
         EventSystem *eventSystem = new EventSystem(this);
         this->eventSystem = eventSystem;
-        // Deserialize OnCollisionEvents if exists
-        if(OnCollisionData)eventSystem->deserialize(*OnCollisionData);
+        // Deserialize onTriggerEvents if exists
+        if(onTriggerData)eventSystem->deserialize(*onTriggerData);
         this->physicsWorld->setEventListener(eventSystem);
     }
     
     void World::startAnimation(const std::string& name, bool reverse) {
         // Checks if the given animation isn't already playing and exists
         if(animations.find(name) != animations.end() && playingAnimations.find(name) == playingAnimations.end()) {
+            std::vector<std::string> names;
+            // Check if there are animations playing on the same entity and stop them
+            for(auto& [animName, anim]: playingAnimations) {
+                if(anim->getOwner() == animations.at(name)->getOwner()) {
+                    names.push_back(animName);
+                }
+            }
+            for(auto& animName : names) {
+                AnimationComponent* animcomp = playingAnimations.at(animName);
+                playingAnimations.erase(animName);
+            }
             // Start playing the animation
+            animations[name]->startPlaying(reverse);
+            // Add this animation to playingAnimations map
+            playingAnimations[name] = animations[name];
+        } else if (playingAnimations.find(name) != playingAnimations.end()) {
+            // play other animation
             animations[name]->startPlaying(reverse);
             // Add this animation to playingAnimations map
             playingAnimations[name] = animations[name];
@@ -70,8 +81,13 @@ namespace portal {
         playingAnimations.clear();
     }
 
-    void World::initEventSystem() const {
-        if(eventSystem)eventSystem->init();
+    void World::stopAnimations() {
+        for(auto& name : toStopPlaying) {
+            if(playingAnimations.find(name) == playingAnimations.end()) continue;
+            AnimationComponent *animTemp = playingAnimations.at(name);
+            playingAnimations.erase(name);
+            animTemp->envokeCallback();
+        }
+        toStopPlaying.clear();
     }
-
 }
