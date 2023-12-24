@@ -64,9 +64,6 @@ namespace portal {
         // translate the options menu to the center of the screen
         optionsModelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(size.x/3.0f, size.y/4.0f, 0.0f)) * optionsModelMatrix;
 
-        pauseMaterial->setup();
-        pauseMaterial->shader->set("transform", VP * menuModelMatrix);
-        rectangle->draw();
 
         // Set the pauseButtons
         // Resume button

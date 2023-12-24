@@ -166,7 +166,8 @@ namespace portal {
             // Create a post processing material
             postprocessMaterial = new TexturedMaterial();
             postprocessMaterial->shader = postprocessShader;
-            postprocessMaterial->texture = colorTarget;
+            // postprocessMaterial->texture = colorTarget;
+            postprocessMaterial->texture = colorTexture;
             postprocessMaterial->sampler = postprocessSampler;
             // The default options are fine but we don't need to interact with the depth buffer
             // so it is more performant to disable the depth mask
@@ -608,30 +609,19 @@ namespace portal {
                 // if there is a postprocess material, draw the scene to the framebuffer after applying bloom
                 // and then draw the framebuffer to the screen using the postprocess material
                 glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
-                // glBindFramebuffer(GL_FRAMEBUFFER, 0);
-                glBindVertexArray(postProcessVertexArray);
-                hdrMaterial->setup();
-                hdrMaterial->shader->set("bloomIntensity", bloomIntensity);
-                hdrMaterial->shader->set("exposure", exposure);       
-                glDrawArrays(GL_TRIANGLES, 0, 3);
-
-                glBindFramebuffer(GL_FRAMEBUFFER, 0);
-                glBindVertexArray(postProcessVertexArray);
-                postprocessMaterial->setup();
-                glDrawArrays(GL_TRIANGLES, 0, 3);
 
             } else {
                 glBindFramebuffer(GL_FRAMEBUFFER, 0);
-                glBindVertexArray(postProcessVertexArray);
-                hdrMaterial->setup();
-                hdrMaterial->shader->set("bloomIntensity", bloomIntensity);
-                hdrMaterial->shader->set("exposure", exposure);       
-                glDrawArrays(GL_TRIANGLES, 0, 3);
             }
 
+            glBindVertexArray(postProcessVertexArray);
+            hdrMaterial->setup();
+            hdrMaterial->shader->set("bloomIntensity", bloomIntensity);
+            hdrMaterial->shader->set("exposure", exposure);       
+            glDrawArrays(GL_TRIANGLES, 0, 3);
         }
         // If there is a postprocess material, draw the scene to the framebuffer
-        else  if(postprocessMaterial){
+        if(postprocessMaterial){
             //TODO: (Req 11) Return to the default framebuffer
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             //TODO: (Req 11) Setup the postprocess material and draw the fullscreen triangle
@@ -741,5 +731,12 @@ namespace portal {
 
     void ForwardRenderer::setBloom(bool bloom){
         this->bloom = bloom;
+        if(postprocessMaterial){
+            if(bloom){
+                postprocessMaterial->texture = colorTexture;
+            } else {
+                postprocessMaterial->texture = colorTarget;
+            }
+        }
     }
 }
