@@ -56,7 +56,7 @@ namespace portal
         // Framebuffer used to store the bright color
         GLuint hdrFBO;
         // Texture used to store the normal color
-        Texture2D *colorTexture;
+        Texture2D *colorTexture, *depthTexture;
         // Texture used to store the bright color
         Texture2D *brightColorTexture;
         // Material used to render final frame
@@ -92,6 +92,7 @@ namespace portal
         // This function should be called every frame to draw the given world
         void render(World* world);
 
+        void setBloom(bool bloom);
 
     };
 

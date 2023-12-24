@@ -1,22 +1,10 @@
 #include "pause-menu.hpp"
-#include "application.hpp"
-#include "asset-loader.hpp"
-#include "mesh/mesh-utils.hpp"
-#include "mesh/mesh.hpp"
-#include "material/material.hpp"
-#include "texture/texture2d.hpp"
-#include "texture/sampler.hpp"
-#include "texture/texture-utils.hpp"
-#include "shader/shader.hpp"
-#include "ecs/world.hpp"
 #include "systems/forward-renderer.hpp"
-// #include "states/menu-state.hpp"
-#include "../states/play-state.hpp"
 
 namespace portal {
-    void PauseMenu::init(Application* app, ForwardRenderer* renderer, Playstate* playstate, World* world) {
+    void PauseMenu::init(Application* app, ForwardRenderer* renderer) {
         PauseMenu::app = app;
-        PauseMenu::playstate = playstate;
+        PauseMenu::renderer = renderer;
 
         pause = true;
         options = false;      
@@ -76,12 +64,6 @@ namespace portal {
         // translate the options menu to the center of the screen
         optionsModelMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(size.x/3.0f, size.y/4.0f, 0.0f)) * optionsModelMatrix;
 
-        // draw the scene on both buffers so that if there was a quick movement
-        // the screen won't flicker with each buffer swap 
-        renderer->render(world);
-        glfwSwapBuffers(app->getWindow());
-        renderer->render(world);
-
         pauseMaterial->setup();
         pauseMaterial->shader->set("transform", VP * menuModelMatrix);
         rectangle->draw();
@@ -110,23 +92,17 @@ namespace portal {
             }
         });
 
-        // // Set the options buttons
-        // optionsButtons = {
-        //     Button{
-        //         glm::vec2(0.0f, 0.0f),
-        //         glm::vec2(0.5f, 0.5f),
-        //         [app](){
-        //             app->changeState("menu");
-        //         }
-        //     },
-        //     Button{
-        //         glm::vec2(0.5f, 0.0f),
-        //         glm::vec2(0.5f, 0.5f),
-        //         [app](){
-        //             app->changeState("options");
-        //         }
-        //     },
-        // };
+        // Set the optionsButtons
+        // Bloom button
+        optionsButtons.push_back(Button{
+            glm::vec2(775.0f, 304.0f),
+            glm::vec2(27.0f, 28.0f),
+            [](){
+                portal::PauseMenu::toggleBloom();
+            }
+        });
+        // Bloom state
+        optionsStates.push_back(true);
     }
 
     bool PauseMenu::render() {
@@ -154,7 +130,6 @@ namespace portal {
                     button.action();
                 }
             }
-            std::cout << "mouse position: " << mousePosition.x << ", " << mousePosition.y << std::endl;
         }
         // Draw the buttons
         for(auto& button: pauseButtons){
@@ -171,11 +146,19 @@ namespace portal {
         optionsMaterial->setup();
         optionsMaterial->shader->set("transform", VP * optionsModelMatrix);
         rectangle->draw();
+        if(app->getMouse().justPressed(GLFW_MOUSE_BUTTON_LEFT)){
+            // Check if any of the buttons are pressed
+            for(auto& button: optionsButtons){
+                if(button.isInside(mousePosition)){
+                    button.action();
+                }
+            }
+        }
         // Draw the buttons
-        for(auto& button: optionsButtons){
-            if(button.isInside(mousePosition)){
+        for(int i = 0; i < optionsButtons.size(); i++){
+            if(optionsButtons[i].isInside(mousePosition) || optionsStates[i]){
                 highlightMaterial->setup();
-                highlightMaterial->shader->set("transform", VP*button.getLocalToWorld());
+                highlightMaterial->shader->set("transform", VP*optionsButtons[i].getLocalToWorld());
                 rectangle->draw();
             }
         }
@@ -215,5 +198,10 @@ namespace portal {
 
     void PauseMenu::openOptions() {
         options = true;
+    }
+
+    void PauseMenu::toggleBloom() {
+        optionsStates[0] = !optionsStates[0];
+        renderer->setBloom(optionsStates[0]);
     }
 }

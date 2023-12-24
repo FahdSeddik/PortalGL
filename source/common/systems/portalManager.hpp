@@ -64,6 +64,7 @@ namespace portal {
         Portal* Portal_2 = nullptr;
         bool isPortal1Shot = false;
         bool isPortal2Shot = false;
+        float portalMaxDistance = 100.0f;
         
         // Validates and casts portals
         void checkPortalShot();

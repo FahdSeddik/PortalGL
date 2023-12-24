@@ -82,7 +82,7 @@ public:
         }, nullptr);
         portal::LoadingScreen::render();
         createWorld(config);
-        portal::PauseMenu::init(getApp(), &renderer, this, &world);
+        portal::PauseMenu::init(getApp(), &renderer);
     }
 
     void onDraw(double deltaTime) override {
