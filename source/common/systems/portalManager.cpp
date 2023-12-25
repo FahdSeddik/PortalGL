@@ -189,6 +189,8 @@ namespace portal {
             // but since the top left is checked first, the move vector is calculated from the top left and the portal is moved in the wrong direction
             if(glm::dot(moveVector, portal.center - otherPortal.center) > 0.1){
                 return moveVector;
+            } else{
+                moveVector = glm::vec2(0.0f, 0.0f);
             }
         } 
         if(isPointInsideRectangle(portal.topRight, otherPortal)){
@@ -200,7 +202,12 @@ namespace portal {
             std::vector<glm::vec2> intersectionPoints = getLineRectangleIntersectionPoints(portal, otherPortal, Point::TOP_RIGHT);
 
             moveVector = intersectionPoints[0] - intersectionPoints[1];
-            return moveVector;
+            // return moveVector;
+            if(glm::dot(moveVector, portal.center - otherPortal.center) > 0.1){
+                return moveVector;
+            } else{
+                moveVector = glm::vec2(0.0f, 0.0f);
+            }
 
         } 
         if(isPointInsideRectangle(portal.bottomLeft, otherPortal)){
@@ -214,6 +221,8 @@ namespace portal {
             moveVector = intersectionPoints[0] - intersectionPoints[1];
             if(glm::dot(moveVector, portal.center - otherPortal.center) > 0.1){
                 return moveVector;
+            } else{
+                moveVector = glm::vec2(0.0f, 0.0f);
             }
         }  
         if(isPointInsideRectangle(portal.bottomRight, otherPortal)){
@@ -225,6 +234,11 @@ namespace portal {
             std::vector<glm::vec2> intersectionPoints = getLineRectangleIntersectionPoints(portal, otherPortal, Point::BOTTOM_RIGHT);
 
             moveVector = intersectionPoints[0] - intersectionPoints[1];
+            if(glm::dot(moveVector, portal.center - otherPortal.center) > 0.1){
+                return moveVector;
+            } else{
+                moveVector = glm::vec2(0.0f, 0.0f);
+            }
         }
         return moveVector;
 
@@ -599,7 +613,7 @@ namespace portal {
             std::string name = "";
             glm::vec3 hitPoint = glm::vec3(0.0f, 0.0f, 0.0f);
             // RayCast from player position to front direction with length 50
-            r3d::Ray ray(player->localTransform.getPosition() + player->getAbsoluteFront() * 0.5f,player->getAbsoluteFront() * 50 + player->localTransform.getPosition());
+            r3d::Ray ray(player->localTransform.getPosition() + player->getAbsoluteFront() * 0.5f,player->getAbsoluteFront() * portalMaxDistance + player->localTransform.getPosition());
             physicsWorld->raycast(ray, new RayCastPortal(name, hitPoint));
             if(name.empty()) return;
             // get entity with current name and check if it is can hold a portal
@@ -620,7 +634,7 @@ namespace portal {
             std::string name = "";
             glm::vec3 hitPoint = glm::vec3(0.0f, 0.0f, 0.0f);
             // RayCast from player position to front direction with length 50
-            r3d::Ray ray(player->localTransform.getPosition() + player->getAbsoluteFront() * 0.5f, player->getAbsoluteFront() * 50 + player->localTransform.getPosition());
+            r3d::Ray ray(player->localTransform.getPosition() + player->getAbsoluteFront() * 0.5f, player->getAbsoluteFront() * portalMaxDistance + player->localTransform.getPosition());
             physicsWorld->raycast(ray, new RayCastPortal(name, hitPoint));
             if(name.empty()) return;
             // get entity with current name and check if it can hold a portal

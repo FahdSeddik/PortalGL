@@ -1,8 +1,8 @@
 {
-    "start-scene": "play",
+    "start-scene": "menu",
     "window":
     {
-        "title":"Default Game Window",
+        "title":"PortalGL",
         "size":{
             "width":1280,
             "height":720
@@ -14,8 +14,8 @@
             // "sky": "assets/textures/sky.jpg",
             "sky": "assets/textures/Space.png",
             "postprocess": "assets/shaders/postprocess/vignette.frag",
-            "bloom": true,
-            // "bloom": false,
+            // "bloom": true,
+            "bloom": false,
             "bloomIntensity": 1.5,
             "bloomBlurIterations": 20,
             "exposure": 0.5
@@ -84,6 +84,8 @@
                 "default_ambient_occlusion": "assets/textures/default_ambient_occlusion.jpg",
                 "default_emission": "assets/textures/default_emissive.jpg",
                 "default_metallic": "assets/textures/default_metallic.jpg"
+
+
             },
             "meshes":{
                 "cube": "assets/models/cube.obj",

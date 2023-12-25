@@ -117,6 +117,9 @@ set(COMMON_SOURCES
 
         source/common/systems/portalManager.hpp
         source/common/systems/portalManager.cpp
+
+        source/common/pause-menu.hpp
+        source/common/pause-menu.cpp
 )
 
 # Define the directories in which to search for the included headers

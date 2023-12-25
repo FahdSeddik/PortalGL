@@ -38,8 +38,8 @@ namespace portal
         Mesh* skySphere;
         TexturedMaterial* skyMaterial;
         // Objects used for Postprocessing
-        GLuint postprocessFrameBuffer, postProcessVertexArray;
-        Texture2D *colorTarget, *depthTarget;
+        GLuint postProcessVertexArray;
+        // Texture2D *colorTarget, *depthTarget;
         TexturedMaterial* postprocessMaterial;
         // List of all the lights in the scene
         std::vector<LightComponent*> lights;
@@ -54,9 +54,9 @@ namespace portal
         int bloomBlurIterations;
         float exposure;
         // Framebuffer used to store the bright color
-        GLuint hdrFBO;
+        GLuint postProcessFBO;
         // Texture used to store the normal color
-        Texture2D *colorTexture;
+        Texture2D *colorTexture, *depthTexture;
         // Texture used to store the bright color
         Texture2D *brightColorTexture;
         // Material used to render final frame
@@ -92,6 +92,8 @@ namespace portal
         // This function should be called every frame to draw the given world
         void render(World* world);
 
+        bool getBloom();
+        void setBloom(bool bloom);
 
     };
 
