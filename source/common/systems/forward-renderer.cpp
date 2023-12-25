@@ -135,20 +135,6 @@ namespace portal {
 
         if(config.contains("postprocess")){
             // Then we check if there is a postprocessing shader in the configuration
-            //TODO: (Req 11) Create a framebuffer
-            glGenFramebuffers(1, &postprocessFrameBuffer);
-            glBindFramebuffer(GL_FRAMEBUFFER, postprocessFrameBuffer);
-            //TODO: (Req 11) Create a color and a depth texture and attach them to the framebuffer
-            // Hints: The color format can be (Red, Green, Blue and Alpha components with 8 bits for each channel).
-            // The depth format can be (Depth component with 24 bits).
-            colorTarget = texture_utils::empty(GL_RGBA8, windowSize);
-            depthTarget = texture_utils::empty(GL_DEPTH24_STENCIL8, windowSize);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorTarget->getOpenGLName(), 0);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthTarget->getOpenGLName(), 0);
-            //TODO: (Req 11) Unbind the framebuffer just to be safe
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            // Create a vertex array to use for drawing the texture
-            // glGenVertexArrays(1, &postProcessVertexArray);
 
             // Create a sampler to use for sampling the scene texture in the post processing shader
             Sampler* postprocessSampler = new Sampler();
@@ -188,30 +174,24 @@ namespace portal {
         }
         // Delete all objects related to post processing
         if(postprocessMaterial){
-            glDeleteFramebuffers(1, &postprocessFrameBuffer);
-            glDeleteVertexArrays(1, &postProcessVertexArray);
-            delete colorTarget;
-            delete depthTarget;
             delete postprocessMaterial->sampler;
             delete postprocessMaterial->shader;
             delete postprocessMaterial;
         }
         // Delete all objects related to bloom
-        if(bloom){
-            glDeleteFramebuffers(1, &hdrFBO);
-            glDeleteVertexArrays(1, &postProcessVertexArray);
-            delete colorTexture;
-            delete brightColorTexture;
-            if(!postprocessMaterial) delete hdrMaterial->sampler;
-            delete hdrMaterial->shader;
-            delete hdrMaterial;
-            glDeleteFramebuffers(2, pingpongFBO);
-            delete pingpongColorbuffers[0];
-            delete pingpongColorbuffers[1];
-            delete pingpongMaterial->shader;
-            delete pingpongMaterial;
+        glDeleteFramebuffers(1, &hdrFBO);
+        glDeleteVertexArrays(1, &postProcessVertexArray);
+        delete colorTexture;
+        delete brightColorTexture;
+        if(!postprocessMaterial) delete hdrMaterial->sampler;
+        delete hdrMaterial->shader;
+        delete hdrMaterial;
+        glDeleteFramebuffers(2, pingpongFBO);
+        delete pingpongColorbuffers[0];
+        delete pingpongColorbuffers[1];
+        delete pingpongMaterial->shader;
+        delete pingpongMaterial;
 
-        }
     }
 
     // Utility function to add a lights to the shader and set the "lightCount" uniform
@@ -554,14 +534,14 @@ namespace portal {
             }
         }
 
-        if(bloom){
+        if(bloom || postprocessMaterial){
             glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
         }
         // If there is a postprocess material, bind the framebuffer
-        else if(postprocessMaterial){
-            //TODO: (Req 11) bind the framebuffer
-            glBindFramebuffer(GL_FRAMEBUFFER, postprocessFrameBuffer);
-        }
+        // else if(postprocessMaterial){
+        //     //TODO: (Req 11) bind the framebuffer
+        //     glBindFramebuffer(GL_FRAMEBUFFER, postprocessFrameBuffer);
+        // }
 
         // CLear the screen
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -732,11 +712,11 @@ namespace portal {
     void ForwardRenderer::setBloom(bool bloom){
         this->bloom = bloom;
         if(postprocessMaterial){
-            if(bloom){
-                postprocessMaterial->texture = colorTexture;
-            } else {
-                postprocessMaterial->texture = colorTarget;
-            }
+            // if(bloom){
+            //     postprocessMaterial->texture = colorTexture;
+            // } else {
+            //     postprocessMaterial->texture = colorTarget;
+            // }
         }
     }
 }

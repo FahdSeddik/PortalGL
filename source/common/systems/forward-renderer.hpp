@@ -38,8 +38,8 @@ namespace portal
         Mesh* skySphere;
         TexturedMaterial* skyMaterial;
         // Objects used for Postprocessing
-        GLuint postprocessFrameBuffer, postProcessVertexArray;
-        Texture2D *colorTarget, *depthTarget;
+        GLuint postProcessVertexArray;
+        // Texture2D *colorTarget, *depthTarget;
         TexturedMaterial* postprocessMaterial;
         // List of all the lights in the scene
         std::vector<LightComponent*> lights;
