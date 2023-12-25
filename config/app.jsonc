@@ -14,8 +14,8 @@
             // "sky": "assets/textures/sky.jpg",
             "sky": "assets/textures/Space.png",
             "postprocess": "assets/shaders/postprocess/vignette.frag",
-            "bloom": true,
-            // "bloom": false,
+            // "bloom": true,
+            "bloom": false,
             "bloomIntensity": 1.5,
             "bloomBlurIterations": 20,
             "exposure": 0.5
@@ -83,10 +83,7 @@
                 "default_roughness": "assets/textures/default_roughness.jpg",
                 "default_ambient_occlusion": "assets/textures/default_ambient_occlusion.jpg",
                 "default_emission": "assets/textures/default_emissive.jpg",
-                "default_metallic": "assets/textures/default_metallic.jpg",
-
-                // pause menu texture
-                "pause_menu": "assets/textures/pause_menu.png"
+                "default_metallic": "assets/textures/default_metallic.jpg"
 
 
             },
@@ -613,28 +610,6 @@
                     },
                     "tint": [1, 1, 1, 1],
                     "texture": "moon",
-                    "sampler": "default"
-                },
-                "mat_pause":{
-                    "type": "lit",
-                    "shader": "lit",
-                    "pipelineState": {
-                        "faceCulling":{
-                            "enabled": false
-                        },
-                        "depthTesting":{
-                            "enabled": true
-                        },
-                        "blending":{
-                            "enabled": true,
-                            "sourceFactor": "GL_SRC_ALPHA",
-                            "destinationFactor": "GL_ONE_MINUS_SRC_ALPHA"
-                        },
-                        "depthMask": false
-                    },
-                    "transparent": true,
-                    "tint": [1, 1, 1, 1],
-                    "albedo": "pause_menu",
                     "sampler": "default"
                 }
             },

@@ -100,7 +100,7 @@ namespace portal {
             }
         });
         // Bloom state
-        optionsStates.push_back(true);
+        optionsStates.push_back(renderer->getBloom());
     }
 
     bool PauseMenu::render() {

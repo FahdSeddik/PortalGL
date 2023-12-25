@@ -54,7 +54,7 @@ namespace portal
         int bloomBlurIterations;
         float exposure;
         // Framebuffer used to store the bright color
-        GLuint hdrFBO;
+        GLuint postProcessFBO;
         // Texture used to store the normal color
         Texture2D *colorTexture, *depthTexture;
         // Texture used to store the bright color
@@ -92,6 +92,7 @@ namespace portal
         // This function should be called every frame to draw the given world
         void render(World* world);
 
+        bool getBloom();
         void setBloom(bool bloom);
 
     };

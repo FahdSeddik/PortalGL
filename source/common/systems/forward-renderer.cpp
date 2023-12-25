@@ -65,8 +65,8 @@ namespace portal {
         exposure = config.value("exposure", 1.0f);
 
         // Create a framebuffer to render the scene to
-        glGenFramebuffers(1, &hdrFBO);
-        glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
+        glGenFramebuffers(1, &postProcessFBO);
+        glBindFramebuffer(GL_FRAMEBUFFER, postProcessFBO);
         // The depth format can be (Depth component with 24 bits).
         colorTexture = texture_utils::empty(GL_RGBA16F, windowSize);
         brightColorTexture = texture_utils::empty(GL_RGBA16F, windowSize);
@@ -179,7 +179,7 @@ namespace portal {
             delete postprocessMaterial;
         }
         // Delete all objects related to bloom
-        glDeleteFramebuffers(1, &hdrFBO);
+        glDeleteFramebuffers(1, &postProcessFBO);
         glDeleteVertexArrays(1, &postProcessVertexArray);
         delete colorTexture;
         delete brightColorTexture;
@@ -535,7 +535,7 @@ namespace portal {
         }
 
         if(bloom || postprocessMaterial){
-            glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
+            glBindFramebuffer(GL_FRAMEBUFFER, postProcessFBO);
         }
         // If there is a postprocess material, bind the framebuffer
         // else if(postprocessMaterial){
@@ -588,7 +588,7 @@ namespace portal {
            if(postprocessMaterial){
                 // if there is a postprocess material, draw the scene to the framebuffer after applying bloom
                 // and then draw the framebuffer to the screen using the postprocess material
-                glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
+                glBindFramebuffer(GL_FRAMEBUFFER, postProcessFBO);
 
             } else {
                 glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -709,14 +709,12 @@ namespace portal {
         glDisable(GL_STENCIL_TEST);
     }
 
+
+    bool ForwardRenderer::getBloom(){
+        return bloom;
+    }
+    
     void ForwardRenderer::setBloom(bool bloom){
         this->bloom = bloom;
-        if(postprocessMaterial){
-            // if(bloom){
-            //     postprocessMaterial->texture = colorTexture;
-            // } else {
-            //     postprocessMaterial->texture = colorTarget;
-            // }
-        }
     }
 }
