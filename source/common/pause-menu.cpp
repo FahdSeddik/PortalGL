@@ -7,7 +7,8 @@ namespace portal {
         PauseMenu::renderer = renderer;
 
         pause = true;
-        options = false;      
+        options = false; 
+         
         
         // Load the pause menu material
         pauseMaterial = new TexturedMaterial();
@@ -172,6 +173,8 @@ namespace portal {
         delete optionsMaterial->shader;
         delete optionsMaterial;
         pauseButtons.clear();
+        optionsButtons.clear();
+        optionsStates.clear();
         app->getMouse().unlockMouse(app->getWindow());
     }
 
