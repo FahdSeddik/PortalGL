@@ -12,6 +12,7 @@ layout (location = 1) out vec4 BrightColor;
 uniform vec4 tint;
 uniform sampler2D tex;
 uniform bool bloom = false;
+uniform float bloomThreshold = 0.9;
 
 void main(){
     //TODO: (Req 7) Modify the following line to compute the fragment color
@@ -21,8 +22,8 @@ void main(){
     BrightColor = vec4(0.0, 0.0, 0.0, 1.0);
     if (!bloom)
         return;
-    float brightness = (frag_color.r + frag_color.g + frag_color.b) / 3.0;
-    if (brightness > 0.7)
+    float brightness = dot(frag_color, vec4(0.2126, 0.7152, 0.0722, 0.0));
+    if (brightness > bloomThreshold)
         BrightColor = frag_color;
     else
         BrightColor = vec4(0.0, 0.0, 0.0, 1.0);

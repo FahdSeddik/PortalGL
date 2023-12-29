@@ -14,10 +14,11 @@
             // "sky": "assets/textures/sky.jpg",
             "sky": "assets/textures/Space.png",
             "postprocess": "assets/shaders/postprocess/vignette.frag",
-            // "bloom": true,
-            "bloom": false,
+            "bloom": true,
+            // "bloom": false,
             "bloomIntensity": 1.5,
             "bloomBlurIterations": 20,
+            "bloomThreshold": 0.9,
             "exposure": 0.5
         },
         "assets":{
@@ -958,6 +959,7 @@
                 "children":[
                     {
                         "position": [0, 12, 1],
+                        "rotation": [45, 0, 45],
                         "components":[
                             {
                                 "type": "Light",
@@ -977,25 +979,25 @@
                                 "color": [100, 100, 100],
                                 "attenuation": [1.0, 0.14, 0.07],
                                 "innerCutOff": 40,
-                                "outerCutOff": 65,
-                                "direction": [1.0, -1.5, 1.0]
+                                "outerCutOff": 65
+                                // "direction": [1.0, -1.5, 1.0]
                             }
                         ]
                     }
                 ]
             },
-            {
-                "position": [0, 10, 0],
-                "components": [
-                    {
-                        "type": "Light",
-                        "lightType": "point",
-                        "color": [15, 15, 15],
-                        "attenuation": [1.0, 0.22, 0.20],
-                        "direction": [0.0, -1.0, 0.0]
-                    }
-                ]
-            },
+            // {
+            //     "position": [0, 10, 0],
+            //     "components": [
+            //         {
+            //             "type": "Light",
+            //             "lightType": "point",
+            //             "color": [15, 15, 15],
+            //             "attenuation": [1.0, 0.22, 0.20],
+            //             "direction": [0.0, -1.0, 0.0]
+            //         }
+            //     ]
+            // },
             //====================
             // Player
             //====================
@@ -2086,6 +2088,7 @@
                 "children":[
                     {
                         "position": [0, 12, 1],
+                        "rotation": [45, 0, 45],
                         "components":[
                             {
                                 "type": "Light",
@@ -2105,8 +2108,8 @@
                                 "color": [100, 100, 100],
                                 "attenuation": [1.0, 0.14, 0.07],
                                 "innerCutOff": 40,
-                                "outerCutOff": 65,
-                                "direction": [-1.0, -1.5, 1.0]
+                                "outerCutOff": 65
+                                // "direction": [-1.0, -1.5, 1.0]
                             }
                         ]
                     }
@@ -2119,8 +2122,8 @@
                         "type": "Light",
                         "lightType": "point",
                         "color": [15, 15, 15],
-                        "attenuation": [1.0, 0.22, 0.20],
-                        "direction": [0.0, -1.0, 0.0]
+                        "attenuation": [1.0, 0.22, 0.20]
+                        // "direction": [0.0, -1.0, 0.0]
                     }
                 ]
             },
@@ -2199,8 +2202,8 @@
                         "type": "Light",
                         "lightType": "point",
                         "color": [10, 10, 10],
-                        "attenuation": [1.0, 0.22, 0.20],
-                        "direction": [0.0, -1.0, 0.0]
+                        "attenuation": [1.0, 0.22, 0.20]
+                        // "direction": [0.0, -1.0, 0.0]
                     }
                 ]
             },

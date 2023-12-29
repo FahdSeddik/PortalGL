@@ -238,20 +238,7 @@ namespace portal {
 
         //TODO: (Req 9) Get the camera ViewProjection matrix and store it in VP camera->getProjectionMatrix(windowSize)
         glm::mat4 VP = projMat * viewMat;
-        //TODO: (Req 9) Set the OpenGL viewport using viewportStart and viewportSize
-        // glViewport(0, 0, windowSize.x, windowSize.y);
-        // //TODO: (Req 9) Set the clear color to black and the clear depth to 1
-        // glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        // glClearDepth(1.0f);
-        // //TODO: (Req 9) Set the color mask to true and the depth mask to true (to ensure the glClear will affect the framebuffer)
-        // glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-        // glDepthMask(GL_TRUE);
 
-        
-        
-
-        //TODO: (Req 9) Clear the color and depth buffers
-        // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         //TODO: (Req 9) Draw all the opaque commands
         // Don't forget to set the "transform" uniform to be equal the model-view-projection matrix for each render command
         for (auto &command : opaqueCommands){
@@ -273,6 +260,7 @@ namespace portal {
                 glm::mat4 MVP = VP * command.localToWorld;
                 command.material->shader->set("transform", MVP);
             }
+            command.material->shader->set("bloomThreshold", bloomThreshold);
             command.mesh->draw();
         }
         // If there is a sky material, draw the sky
@@ -363,147 +351,13 @@ namespace portal {
 
         return newProj;
     }
-
-    void ForwardRenderer::drawRecursivePortals(glm::mat4 const& modelMat, glm::mat4 const &viewMat, glm::mat4 const &projMat, size_t maxRecursionLevel, size_t recursionLevel) {
-        for(int i = 0; i < 2; i++) {
-            Entity* curportal = portals[i];
-            // Disable color and depth drawing
-            glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-            glDepthMask(GL_FALSE);
-
-            // Disable depth test
-            glDisable(GL_DEPTH_TEST);
-
-            // Enable stencil test, to prevent drawing outside
-            // region of current portal depth
-            glEnable(GL_STENCIL_TEST);
-
-            // Fail stencil test when inside of outer portal
-            // (fail where we should be drawing the inner portal)
-            glStencilFunc(GL_NOTEQUAL, (GLint)recursionLevel, (GLuint)0xFF);
-
-            // Increment stencil value on stencil fail
-            // (on area of inner portal)
-            glStencilOp(GL_INCR, GL_KEEP, GL_KEEP);
-
-            // Enable (writing into) all stencil bits
-            glStencilMask(0xFF);
-
-            drawPortal(portalModelMats[i], viewMat, projMat, curportal);
-            const r3d::Quaternion& temprot = curportal->localTransform.getRotation();
-            glm::fquat rot(temprot.w, temprot.x, temprot.y, temprot.z);
-            glm::mat4 destView = viewMat * portalModelMats[i]
-            * glm::rotate(glm::mat4(1.0f), PI, glm::vec3(0.0f, 1.0f, 0.0f) * rot)
-            * glm::inverse(portalModelMats[1-i]);
-            // Base case, render inside of inner portal
-            if (recursionLevel == maxRecursionLevel)
-            {
-                // Enable color and depth drawing
-                glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-                glDepthMask(GL_TRUE);
-                
-                // Clear the depth buffer so we don't interfere with stuff
-                // outside of this inner portal
-                glClear(GL_DEPTH_BUFFER_BIT);
-
-                // Enable the depth test
-                // So the stuff we render here is rendered correctly
-                glEnable(GL_DEPTH_TEST);
-
-                // Enable stencil test
-                // So we can limit drawing inside of the inner portal
-                glEnable(GL_STENCIL_TEST);
-
-                // Disable drawing into stencil buffer
-                glStencilMask(0x00);
-
-                // Draw only where stencil value == recursionLevel + 1
-                // which is where we just drew the new portal
-                glStencilFunc(GL_EQUAL, (GLint)recursionLevel + 1, 0xFF);
-
-                // Draw scene objects with destView, limited to stencil buffer
-                // use an edited projection matrix to set the near plane to the portal plane
-                drawNonPortalObjects(portalModelMats[1-i], destView, getClippedProjMat(portals[1-i]->localTransform.getRotation(), portals[1-i]->localTransform.getPosition(), destView, projMat));
-                //drawNonPortals(destView, projMat);
-            }
-            else
-            {
-                // Recursion case
-                // Pass our new view matrix and the clipped projection matrix (see above)
-                drawRecursivePortals(portalModelMats[1-i], destView, getClippedProjMat(portals[1-i]->localTransform.getRotation(), portals[1-i]->localTransform.getPosition(), destView, projMat), maxRecursionLevel, recursionLevel + 1);
-            }
-            // Disable color and depth drawing
-            glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-            glDepthMask(GL_FALSE);
-
-            // Enable stencil test and stencil drawing
-            glEnable(GL_STENCIL_TEST);
-            glStencilMask(static_cast<GLuint>(0xFF));
-
-            // Fail stencil test when inside of our newly rendered
-            // inner portal
-            glStencilFunc(GL_NOTEQUAL, (GLint)recursionLevel + 1, static_cast<GLuint>(0xFF));
-
-            // Decrement stencil value on stencil fail
-            // This resets the incremented values to what they were before,
-            // eventually ending up with a stencil buffer full of zero's again
-            // after the last (outer) step.
-            glStencilOp(GL_DECR, GL_KEEP, GL_KEEP);
-
-            // Draw portal into stencil buffer
-            drawPortal(portalModelMats[i], viewMat, projMat, curportal);
-        }
-        // Disable the stencil test and stencil writing
-        glDisable(GL_STENCIL_TEST);
-        glStencilMask(0x00);
-
-        // Disable color writing
-        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-
-        // Enable the depth test, and depth writing.
-        glEnable(GL_DEPTH_TEST);
-        glDepthMask(GL_TRUE);
-
-        // Make sure we always write the data into the buffer
-        glDepthFunc(GL_ALWAYS);
-
-        // Clear the depth buffer
-        glClear(GL_DEPTH_BUFFER_BIT);
-
-        // Draw portals into depth buffer
-        for(int i = 0; i < 2; i++) {
-            drawPortal(portalModelMats[i], viewMat, projMat, portals[i]);
-        }
-
-        // Reset the depth function to the default
-        glDepthFunc(GL_LESS);
-
-        // Enable stencil test and disable writing to stencil buffer
-        glEnable(GL_STENCIL_TEST);
-        glStencilMask(0x00);
-
-        // Draw at stencil >= recursionlevel
-        // which is at the current level or higher (more to the inside)
-        // This basically prevents drawing on the outside of this level.
-        glStencilFunc(GL_LEQUAL, (GLint)recursionLevel, 0xFF);
-
-        // Enable color and depth drawing again
-        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-        glDepthMask(GL_TRUE);
-
-        // And enable the depth test
-        glEnable(GL_DEPTH_TEST);
-
-        // Draw scene objects normally, only at recursionLevel
-        drawNonPortalObjects(modelMat, viewMat, projMat);
-    }
-    
+   
     void ForwardRenderer::render(World* world){
         // First of all, we search for a camera and for all the mesh renderers
         CameraComponent* camera = nullptr;
         opaqueCommands.clear();
         transparentCommands.clear();
-        lights.clear();
+
         Entity* portal1 = world->getEntityByName("Portal_1");
         Entity* portal2 = world->getEntityByName("Portal_2");
         for(const auto& [name, entity] : world->getEntities()){
@@ -528,20 +382,17 @@ namespace portal {
                 }
             }
 
-            // Add all the lights in the scene to the lights vector
-            if(auto light = entity->getComponent<LightComponent>(); light){
-                lights.push_back(light);
+            if(firstFrame){
+                // Add all the lights in the scene to the lights vector
+                if(auto light = entity->getComponent<LightComponent>(); light){
+                    lights.push_back(light);
+                }
             }
         }
 
         if(bloom || postprocessMaterial){
             glBindFramebuffer(GL_FRAMEBUFFER, postProcessFBO);
         }
-        // If there is a postprocess material, bind the framebuffer
-        // else if(postprocessMaterial){
-        //     //TODO: (Req 11) bind the framebuffer
-        //     glBindFramebuffer(GL_FRAMEBUFFER, postprocessFrameBuffer);
-        // }
 
         // CLear the screen
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -559,7 +410,6 @@ namespace portal {
             portals[0] = portal1, portals[1] = portal2;
             portalModelMats[0] = portal1->getLocalToWorldMatrix(), portalModelMats[1] = portal2->getLocalToWorldMatrix();
             size_t maxRecursionLevel = 1;
-            // drawRecursivePortals(camera->getOwner()->getLocalToWorldMatrix(),camera->getViewMatrix(), camera->getProjectionMatrix(windowSize), maxRecursionLevel);
             drawPortalsNonRecursive(camera->getOwner()->getLocalToWorldMatrix(),camera->getViewMatrix(), camera->getProjectionMatrix(windowSize), portal1, portal2);
         }
 
