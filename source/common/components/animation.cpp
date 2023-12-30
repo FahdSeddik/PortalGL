@@ -13,8 +13,7 @@ namespace portal {
     void AnimationComponent::deserializeCallback(const nlohmann::json& data, bool reverse) {
         if(!data.is_object()) return;
         // if type is "animation" then it would call another animation
-        // if type is "disable" then it would disable collider of parent of owner
-        std::string type = data.value("type", "disable");
+        std::string type = data.value("type", "");
         std::function<void()> tempCallback = nullptr;
         if(type == "animation"){
             //there can be multiple names for callbacks
@@ -29,13 +28,6 @@ namespace portal {
                         this->getOwner()->getWorld()->startAnimation(name);
                     }
                 }
-            };
-        } else if(type == "disable" && this->getOwner()->parent){
-            tempCallback = [this, reverse](){
-                // When Collider is set as Trigger all other colliders can go through it
-                this->getOwner()->parent->getComponent<RigidBodyComponent>()->getCollider()->setIsTrigger(!reverse);
-                // Disable gravity of rigidbody to prevent falling in case of dynamic rigidbody
-                this->getOwner()->parent->getComponent<RigidBodyComponent>()->getBody()->enableGravity(reverse);
             };
         }
         if (reverse) {
