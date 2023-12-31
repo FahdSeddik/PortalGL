@@ -90,7 +90,7 @@ class Menustate: public portal::State {
 
         // Reset the time elapsed since the state is entered.
         time = 0;
-
+        auto size = getApp()->getFrameBufferSize();
         // Fill the positions, sizes and actions for the menu buttons
         // Note that we use lambda expressions to set the actions of the buttons.
         // A lambda expression consists of 3 parts:
@@ -99,12 +99,12 @@ class Menustate: public portal::State {
         // - The argument list () which is the arguments that the lambda should receive when it is called.
         //      We leave it empty since button actions receive no input.
         // - The body {} which contains the code to be executed. 
-        buttons[0].position = {830.0f, 607.0f};
-        buttons[0].size = {400.0f, 33.0f};
+        buttons[0].position = {830.0f / 1280.0f * size.x, 607.0f / 720.0f * size.y};
+        buttons[0].size = {400.0f / 1280.0f * size.x, 33.0f / 720.0f * size.y};
         buttons[0].action = [this](){this->getApp()->changeState("play");};
 
-        buttons[1].position = {830.0f, 644.0f};
-        buttons[1].size = {400.0f, 33.0f};
+        buttons[1].position = {830.0f / 1280.0f * size.x, 644.0f / 720.0f * size.y};
+        buttons[1].size = {400.0f / 1280.0f * size.x, 33.0f / 720.0f * size.y};
         buttons[1].action = [this](){this->getApp()->close();};
     }
 

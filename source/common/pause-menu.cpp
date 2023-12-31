@@ -69,22 +69,22 @@ namespace portal {
         // Set the pauseButtons
         // Resume button
         pauseButtons.push_back(Button{
-            glm::vec2(110.0f, 364.0f),
-            glm::vec2(173.0f, 25.0f),
+            glm::vec2(110.0f, 364.0f) / glm::vec2(1280.0f, 720.0f) * glm::vec2(size),
+            glm::vec2(173.0f, 25.0f) / glm::vec2(1280.0f, 720.0f) * glm::vec2(size),
             [](){
                 portal::PauseMenu::unPause();
             }
         });
         pauseButtons.push_back(Button{
-            glm::vec2(110.0f, 396.0f),
-            glm::vec2(173.0f, 25.0f),
+            glm::vec2(110.0f, 396.0f) / glm::vec2(1280.0f, 720.0f) * glm::vec2(size),
+            glm::vec2(173.0f, 25.0f) / glm::vec2(1280.0f, 720.0f) * glm::vec2(size),
             [](){
                 portal::PauseMenu::openOptions();
             }
         });
         pauseButtons.push_back(Button{
-            glm::vec2(110.0f, 428.0f),
-            glm::vec2(173.0f, 26.0f),
+            glm::vec2(110.0f, 428.0f) / glm::vec2(1280.0f, 720.0f) * glm::vec2(size),
+            glm::vec2(173.0f, 26.0f)  / glm::vec2(1280.0f, 720.0f) * glm::vec2(size),
             [](){
                 portal::PauseMenu::quit();
             }
@@ -93,8 +93,8 @@ namespace portal {
         // Set the optionsButtons
         // Bloom button
         optionsButtons.push_back(Button{
-            glm::vec2(775.0f, 304.0f),
-            glm::vec2(27.0f, 28.0f),
+            glm::vec2(775.0f, 304.0f) / glm::vec2(1280.0f, 720.0f) * glm::vec2(size),
+            glm::vec2(27.0f, 28.0f) / glm::vec2(1280.0f, 720.0f) * glm::vec2(size),
             [](){
                 portal::PauseMenu::toggleBloom();
             }
