@@ -1,8 +1,8 @@
 <p align="center">
 
- <img src="Banner.png" alt="sentiments" width="450" align="center"/>  
- <img src="https://github.com/FahdSeddik/PortalGL/assets/62207434/b7a81910-7a76-4b84-96da-68124a008818" align="left" width="280"/>  
- <img src="https://github.com/FahdSeddik/PortalGL/assets/62207434/d347d4b4-9e34-4226-9f4f-8537d0aa9972" align="right" width="280"/>  
+ <img src="Banner.png" alt="sentiments" width="45%" align="center"/>  
+ <img src="https://github.com/FahdSeddik/PortalGL/assets/62207434/b7a81910-7a76-4b84-96da-68124a008818" align="left" width="27%"/>  
+ <img src="https://github.com/FahdSeddik/PortalGL/assets/62207434/d347d4b4-9e34-4226-9f4f-8537d0aa9972" align="right" width="27%"/>  
 
 </p>
 
